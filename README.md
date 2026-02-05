@@ -12,6 +12,12 @@ It focuses on a very common situation: having food available but not knowing wha
 
 ---
 
+<p align="center">
+  Pick up about have and let us think about a meal. Filter by time, difficulty and diet!
+</p>
+
+---
+
 ## 💭 Project Idea
 
 Many people have ingredients in their fridge or pantry but don’t know what recipes they can prepare with them.  
@@ -58,10 +64,10 @@ It adapts recipe suggestions to the ingredients the user actually has, offering 
 
 **The team behind RecetaYa:**
 
-- Alejandro Corredor  
-- Germán Rodríguez  
-- Juan Pablo Sánchez  
-- Salomé Ávila  
+- Alejandro Corredor (Progamador Back-end)
+- Germán Rodríguez  (Diseñador gráfico)
+- Juan Pablo Sánchez  (Programador front-end)
+- Salomé Ávila  (Director / Programador back-end)
 
 ---
 
