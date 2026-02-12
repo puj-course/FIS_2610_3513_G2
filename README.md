@@ -64,10 +64,10 @@ It adapts recipe suggestions to the ingredients the user actually has, offering 
 
 **The team behind RecetaYa:**
 
-- Alejandro Corredor (Progamador Back-end)
-- Germán Rodríguez  (Diseñador gráfico)
-- Juan Pablo Sánchez  (Programador front-end)
-- Salomé Ávila  (Director / Programador back-end)
+- Alejandro Corredor (Progamador Back-end) | Scrum Master, QA Lead
+- Germán Rodríguez  (Diseñador gráfico) | Product Owner
+- Juan Pablo Sánchez  (Programador front-end) | Sprint Planner
+- Salomé Ávila  (Director / Programador back-end) | DevOps Engineer, Configuration Manager
 
 ---
 
