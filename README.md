@@ -48,7 +48,7 @@ Check out the [Wiki](https://github.com/puj-course/FIS_2610_3513_G2/wiki#present
 
 # Technologies used
 
-- **Frontend:** ...
+- **Frontend:** TBD
 - **Backend:** Node.js + Nest.js
 - **Database:** PostgreSQL + Prisma ORM
 - **DevOps:** Github Actions, Docker, SonarQube
