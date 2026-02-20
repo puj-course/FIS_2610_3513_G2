@@ -18,66 +18,130 @@ It focuses on a very common situation: having food available but not knowing wha
 
 ---
 
-## 💭 Project Idea
+# Index
 
-Many people have ingredients in their fridge or pantry but don’t know what recipes they can prepare with them.  
+- [Description](#Description)
+- 
+
+
+# Description
+
+Many people have ingredients in their fridge or pantry but don’t know what recipes they can prepare with them. 
 This often leads to food waste, time wasted searching for recipes, and frustration when cooking.
 
-RecetaYa aims to simplify this process by suggesting meals based on what the user already has.
+RecetaYa aims to simplify this process by suggesting meals based on what the user already has. Recipes can also be filtered by different categories such as types of food, origin of the food, healthiness or time necessary to make
+
+Check out the [Wiki](https://github.com/puj-course/FIS_2610_3513_G2/wiki#presenting-recetaya) for more info about our project :>.
 
 ---
 
-## ❓ What Problem Does It Solve?
-
-- Difficulty deciding what to cook with available ingredients  
-- Food waste caused by unused products  
-- Time lost searching for recipes online  
-- Frustration when cooking at home  
-
----
-
-## 👥 Who Is Affected?
-
-This problem mainly affects:
-
-- University students living alone  
-- Families with limited budgets  
-- Young people with little cooking experience  
-- People interested in reducing food waste  
-
----
-
-## Benefits
-
-- ⏱️ Saves time when planning meals  
-- ♻️ Reduces food waste  
-- 💸 Supports cooking on a student budget  
-- 🍳 Improves decision-making when cooking at home  
-
-### What makes it different?
-Unlike generic recipe websites or apps that assume users already have all the required ingredients, RecetaYa reverses the process.  
-It adapts recipe suggestions to the ingredients the user actually has, offering personalized options and alternatives.
-
----
-
-## 🤝 Team
+# 🤝 Team
 
 **The team behind RecetaYa:**
 
-- Alejandro Corredor (Progamador Back-end) | Scrum Master, QA Lead
-- Germán Rodríguez  (Diseñador gráfico) | Product Owner
-- Juan Pablo Sánchez  (Programador front-end) | Sprint Planner
-- Salomé Ávila  (Director / Programador back-end) | DevOps Engineer, Configuration Manager
+|---|---|---|
+|---|---|---|
+|---|---|---|
+| Salomé Ávila | DevOps Engineer, Configuration Manager |[Salome's Profile](https://github.com/blurryavi)|
 
 ---
 
-## 🛠️ Development
+# Technologies used
 
-This project was developed by **JSAG Solutions**.
+- **Frontend:** ...
+- **Backend:** Node.js + Nest.js
+- **Database:** PostgreSQL + Prisma ORM
+- **DevOps:** Github Actions, Docker, SonarQube
+- **Version control:** Git
 
 ---
 
-## 📌 Final Note
+# Structure
 
-RecetaYa encourages smarter cooking habits by helping users make the most out of what they already have — especially when time, money, and ingredients are limited.
+```
+project-name/
+├── .github/
+│   ├── ISSUE_TEMPLATE/
+│   │   ├── bug_report.md
+│   │   ├── feature_request.md
+│   ├── PULL_REQUEST_TEMPLATE.md
+│   └── workflows/
+│       ├── ci.yml
+│       └── cd.yml
+├── conf/
+│   ├── config.yaml
+│   └── settings.json
+├── docs/
+│   ├── api/
+│   ├── architecture/
+│   └── user_guide/
+├── jupyter/
+│   ├── notebooks/
+│   │   ├── exploration.ipynb
+│   │   └── analysis.ipynb
+│   └── datasets/
+│       ├── data1.csv
+│       └── data2.csv
+├── scripts/
+│   ├── setup.sh
+│   ├── deploy.sh
+│   └── test.sh
+├── src/
+│   ├── main/
+│   │   ├── java/ (o python/, etc. según el lenguaje)
+│   │   └── resources/
+│   ├── test/
+│   │   ├── java/ (o python/, etc. según el lenguaje)
+│   │   └── resources/
+├── temp/
+│   ├── temp_file.txt
+│   └── temp_data/
+│       ├── temp1.tmp
+│       └── temp2.tmp
+├── .gitignore
+├── README.md
+├── LICENSE
+├── CHANGELOG.md
+├── CONTRIBUTING.md
+├── Dockerfile
+├── docker-compose.yml
+└── Makefile
+```
 
+# Instalation
+## Requirements
+
+- Docker & Docker Compose
+- Git
+- ...
+
+### Clone this repo
+
+Go into your Linux (important, jk) terminal and try this commands
+
+```
+git clone https://github.com/organizacion/proyecto.git
+cd proyecto
+```
+
+### Docker Execution
+### Testing
+# Academic context
+
+- **Course:** Software Engineer Fundamentals
+- **Professor:**  Luis Gabriel Moreno Sandoval, PhD
+- **Contecto:** morenoluis@javeriana.edu.co
+
+# Contact 
+
+Leave us a message
+
+**Salomé Avila**
+Computer science student at Pontificia Universidad Javeriana.
+I'll be happy to get in touch.
+📧 savilat@javeriana.edu.co
+
+
+# License
+
+This project has been developed for academic purposes. 
