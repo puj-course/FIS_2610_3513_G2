@@ -69,9 +69,15 @@ Check out the [Wiki](https://github.com/puj-course/FIS_2610_3513_G2/wiki#present
   <img width="10%" src="https://github.com/user-attachments/assets/6adbf6f0-a01f-4a05-bf3e-6d6c95ae0a02" />
   
 <img width="10%" alt="Image" src="https://github.com/user-attachments/assets/49d39fe9-d0af-4853-8917-da7419aca69e" />
-
-  <img width="10%" src="https://github.com/user-attachments/assets/cd5adf16-a7b1-4894-9208-76c215208ccb" />
+ 
+ <img width="10%" src="https://github.com/user-attachments/assets/cd5adf16-a7b1-4894-9208-76c215208ccb" />
 </div>
+
+- **Frontend:** TBD
+- **Backend:** Node.js + Nest.js
+- **Database:** PostgreSQL + Prisma ORM
+- **DevOps:** Github Actions, Docker, SonarQube
+- **Version control:** Git
 
 ---
 
@@ -140,7 +146,7 @@ Go into your Linux (important, jk) terminal and try this commands
 
 ```
 git clone https://github.com/puj-course/FIS_2610_3513_G2.git
-cd proyecto
+cd FIS_2610_3513_G2
 ```
 
 ### Docker Execution
