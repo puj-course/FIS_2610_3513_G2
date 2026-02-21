@@ -81,3 +81,4 @@ This project was developed by **JSAG Solutions**.
 
 RecetaYa encourages smarter cooking habits by helping users make the most out of what they already have — especially when time, money, and ingredients are limited.
 
+- [German Rodriguez](https://github.com/germandrzmr)
