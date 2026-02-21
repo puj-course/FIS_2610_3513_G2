@@ -1,6 +1,6 @@
 # Presenting... RecetaYa!
 <p align="center">
-<img width="256" height="256" alt="logoRecetasYa" src="https://github.com/user-attachments/assets/33cd7178-7225-437a-8ef6-7e3f67e92575" />
+<img width="256" height="256" alt="image" src="https://github.com/user-attachments/assets/644004bf-2b7a-4ace-8ceb-f54d65f815a1" />
 </p>
 
 _*Have you ever wanted to cook something nice on a student budget?*_  
@@ -21,7 +21,7 @@ It focuses on a very common situation: having food available but not knowing wha
 # Index
 
 - [Description](#Description)
-- [Team](# 🤝 Team) 
+- [Team](#-team) 
 - [Technologies used](#technologies-used)
 - [Structure](#structure)
 - [Installation](#instalation)
@@ -69,9 +69,15 @@ Check out the [Wiki](https://github.com/puj-course/FIS_2610_3513_G2/wiki#present
   <img width="10%" src="https://github.com/user-attachments/assets/6adbf6f0-a01f-4a05-bf3e-6d6c95ae0a02" />
   
 <img width="10%" alt="Image" src="https://github.com/user-attachments/assets/49d39fe9-d0af-4853-8917-da7419aca69e" />
-
-  <img width="10%" src="https://github.com/user-attachments/assets/cd5adf16-a7b1-4894-9208-76c215208ccb" />
+ 
+ <img width="10%" src="https://github.com/user-attachments/assets/cd5adf16-a7b1-4894-9208-76c215208ccb" />
 </div>
+
+- **Frontend:** TBD
+- **Backend:** Node.js + Nest.js
+- **Database:** PostgreSQL + Prisma ORM
+- **DevOps:** Github Actions, Docker, SonarQube
+- **Version control:** Git
 
 ---
 
@@ -140,7 +146,7 @@ Go into your Linux (important, jk) terminal and try this commands
 
 ```
 git clone https://github.com/puj-course/FIS_2610_3513_G2.git
-cd proyecto
+cd FIS_2610_3513_G2
 ```
 
 ### Docker Execution
