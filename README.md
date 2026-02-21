@@ -53,7 +53,7 @@ Check out the [Wiki](https://github.com/puj-course/FIS_2610_3513_G2/wiki#present
 |---|---|---|
 | Salomé Ávila | Back-end Developer, DevOps Engineer, Configuration Manager |[Salome's Profile](https://github.com/blurryavi)|
 | Ale Corredor | Back-end Developer, QA Lead |[Alejandro's Profile](https://github.com/Alendy-24)|
-
+| Juan Sánchez | Front-end Developer, Sprint planner |[Juan´s Profile](https://github.com/jsanchez312)|
 ---
 
 # Technologies used
