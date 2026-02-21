@@ -21,7 +21,7 @@ It focuses on a very common situation: having food available but not knowing wha
 # Index
 
 - [Description](#Description)
-- [Team](#🤝Team) 
+- [Team](#-team) 
 - [Technologies used](#technologies-used)
 - [Structure](#structure)
 - [Installation](#instalation)
