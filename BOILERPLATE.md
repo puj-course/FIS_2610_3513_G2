@@ -1,4 +1,4 @@
-# fis_boilerplate
+# recetaYa_boilerplate
 ## Descripción de cada directorio y archivos
 ```bash
 recetasYaApp/
