@@ -21,8 +21,17 @@ It focuses on a very common situation: having food available but not knowing wha
 # Index
 
 - [Description](#Description)
-- 
-
+- [Team](# 🤝 Team) 
+- [Technologies used](#technologies-used)
+- [Structure](#structure)
+- [Installation](#instalation)
+- [Requeriments](#requirements)
+- [Clone this repo](#clone-this-repo)
+- [Docker Execution](#docker-execution) 
+- [Testing](#testing)
+- [Academic Context](#academic-context)
+- [Contact](#contact)
+- [License](#license)
 
 # Description
 
@@ -42,11 +51,27 @@ Check out the [Wiki](https://github.com/puj-course/FIS_2610_3513_G2/wiki#present
 |---|---|---|
 |---|---|---|
 |---|---|---|
-| Salomé Ávila | DevOps Engineer, Configuration Manager |[Salome's Profile](https://github.com/blurryavi)|
+| Salomé Ávila | Back-end Developer, DevOps Engineer, Configuration Manager |[Salome's Profile](https://github.com/blurryavi)|
+| Ale Corredor | Back-end Developer, QA Lead |[Alejandro's Profile](https://github.com/Alendy-24)|
 
 ---
 
 # Technologies used
+
+<div style="display: flex; width: 100%; overflow-x: auto; gap: 5px; padding: 5px; box-sizing: border-box;" align="center">
+ 
+<img width="11%"  alt="Image" src="https://github.com/user-attachments/assets/548de62c-089a-4eb0-82d8-17fb3d0438bd" />
+  <img width="10%" src="https://github.com/user-attachments/assets/28148933-9345-44e9-89a4-119d6d3ba6db" />
+  <img width="10%" src="https://github.com/user-attachments/assets/f2407690-ba56-4ce8-b0ea-f38bf1f17a60" />
+
+<img width="9%" alt="Image" src="https://github.com/user-attachments/assets/ece703c5-2b5d-4387-b981-8596eaca3afb" />
+
+  <img width="10%" src="https://github.com/user-attachments/assets/6adbf6f0-a01f-4a05-bf3e-6d6c95ae0a02" />
+  
+<img width="10%" alt="Image" src="https://github.com/user-attachments/assets/49d39fe9-d0af-4853-8917-da7419aca69e" />
+ 
+ <img width="10%" src="https://github.com/user-attachments/assets/cd5adf16-a7b1-4894-9208-76c215208ccb" />
+</div>
 
 - **Frontend:** TBD
 - **Backend:** Node.js + Nest.js
@@ -120,8 +145,8 @@ project-name/
 Go into your Linux (important, jk) terminal and try this commands
 
 ```
-git clone https://github.com/organizacion/proyecto.git
-cd proyecto
+git clone https://github.com/puj-course/FIS_2610_3513_G2.git
+cd FIS_2610_3513_G2
 ```
 
 ### Docker Execution
@@ -130,7 +155,7 @@ cd proyecto
 
 - **Course:** Software Engineer Fundamentals
 - **Professor:**  Luis Gabriel Moreno Sandoval, PhD
-- **Contecto:** morenoluis@javeriana.edu.co
+- **Contacto:** morenoluis@javeriana.edu.co
 
 # Contact 
 
@@ -140,6 +165,11 @@ Leave us a message
 Computer science student at Pontificia Universidad Javeriana.
 I'll be happy to get in touch.
 📧 savilat@javeriana.edu.co
+
+**Alejandro Corredor Morales**
+Computer science student at Pontificia Universidad Javeriana.
+Dm me anytime you need it!
+📧 daniel-corredor@javeriana.edu.co
 
 
 # License
