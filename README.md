@@ -54,7 +54,7 @@ Check out the [Wiki](https://github.com/puj-course/FIS_2610_3513_G2/wiki#present
 | Salomé Ávila | Back-end Developer, DevOps Engineer, Configuration Manager |[Salome's Profile](https://github.com/blurryavi)|
 | Ale Corredor | Back-end Developer, QA Lead |[Alejandro's Profile](https://github.com/Alendy-24)|
 | Juan Sánchez | Front-end Developer, Sprint planner |[Juan´s Profile](https://github.com/jsanchez312)|
-
+| German Rodríguez | Graphic designer, Product Owner |[German´s Profile](https://github.com/germandrzmr)|
 ---
 
 # Technologies used
@@ -82,8 +82,101 @@ Check out the [Wiki](https://github.com/puj-course/FIS_2610_3513_G2/wiki#present
 
 ---
 
-## 📌 Final Note
+# Structure
 
-RecetaYa encourages smarter cooking habits by helping users make the most out of what they already have — especially when time, money, and ingredients are limited.
+```
+project-name/
+├── .github/
+│   ├── ISSUE_TEMPLATE/
+│   │   ├── bug_report.md
+│   │   ├── feature_request.md
+│   ├── PULL_REQUEST_TEMPLATE.md
+│   └── workflows/
+│       ├── ci.yml
+│       └── cd.yml
+├── conf/
+│   ├── config.yaml
+│   └── settings.json
+├── docs/
+│   ├── api/
+│   ├── architecture/
+│   └── user_guide/
+├── jupyter/
+│   ├── notebooks/
+│   │   ├── exploration.ipynb
+│   │   └── analysis.ipynb
+│   └── datasets/
+│       ├── data1.csv
+│       └── data2.csv
+├── scripts/
+│   ├── setup.sh
+│   ├── deploy.sh
+│   └── test.sh
+├── src/
+│   ├── main/
+│   │   ├── java/ (o python/, etc. según el lenguaje)
+│   │   └── resources/
+│   ├── test/
+│   │   ├── java/ (o python/, etc. según el lenguaje)
+│   │   └── resources/
+├── temp/
+│   ├── temp_file.txt
+│   └── temp_data/
+│       ├── temp1.tmp
+│       └── temp2.tmp
+├── .gitignore
+├── README.md
+├── LICENSE
+├── CHANGELOG.md
+├── CONTRIBUTING.md
+├── Dockerfile
+├── docker-compose.yml
+└── Makefile
+```
 
-- [Juan Sánchez](https://github.com/jsanchez312)
+# Instalation
+## Requirements
+
+- Docker & Docker Compose
+- Git
+- ...
+
+### Clone this repo
+
+Go into your Linux (important, jk) terminal and try this commands
+
+```
+git clone https://github.com/puj-course/FIS_2610_3513_G2.git
+cd FIS_2610_3513_G2
+```
+
+### Docker Execution
+### Testing
+# Academic context
+
+- **Course:** Software Engineer Fundamentals
+- **Professor:**  Luis Gabriel Moreno Sandoval, PhD
+- **Contacto:** morenoluis@javeriana.edu.co
+
+# Contact 
+
+Leave us a message
+
+**Salomé Avila**
+Computer science student at Pontificia Universidad Javeriana.
+I'll be happy to get in touch.
+📧 savilat@javeriana.edu.co
+
+**Alejandro Corredor Morales**
+Computer science student at Pontificia Universidad Javeriana.
+Dm me anytime you need it!
+📧 daniel-corredor@javeriana.edu.co
+
+**Juan Pablo Sánchez Panqueva**
+Computer science student at Pontificia Universidad Javeriana.
+¡Here to solve any doubts you got!
+📧 sanchez.jp@javeriana.edu.co
+
+# License
+
+This project has been developed for academic purposes. 
