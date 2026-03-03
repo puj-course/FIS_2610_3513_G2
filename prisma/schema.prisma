@@ -1,0 +1,96 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql" 
+}
+
+model Usuario {
+  idUsuario      Int              @id @default(autoincrement())
+  nickname       String           @db.VarChar(30)
+  email          String           @unique @db.VarChar(50)
+  contrasena     String           @db.VarChar(30)
+  fecha_registro DateTime         @default(now())
+  fotoPerfil     Bytes?           // Representación de BLOB
+  
+  recetas        Receta[]
+  recetasGuardadas RecetaGuardada[]
+}
+
+model Receta {
+  idReceta          Int              @id @default(autoincrement())
+  nombre            String           @db.VarChar(50)
+  descripcion       String           @db.VarChar(200)
+  tiempoPreparacion String           @db.VarChar(30)
+  calorias          String           @db.VarChar(10)
+  imagenReceta      Bytes?           // Representación de BLOB
+  fechaCreacion     DateTime         @default(now())
+  
+  usuario           Usuario          @relation(fields: [Usuario_idUsuario], references: [idUsuario])
+  Usuario_idUsuario Int
+
+  pasos             Paso[]
+  categorias        RecetaCategoria[]
+  ingredientes      RecetaIngrediente[]
+  guardadaPor       RecetaGuardada[]
+}
+
+model Paso {
+  idPaso           Int      @id @default(autoincrement())
+  descripcion      String   @db.VarChar(500)
+  numeroPaso       Int
+  
+  receta           Receta   @relation(fields: [Receta_idReceta], references: [idReceta])
+  Receta_idReceta  Int
+}
+
+model Ingrediente {
+  idIngrediente Int                 @id @default(autoincrement())
+  nombre        String              @db.VarChar(50)
+  
+  recetas       RecetaIngrediente[]
+}
+
+model Categoria {
+  idCategoria Int               @id @default(autoincrement())
+  nombre      String            @db.VarChar(50)
+  
+  recetas     RecetaCategoria[]
+}
+
+// Tabla intermedia para la relación N:M entre Receta e Ingrediente
+model RecetaIngrediente {
+  Receta_idReceta         Int
+  Ingrediente_idIngrediente Int
+  cantidadIngrediente     String   @db.VarChar(20)
+
+  receta      Receta      @relation(fields: [Receta_idReceta], references: [idReceta])
+  ingrediente Ingrediente @relation(fields: [Ingrediente_idIngrediente], references: [idIngrediente])
+
+  @@id([Receta_idReceta, Ingrediente_idIngrediente])
+}
+
+// Tabla intermedia para la relación N:M entre Receta y Categoria
+model RecetaCategoria {
+  Receta_idReceta    Int
+  Categoria_idCategoria Int
+
+  receta    Receta    @relation(fields: [Receta_idReceta], references: [idReceta])
+  categoria Categoria @relation(fields: [Categoria_idCategoria], references: [idCategoria])
+
+  @@id([Receta_idReceta, Categoria_idCategoria])
+}
+
+// Tabla para recetas guardadas (Relación Usuario - Receta)
+model RecetaGuardada {
+  fecha_guardado    DateTime @default(now())
+  Usuario_idUsuario Int
+  Receta_idReceta   Int
+
+  usuario Usuario @relation(fields: [Usuario_idUsuario], references: [idUsuario])
+  receta  Receta  @relation(fields: [Receta_idReceta], references: [idReceta])
+
+  @@id([Usuario_idUsuario, Receta_idReceta])
+}
