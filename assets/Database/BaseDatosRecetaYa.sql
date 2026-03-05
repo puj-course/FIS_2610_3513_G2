@@ -1,183 +1,76 @@
--- Generado por Oracle SQL Developer Data Modeler 24.3.1.351.0831
---   en:        2026-02-25 20:20:01 COT
---   sitio:      Oracle Database 11g
---   tipo:      Oracle Database 11g
+CREATE TABLE Categoria (
+    idCategoria SERIAL        NOT NULL,
+    nombre      VARCHAR(50)   NOT NULL,
+    CONSTRAINT Categoria_PK PRIMARY KEY (idCategoria)
+);
 
-CREATE TABLE Categoria 
-    ( 
-     idCategoria NUMBER  NOT NULL , 
-     nombre      VARCHAR2 (50)  NOT NULL 
-    ) 
-;
+CREATE TABLE Ingrediente (
+    idIngrediente SERIAL       NOT NULL,
+    nombre        VARCHAR(100) NOT NULL,
+    CONSTRAINT Ingrediente_PK PRIMARY KEY (idIngrediente)
+);
 
-ALTER TABLE Categoria 
-    ADD CONSTRAINT Categoria_PK PRIMARY KEY ( idCategoria ) ;
+CREATE TABLE Usuario (
+    idUsuario      SERIAL       NOT NULL,
+    nickname       VARCHAR(30)  NOT NULL,
+    email          VARCHAR(50)  NOT NULL,
+    contrasena     VARCHAR(30)  NOT NULL,  
+    fecha_registro DATE,
+    fotoPerfil     BYTEA,                  
+    CONSTRAINT Usuario_PK PRIMARY KEY (idUsuario)
+);
 
-CREATE TABLE Ingrediente 
-    ( 
-     idIngrediente NUMBER  NOT NULL , 
-     nombre        VARCHAR2 (100) 
+CREATE TABLE Receta (
+    idReceta          SERIAL        NOT NULL,
+    nombre            VARCHAR(50)   NOT NULL,
+    descripcion       VARCHAR(200),
+    tiempoPreparacion VARCHAR(30)   NOT NULL,
+    calorias          VARCHAR(10)   NOT NULL,
+    imagenReceta      BYTEA,                 
+    fechaCreacion     DATE          NOT NULL,
+    CONSTRAINT Receta_PK PRIMARY KEY (idReceta)
+);
 
-                     NOT NULL 
-    ) 
-;
+CREATE TABLE Paso (
+    idPaso          SERIAL        NOT NULL,
+    descripcion     VARCHAR(500)  NOT NULL,
+    Receta_idReceta INTEGER       NOT NULL,
+    numeroPaso      INTEGER       NOT NULL,
+    CONSTRAINT Paso_PK PRIMARY KEY (idPaso),
+    CONSTRAINT Paso_Receta_FK FOREIGN KEY (Receta_idReceta)
+        REFERENCES Receta (idReceta)
+);
 
-ALTER TABLE Ingrediente 
-    ADD CONSTRAINT Ingrediente_PK PRIMARY KEY ( idIngrediente ) ;
+CREATE TABLE RecetaIngrediente (
+    Receta_idReceta           INTEGER     NOT NULL,
+    Ingrediente_idIngrediente INTEGER     NOT NULL,
+    cantidadIngrediente       VARCHAR(20),
+    CONSTRAINT RecetaIngrediente_PK PRIMARY KEY (Receta_idReceta, Ingrediente_idIngrediente),
+    CONSTRAINT RecetaCategoria_Receta_FK FOREIGN KEY (Receta_idReceta)
+        REFERENCES Receta (idReceta),
+    CONSTRAINT RecetaCategoria_Ingrediente_FK FOREIGN KEY (Ingrediente_idIngrediente)
+        REFERENCES Ingrediente (idIngrediente)
+);
 
-CREATE TABLE Paso 
-    ( 
-     idPaso          NUMBER  NOT NULL , 
-     descripcion     VARCHAR2 (500)  NOT NULL , 
-     Receta_idReceta NUMBER  NOT NULL , 
-     numeroPaso      NUMBER  NOT NULL 
-    ) 
-;
+CREATE TABLE recetaGuardada (
+    fecha_guardado    DATE,
+    Usuario_idUsuario INTEGER NOT NULL,
+    Receta_idReceta   INTEGER NOT NULL,
+    CONSTRAINT recetaGuardada_PK PRIMARY KEY (Usuario_idUsuario),
+    CONSTRAINT recetaGuardada_Usuario_FK FOREIGN KEY (Usuario_idUsuario)
+        REFERENCES Usuario (idUsuario),
+    CONSTRAINT recetaGuardada_Receta_FK FOREIGN KEY (Receta_idReceta)
+        REFERENCES Receta (idReceta)
+);
 
-ALTER TABLE Paso 
-    ADD CONSTRAINT Paso_PK PRIMARY KEY ( idPaso ) ;
+CREATE TABLE RecetaCategoria (
+    Receta_idReceta       INTEGER NOT NULL,
+    Categoria_idCategoria INTEGER NOT NULL,
+    CONSTRAINT RecetaCategoria_PK PRIMARY KEY (Receta_idReceta, Categoria_idCategoria),
+    CONSTRAINT RecetaIngrediente_Receta_FK FOREIGN KEY (Receta_idReceta)
+        REFERENCES Receta (idReceta),
+    CONSTRAINT RecetaIngrediente_Categoria_FK FOREIGN KEY (Categoria_idCategoria)
+        REFERENCES Categoria (idCategoria)
+);
 
-CREATE TABLE Receta 
-    ( 
-     idReceta          NUMBER  NOT NULL , 
-     nombre            VARCHAR2 (50)  NOT NULL , 
-     descripcion       VARCHAR2 (200) , 
-     tiempoPreparacion VARCHAR2 (30)  NOT NULL , 
-     calorias          VARCHAR2 (10)  NOT NULL , 
-     imagenReceta      BLOB , 
-     fechaCreacion     DATE  NOT NULL , 
-     Usuario_idUsuario NUMBER  NOT NULL 
-    ) 
-;
-
-ALTER TABLE Receta 
-    ADD CONSTRAINT Receta_PK PRIMARY KEY ( idReceta ) ;
-
-CREATE TABLE RecetaCategoria 
-    ( 
-     Receta_idReceta           NUMBER  NOT NULL , 
-     Ingrediente_idIngrediente NUMBER  NOT NULL , 
-     cantidadIngrediente       VARCHAR2 (20) 
-    ) 
-;
-
-CREATE TABLE recetaGuardada 
-    ( 
-     fecha_guardado    DATE , 
-     Usuario_idUsuario NUMBER  NOT NULL , 
-     Receta_idReceta   NUMBER  NOT NULL 
-    ) 
-;
-
-ALTER TABLE recetaGuardada 
-    ADD CONSTRAINT recetaGuardada_PK PRIMARY KEY ( Usuario_idUsuario ) ;
-
-CREATE TABLE RecetaIngrediente 
-    ( 
-     Receta_idReceta       NUMBER  NOT NULL , 
-     Categoria_idCategoria NUMBER  NOT NULL 
-    ) 
-;
-
-CREATE TABLE Usuario 
-    ( 
-     idUsuario      NUMBER  NOT NULL , 
-     nickname       VARCHAR2 (30)  NOT NULL , 
-     email          VARCHAR2 (50)  NOT NULL , 
-     contraseña     VARCHAR2 (30)  NOT NULL , 
-     fecha_registro DATE , 
-     fotoPerfil     BLOB 
-    ) 
-;
-
-ALTER TABLE Usuario 
-    ADD CONSTRAINT Usuario_PK PRIMARY KEY ( idUsuario ) ;
-
-ALTER TABLE Paso 
-    ADD CONSTRAINT Paso_Receta_FK FOREIGN KEY 
-    ( 
-     Receta_idReceta
-    ) 
-    REFERENCES Receta 
-    ( 
-     idReceta
-    ) 
-;
-
-ALTER TABLE Receta 
-    ADD CONSTRAINT Receta_Usuario_FK FOREIGN KEY 
-    ( 
-     Usuario_idUsuario
-    ) 
-    REFERENCES Usuario 
-    ( 
-     idUsuario
-    ) 
-;
-
-ALTER TABLE RecetaCategoria 
-    ADD CONSTRAINT RecetaCategoria_Ingrediente_FK FOREIGN KEY 
-    ( 
-     Ingrediente_idIngrediente
-    ) 
-    REFERENCES Ingrediente 
-    ( 
-     idIngrediente
-    ) 
-;
-
-ALTER TABLE RecetaCategoria 
-    ADD CONSTRAINT RecetaCategoria_Receta_FK FOREIGN KEY 
-    ( 
-     Receta_idReceta
-    ) 
-    REFERENCES Receta 
-    ( 
-     idReceta
-    ) 
-;
-
-ALTER TABLE recetaGuardada 
-    ADD CONSTRAINT recetaGuardada_Receta_FK FOREIGN KEY 
-    ( 
-     Receta_idReceta
-    ) 
-    REFERENCES Receta 
-    ( 
-     idReceta
-    ) 
-;
-
-ALTER TABLE recetaGuardada 
-    ADD CONSTRAINT recetaGuardada_Usuario_FK FOREIGN KEY 
-    ( 
-     Usuario_idUsuario
-    ) 
-    REFERENCES Usuario 
-    ( 
-     idUsuario
-    ) 
-;
-
-ALTER TABLE RecetaIngrediente 
-    ADD CONSTRAINT RecetaIngrediente_Categoria_FK FOREIGN KEY 
-    ( 
-     Categoria_idCategoria
-    ) 
-    REFERENCES Categoria 
-    ( 
-     idCategoria
-    ) 
-;
-
-ALTER TABLE RecetaIngrediente 
-    ADD CONSTRAINT RecetaIngrediente_Receta_FK FOREIGN KEY 
-    ( 
-     Receta_idReceta
-    ) 
-    REFERENCES Receta 
-    ( 
-     idReceta
-    ) 
-;
 
