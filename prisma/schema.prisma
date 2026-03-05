@@ -1,96 +1,79 @@
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql" 
+  provider = "postgresql"
+
 }
 
-model Usuario {
-  idUsuario      Int              @id @default(autoincrement())
-  nickname       String           @db.VarChar(30)
-  email          String           @unique @db.VarChar(50)
-  contrasena     String           @db.VarChar(30)
-  fecha_registro DateTime         @default(now())
-  fotoPerfil     Bytes?           // Representación de BLOB
-  
-  recetas        Receta[]
-  recetasGuardadas RecetaGuardada[]
+model categoria {
+  idcategoria     Int               @id(map: "categoria_pk") @default(autoincrement())
+  nombre          String            @db.VarChar(50) @unique
+  recetacategoria recetacategoria[]
 }
 
-model Receta {
-  idReceta          Int              @id @default(autoincrement())
-  nombre            String           @db.VarChar(50)
-  descripcion       String           @db.VarChar(200)
-  tiempoPreparacion String           @db.VarChar(30)
-  calorias          String           @db.VarChar(10)
-  imagenReceta      Bytes?           // Representación de BLOB
-  fechaCreacion     DateTime         @default(now())
-  
-  usuario           Usuario          @relation(fields: [Usuario_idUsuario], references: [idUsuario])
-  Usuario_idUsuario Int
-
-  pasos             Paso[]
-  categorias        RecetaCategoria[]
-  ingredientes      RecetaIngrediente[]
-  guardadaPor       RecetaGuardada[]
+model ingrediente {
+  idingrediente     Int                 @id(map: "ingrediente_pk") @default(autoincrement())
+  nombre            String              @db.VarChar(100) @unique
+  recetaingrediente recetaingrediente[]
 }
 
-model Paso {
-  idPaso           Int      @id @default(autoincrement())
-  descripcion      String   @db.VarChar(500)
-  numeroPaso       Int
-  
-  receta           Receta   @relation(fields: [Receta_idReceta], references: [idReceta])
-  Receta_idReceta  Int
+model paso {
+  idpaso          Int    @id(map: "paso_pk") @default(autoincrement())
+  descripcion     String @db.VarChar(500)
+  receta_idreceta Int
+  numeropaso      Int
+  receta          receta @relation(fields: [receta_idreceta], references: [idreceta], onDelete: NoAction, onUpdate: NoAction, map: "paso_receta_fk")
 }
 
-model Ingrediente {
-  idIngrediente Int                 @id @default(autoincrement())
-  nombre        String              @db.VarChar(50)
-  
-  recetas       RecetaIngrediente[]
+model receta {
+  idreceta          Int                 @id(map: "receta_pk") @default(autoincrement())
+  nombre            String              @db.VarChar(50)
+  descripcion       String?             @db.VarChar(200)
+  tiempopreparacion String              @db.VarChar(30)
+  calorias          String              @db.VarChar(10)
+  imagenreceta      Bytes?
+  fechacreacion     DateTime            @db.Date
+  paso              paso[]
+  recetacategoria   recetacategoria[]
+  recetaguardada    recetaguardada[]
+  recetaingrediente recetaingrediente[]
 }
 
-model Categoria {
-  idCategoria Int               @id @default(autoincrement())
-  nombre      String            @db.VarChar(50)
-  
-  recetas     RecetaCategoria[]
+model recetacategoria {
+  receta_idreceta       Int
+  categoria_idcategoria Int
+  categoria             categoria @relation(fields: [categoria_idcategoria], references: [idcategoria], onDelete: NoAction, onUpdate: NoAction, map: "recetaingrediente_categoria_fk")
+  receta                receta    @relation(fields: [receta_idreceta], references: [idreceta], onDelete: NoAction, onUpdate: NoAction, map: "recetaingrediente_receta_fk")
+
+  @@id([receta_idreceta, categoria_idcategoria], map: "recetacategoria_pk")
 }
 
-// Tabla intermedia para la relación N:M entre Receta e Ingrediente
-model RecetaIngrediente {
-  Receta_idReceta         Int
-  Ingrediente_idIngrediente Int
-  cantidadIngrediente     String   @db.VarChar(20)
-
-  receta      Receta      @relation(fields: [Receta_idReceta], references: [idReceta])
-  ingrediente Ingrediente @relation(fields: [Ingrediente_idIngrediente], references: [idIngrediente])
-
-  @@id([Receta_idReceta, Ingrediente_idIngrediente])
+model recetaguardada {
+  fecha_guardado    DateTime? @db.Date
+  usuario_idusuario Int       @id(map: "recetaguardada_pk")
+  receta_idreceta   Int
+  receta            receta    @relation(fields: [receta_idreceta], references: [idreceta], onDelete: NoAction, onUpdate: NoAction, map: "recetaguardada_receta_fk")
+  usuario           usuario   @relation(fields: [usuario_idusuario], references: [idusuario], onDelete: NoAction, onUpdate: NoAction, map: "recetaguardada_usuario_fk")
 }
 
-// Tabla intermedia para la relación N:M entre Receta y Categoria
-model RecetaCategoria {
-  Receta_idReceta    Int
-  Categoria_idCategoria Int
+model recetaingrediente {
+  receta_idreceta           Int
+  ingrediente_idingrediente Int
+  cantidadingrediente       String?     @db.VarChar(20)
+  ingrediente               ingrediente @relation(fields: [ingrediente_idingrediente], references: [idingrediente], onDelete: NoAction, onUpdate: NoAction, map: "recetacategoria_ingrediente_fk")
+  receta                    receta      @relation(fields: [receta_idreceta], references: [idreceta], onDelete: NoAction, onUpdate: NoAction, map: "recetacategoria_receta_fk")
 
-  receta    Receta    @relation(fields: [Receta_idReceta], references: [idReceta])
-  categoria Categoria @relation(fields: [Categoria_idCategoria], references: [idCategoria])
-
-  @@id([Receta_idReceta, Categoria_idCategoria])
+  @@id([receta_idreceta, ingrediente_idingrediente], map: "recetaingrediente_pk")
 }
 
-// Tabla para recetas guardadas (Relación Usuario - Receta)
-model RecetaGuardada {
-  fecha_guardado    DateTime @default(now())
-  Usuario_idUsuario Int
-  Receta_idReceta   Int
-
-  usuario Usuario @relation(fields: [Usuario_idUsuario], references: [idUsuario])
-  receta  Receta  @relation(fields: [Receta_idReceta], references: [idReceta])
-
-  @@id([Usuario_idUsuario, Receta_idReceta])
+model usuario {
+  idusuario      Int             @id(map: "usuario_pk") @default(autoincrement())
+  nickname       String          @db.VarChar(30)
+  email          String          @db.VarChar(50)
+  contrasena     String          @db.VarChar(30)
+  fecha_registro DateTime?       @db.Date
+  fotoperfil     Bytes?
+  recetaguardada recetaguardada?
 }
