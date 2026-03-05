@@ -9,7 +9,7 @@
   },
   "scripts": {
     "build": "nest build",
-    "start": "node dist/main.js",
+    "start": "node dist/src/main",
     "start:dev": "nest start --watch",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate deploy"
@@ -35,6 +35,8 @@
     "@prisma/adapter-ppg": "^7.2.0",
     "@prisma/client": "^7.4.2",
     "@prisma/driver-adapter-utils": "^7.2.0",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.15.1",
     "csv-parse": "^6.1.0",
     "dotenv": "^17.2.3",
     "reflect-metadata": "^0.1.14"
