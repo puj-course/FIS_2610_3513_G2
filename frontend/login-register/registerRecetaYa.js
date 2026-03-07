@@ -29,6 +29,6 @@ const eyeOpen = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" str
       users.push({ name, email, password });
       localStorage.setItem('unimercs_users', JSON.stringify(users));
       showMsg('¡Cuenta creada! Redirigiendo...', 'ok');
-      setTimeout(() => window.location.href = 'login.html', 1200);
+      setTimeout(() => window.location.href = 'loginRecetaYa.html', 1200);
     }, 600);
   }

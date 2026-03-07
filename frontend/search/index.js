@@ -1,28 +1,42 @@
- // Placeholder suggestions — swap with real DB data later
-  const ITEMS = [
-    'Arepas de Choclo', 'Bandeja Paisa', 'Sancocho de Gallina',
-    'Natilla Colombiana', 'Changua Bogotana', 'Arroz con Pollo',
-    'Buñuelos de Queso', 'Cazuela de Mariscos', 'Ajiaco Santafereño',
-    'Pandebono', 'Empanadas de Pipián', 'Lechona Tolimense',
-  ];
-
   const input = document.getElementById('searchInput');
   const sugBox = document.getElementById('suggestions');
 
-  input.addEventListener('input', () => {
+  input.addEventListener('input', async () => {
     const q = input.value.trim();
-    if (!q) { sugBox.classList.remove('open'); return; }
 
-    const matches = ITEMS.filter(i => i.toLowerCase().includes(q.toLowerCase())).slice(0, 6);
-    if (!matches.length) { sugBox.classList.remove('open'); return; }
+  if (q.length < 2) {
+    sugBox.classList.remove('open');
+    return;
+  }
 
-    sugBox.innerHTML = matches.map(m => {
-      const hi = m.replace(new RegExp(`(${q})`, 'gi'), '<span class="sug-hi">$1</span>');
-      return `<div class="sug-item">
+
+  const response = await fetch(
+    `http://localhost:3000/ingredientes/autocomplete?q=${encodeURIComponent(q)}`
+  );
+
+  const ingredients = await response.json();
+
+  if (!ingredients.length) {
+    sugBox.classList.remove('open');
+    return;
+  }
+
+
+  sugBox.innerHTML = ingredients.map(i => {
+      const name = i.nombre; 
+      const hi = name.replace(
+      new RegExp(`(${q})`, 'gi'), 
+      '<span class="sug-hi">$1</span>');
+
+      return `<div class="sug-item" data-id="${i.idingrediente}">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
-        </svg>${hi}</div>`;
+          <circle cx="11" cy="11" r="8"/>
+          <path d="m21 21-4.35-4.35"/>
+        </svg>
+        ${hi}
+      </div>`;
     }).join('');
+
     sugBox.classList.add('open');
   });
 
