@@ -48,13 +48,14 @@ Check out the [Wiki](https://github.com/puj-course/FIS_2610_3513_G2/wiki#present
 
 **The team behind RecetaYa:**
 
-|---|---|---|
-|---|---|---|
-|---|---|---|
-| Salomé Ávila | Back-end Developer, DevOps Engineer, Configuration Manager |[Salome's Profile](https://github.com/blurryavi)|
-| Ale Corredor | Back-end Developer, QA Lead |[Alejandro's Profile](https://github.com/Alendy-24)|
-| Juan Sánchez | Front-end Developer, Sprint planner |[Juan´s Profile](https://github.com/jsanchez312)|
-| German Rodríguez | Graphic designer, Product Owner |[German´s Profile](https://github.com/germandrzmr)|
+
+| Name | Role | Profile |
+|------|------|---------|
+| Salomé Ávila | Back-end Developer, DevOps Engineer, Configuration Manager | [Salome's Profile](https://github.com/blurryavi) |
+| Ale Corredor | Back-end Developer, QA Lead | [Alejandro's Profile](https://github.com/Alendy-24) |
+| Juan Sánchez | Front-end Developer, Sprint Planner | [Juan's Profile](https://github.com/jsanchez312) |
+| German Rodríguez | Graphic Designer, Product Owner | [German's Profile](https://github.com/germandrzmr) |
+
 ---
 
 # Technologies used
@@ -85,53 +86,69 @@ Check out the [Wiki](https://github.com/puj-course/FIS_2610_3513_G2/wiki#present
 # Structure
 
 ```
-project-name/
-├── .github/
-│   ├── ISSUE_TEMPLATE/
+recetasYaApp/
+├── .git/
+├── .github
+│   ├── ISSUE_TEMPLATE
 │   │   ├── bug_report.md
-│   │   ├── feature_request.md
+│   │   └── feature_request.md
 │   ├── PULL_REQUEST_TEMPLATE.md
-│   └── workflows/
-│       ├── ci.yml
-│       └── cd.yml
-├── conf/
+│   └── workflows
+│       ├── cd.yml
+│       └── ci.yml
+├── conf
 │   ├── config.yaml
 │   └── settings.json
-├── docs/
-│   ├── api/
-│   ├── architecture/
-│   └── user_guide/
-├── jupyter/
-│   ├── notebooks/
-│   │   ├── exploration.ipynb
-│   │   └── analysis.ipynb
-│   └── datasets/
-│       ├── data1.csv
-│       └── data2.csv
-├── scripts/
-│   ├── setup.sh
+├── docs
+│   ├── api
+│   │   └── .gitkeep
+│   ├── architecture
+│   │   └── .gitkeep
+│   └── user_guide
+│       └── .gitkeep
+├── prisma
+│   └── schema.prisma
+├── Scripts
 │   ├── deploy.sh
+│   ├── setup.hs
 │   └── test.sh
-├── src/
-│   ├── main/
-│   │   ├── java/ (o python/, etc. según el lenguaje)
-│   │   └── resources/
-│   ├── test/
-│   │   ├── java/ (o python/, etc. según el lenguaje)
-│   │   └── resources/
-├── temp/
-│   ├── temp_file.txt
-│   └── temp_data/
-│       ├── temp1.tmp
-│       └── temp2.tmp
+├── src
+│   ├── main
+│   │   ├── resources
+│   │   │   ├── .gitkeep
+│   │   │   └── prisma
+│   │   │       ├── prisma.module.ts
+│   │   │       └── prisma.service.ts
+│   │   └── ts
+│   │       ├── app.module.ts
+│   │       ├── common
+│   │       ├── main.ts
+│   │       └── modules
+│   └── test
+│       ├── java
+│       │   └── .gitkeep
+│       └── resources
+│           └── .gitkeep
+├── temp
+│   ├── temp_data
+│   │   ├── temp1.tmp
+│   │   └── temp2.tmp
+│   └── temp_file.txt
+├── .dockerignore
 ├── .gitignore
-├── README.md
-├── LICENSE
+├── .nvmrc
+├── BOILERPLATE.md
 ├── CHANGELOG.md
 ├── CONTRIBUTING.md
-├── Dockerfile
 ├── docker-compose.yml
-└── Makefile
+├── Dockerfile
+├── LICENSE
+├── Makefile
+├── nest-cli.json
+├── package-lock.json
+├── package.json
+├── README.md
+└── tsconfig.json
 ```
 
 # Instalation
