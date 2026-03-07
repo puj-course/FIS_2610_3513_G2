@@ -4,6 +4,7 @@ import { IngredientesService } from './ingredientes.service'
 @Controller('ingredientes')
 export class IngredientesController {
 
+  // agregando autocompletado
   constructor(private ingredientesService: IngredientesService) {}
 
   @Get('autocomplete')
