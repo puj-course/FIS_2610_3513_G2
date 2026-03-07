@@ -1,11 +1,14 @@
 ---
 name: Sub-Issue / Tarea Técnica
+about: Plantilla para tareas técnicas derivadas de una Historia de Usuario
+title: ''
+labels: enhancement
 assignees: ''
 ---
 
 ## 📄 Descripción
 <!-- Explica brevemente qué hay que implementar y por qué existe esta tarea -->
-...
+
 
 ## 🔗 Historia de Usuario Relacionada
 <!-- Indica el issue padre del que se deriva esta tarea -->
