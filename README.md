@@ -189,6 +189,10 @@ Computer science student at Pontificia Universidad Javeriana.
 Dm me anytime you need it!
 📧 daniel-corredor@javeriana.edu.co
 
+**Juan Pablo Sánchez Panqueva**
+Computer science student at Pontificia Universidad Javeriana.
+¡Here to solve any doubts you got!
+📧 sanchez.jp@javeriana.edu.co
 
 # License
 
