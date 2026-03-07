@@ -5,7 +5,7 @@ assignees: ''
 
 ## 📄 Descripción
 <!-- Explica brevemente qué hay que implementar y por qué existe esta tarea -->
-
+...
 
 ## 🔗 Historia de Usuario Relacionada
 <!-- Indica el issue padre del que se deriva esta tarea -->
