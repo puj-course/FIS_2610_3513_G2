@@ -1,8 +1,6 @@
 ---
 name: Sub-Issue / Tarea Técnica
 about: Plantilla para tareas técnicas derivadas de una Historia de Usuario
-title: ''
-labels: enhancement
 assignees: ''
 ---
 
