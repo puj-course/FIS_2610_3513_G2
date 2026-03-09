@@ -12,7 +12,7 @@ const eyeOpen = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" str
     el.textContent = text; el.className = 'msg ' + type + ' show';
   }
 
-  function login() {
+  async function login() {
     const email = document.getElementById('email').value.trim().toLowerCase();
     const password = pw.value;
     if (!email || !email.includes('@')) return showMsg('Ingresa un correo válido', 'err');
@@ -20,14 +20,27 @@ const eyeOpen = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" str
 
     const btn = document.getElementById('btn');
     btn.disabled = true; btn.classList.add('loading');
+    try {
+    const response = await fetch('http://localhost:3000/usuarios/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, contrasena: password }),
+    });
 
-    setTimeout(() => {
-      const users = JSON.parse(localStorage.getItem('unimercs_users') || '[]');
-      const user = users.find(u => u.email === email);
-      if (!user) { showMsg('No existe una cuenta con este correo', 'err'); btn.disabled = false; btn.classList.remove('loading'); return; }
-      if (user.password !== password) { showMsg('Contraseña incorrecta', 'err'); btn.disabled = false; btn.classList.remove('loading'); return; }
-      localStorage.setItem('unimercs_current_user', JSON.stringify({ email: user.email, name: user.name }));
-      showMsg('¡Bienvenido, ' + user.name + '!', 'ok');
-      setTimeout(() => window.location.href = 'index.html', 1200);
-    }, 600);
+  const data = await response.json();
+
+  if (!response.ok) {
+    showMsg(data.message, 'err');
+    btn.disabled = false;
+    btn.classList.remove('loading');
+    return
+  } 
+  sessionStorage.setItem('recetaya_user', JSON.stringify(data.user));
+  showMsg(data.message, 'ok');
+  setTimeout(() => window.location.href = '../search/index.html', 1200);
+  } catch (err) {                                               // ← y esto
+      showMsg('No se pudo conectar con el servidor', 'err');
+      btn.disabled = false;
+      btn.classList.remove('loading');
+    }
   }
