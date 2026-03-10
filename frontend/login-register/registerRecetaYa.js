@@ -11,23 +11,32 @@ const eyeOpen = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" str
     const el = document.getElementById('msg');
     el.textContent = text; el.className = 'msg ' + type + ' show';
   }
-
-  function login() {
+ //---------------------------------------------------------------------------------------------------------------------
+ // register
+  async function register() {
+    const name = document.getElementById('name').value.trim();
     const email = document.getElementById('email').value.trim().toLowerCase();
     const password = pw.value;
+    if (!name) return showMsg('Ingresa tu nombre', 'err');
     if (!email || !email.includes('@')) return showMsg('Ingresa un correo válido', 'err');
-    if (!password) return showMsg('Ingresa tu contraseña', 'err');
+    if (password.length < 8) return showMsg('La contraseña debe tener al menos 8 caracteres', 'err');   
 
     const btn = document.getElementById('btn');
     btn.disabled = true; btn.classList.add('loading');
-
-    setTimeout(() => {
-      const users = JSON.parse(localStorage.getItem('unimercs_users') || '[]');
-      const user = users.find(u => u.email === email);
-      if (!user) { showMsg('No existe una cuenta con este correo', 'err'); btn.disabled = false; btn.classList.remove('loading'); return; }
-      if (user.password !== password) { showMsg('Contraseña incorrecta', 'err'); btn.disabled = false; btn.classList.remove('loading'); return; }
-      localStorage.setItem('unimercs_current_user', JSON.stringify({ email: user.email, name: user.name }));
-      showMsg('¡Bienvenido, ' + user.name + '!', 'ok');
-      setTimeout(() => window.location.href = 'index.html', 1200);
-    }, 600);
+     try {
+    const response = await fetch('http://localhost:3000/usuarios/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nickname: name, email, contrasena: password }),
+  });
+  
+  const data = await response.json();
+  if (!response.ok) return showMsg(data.message, 'err');
+  showMsg('¡Cuenta creada! Redirigiendo...', 'ok');
+  setTimeout(() => window.location.href = 'loginRecetaYa.html', 1200);
+  } catch (err) {                                               // ← y esto
+      showMsg('No se pudo conectar con el servidor', 'err');
+      btn.disabled = false;
+      btn.classList.remove('loading');
+    }
   }

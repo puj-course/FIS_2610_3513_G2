@@ -12,23 +12,35 @@ const eyeOpen = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" str
     el.textContent = text; el.className = 'msg ' + type + ' show';
   }
 
-  function register() {
-    const name = document.getElementById('name').value.trim();
+  async function login() {
     const email = document.getElementById('email').value.trim().toLowerCase();
     const password = pw.value;
-    if (!name) return showMsg('Ingresa tu nombre', 'err');
     if (!email || !email.includes('@')) return showMsg('Ingresa un correo válido', 'err');
-    if (password.length < 8) return showMsg('La contraseña debe tener al menos 8 caracteres', 'err');
+    if (!password) return showMsg('Ingresa tu contraseña', 'err');
 
     const btn = document.getElementById('btn');
     btn.disabled = true; btn.classList.add('loading');
+    try {
+    const response = await fetch('http://localhost:3000/usuarios/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, contrasena: password }),
+    });
 
-    setTimeout(() => {
-      const users = JSON.parse(localStorage.getItem('unimercs_users') || '[]');
-      if (users.find(u => u.email === email)) { showMsg('Ya existe una cuenta con este correo', 'err'); btn.disabled = false; btn.classList.remove('loading'); return; }
-      users.push({ name, email, password });
-      localStorage.setItem('unimercs_users', JSON.stringify(users));
-      showMsg('¡Cuenta creada! Redirigiendo...', 'ok');
-      setTimeout(() => window.location.href = 'login.html', 1200);
-    }, 600);
+  const data = await response.json();
+
+  if (!response.ok) {
+    showMsg(data.message, 'err');
+    btn.disabled = false;
+    btn.classList.remove('loading');
+    return
+  } 
+  sessionStorage.setItem('recetaya_user', JSON.stringify(data.user));
+  showMsg(data.message, 'ok');
+  setTimeout(() => window.location.href = '../search/index.html', 1200);
+  } catch (err) {                                               // ← y esto
+      showMsg('No se pudo conectar con el servidor', 'err');
+      btn.disabled = false;
+      btn.classList.remove('loading');
+    }
   }

@@ -12,48 +12,75 @@ recetasYaApp/
 │   └── workflows
 │       ├── cd.yml
 │       └── ci.yml
+├── assets
+│   └── Database
+│       └── BaseDatosRecetaYa.sql
 ├── conf
-│   ├── config.yaml
-│   └── settings.json
+│   ├── config.yaml
+│   └── settings.json
 ├── docs
-│   ├── api
-│   │   └── .gitkeep
-│   ├── architecture
-│   │   └── .gitkeep
-│   └── user_guide
-│       └── .gitkeep
+│   ├── api
+│   ├── documentation
+│   │   ├── DiagramaRecetaYa.dmd
+│   │   ├── ModeloBDRecetaYa.pdf
+│   │   └── recetas_Basico_extendido.xlsx
+│   ├── user_guide
+│   └── Documentación login recetaya.pdf
+├── frontend
+│   ├── login-register
+│   │   ├── loginRecetaYa.css
+│   │   ├── loginRecetaYa.html
+│   │   ├── loginRecetaYa.js
+│   │   ├── registerRecetaYa.css
+│   │   ├── registerRecetaYa.html
+│   │   └── registerRecetaYa.js
+│   └── search
+│       ├── index.css
+│       ├── index.html
+│       └── index.js
 ├── prisma
-│   └── schema.prisma
+│   ├── migrations
+│   │   ├── 20260303041620_init
+│   │   │   └── migration.sql
+│   │   └── migration_lock.toml
+│   ├── prisma.service.ts
+│   └── schema.prisma
 ├── Scripts
-│   ├── deploy.sh
-│   ├── setup.hs
-│   └── test.sh
+│   ├── deploy.sh
+│   ├── insert-recipes.ts
+│   ├── recipes.csv
+│   ├── setup.hs
+│   └── test.sh
 ├── src
-│   ├── blank.txt
-│   ├── main
-│   │   ├── resources
-│   │   │   ├── .gitkeep
-│   │   │   └── prisma
-│   │   │       ├── prisma.module.ts
-│   │   │       └── prisma.service.ts
-│   │   └── ts
-│   │       ├── app.module.ts
-│   │       ├── common
-│   │       ├── main.ts
-│   │       └── modules
-│   └── test
-│       ├── java
-│       │   └── .gitkeep
-│       └── resources
-│           └── .gitkeep
+│   ├── ingredientes
+│   │   ├── dto
+│   │   │   └── buscar-ingrediente.dto.ts
+│   │   ├── ingredientes.controller.ts
+│   │   ├── ingredientes.module.ts
+│   │   └── ingredientes.service.ts
+│   ├── recetas
+│   │   ├── dto
+│   │   │   └── buscar-recetas.dto.ts
+│   │   ├── recetas.controller.ts
+│   │   ├── recetas.module.ts
+│   │   └── recetas.service.ts
+│   ├── test
+│   │   ├── java
+│   │   └── resources
+│   ├── usuarios
+│   │   ├── dto
+│   │   │   ├── login.dto.ts
+│   │   │   └── register.dto.ts
+│   │   ├── usuarios.controller.ts
+│   │   ├── usuarios.module.ts
+│   │   └── usuarios.service.ts
+│   ├── app.module.ts
+│   └── main.ts
 ├── temp
-│   ├── temp_data
-│   │   ├── temp1.tmp
-│   │   └── temp2.tmp
-│   └── temp_file.txt
-├── .dockerignore
-├── .gitignore
-├── .nvmrc
+│   ├── temp_data
+│   │   ├── temp1.tmp
+│   │   └── temp2.tmp
+│   └── temp_file.txt
 ├── BOILERPLATE.md
 ├── CHANGELOG.md
 ├── CONTRIBUTING.md
@@ -62,14 +89,17 @@ recetasYaApp/
 ├── LICENSE
 ├── Makefile
 ├── nest-cli.json
-├── package-lock.json
 ├── package.json
+├── package-lock.json
+├── prisma.config.ts
 ├── README.md
 └── tsconfig.json
 ````
 
 ## Folder Descriptions
 
+### `assets/Database`
+SQL code and database structure that was later migrated to prisma.
 ### `.github/`
 
 Contains GitHub-specific configurations, including templates for issues and pull requests, and GitHub Actions workflows for Continuous Integration (CI) and Continuous Deployment (CD).
@@ -85,28 +115,28 @@ Project documentation.
 - `api/`: API documentation.
 - `architecture/`: Architecture diagrams and documentation.
 - `user_guide/`: User guides for end users.
+- `documentation/` All diagrams and files related to our project (UML, E-R, excel spreadsheet, etc.)
+
+### `frontend/`
+
+All frontend html, css and javascript Files
+
+### `prisma/`: 
+Prisma-specific configuration and modules.
+
+      - `schema.prisma`: Database schema according to prisma to then be migrated to postgresql
+      - `prisma.service.ts`: Prisma service for database access.
 
 ### `src/`
 
 Main source code folder.
 
-- `main/`: Main application source code.
-
-  - `resources/`: Resource files such as configuration or other required files.
-
-    - `prisma/`: Prisma-specific configuration and modules.
-
-      - `prisma.module.ts`: Prisma module definition.
-      - `prisma.service.ts`: Prisma service for database access.
-  - `ts/`: Core TypeScript code.
-
-    - `common/`: Shared utilities, helpers, DTOs, interceptors, etc.
-    - `modules/`: Application modules, each representing a feature (e.g., recipes, users, auth).
+    - `ingredientes/`: Ingredients module, service, dto and controller.
+    - `recetas/`: Recipes module, service, dto and controller
+    - `usuarios/`: Usuarios module, service, dto and controller, logic for login authentication.
     - `app.module.ts`: Root module importing other modules.
     - `main.ts`: Application entry point.
-- `test/`: Test code.
-
-  - `resources/`: Placeholder for test resources.
+    - `test/`: Test code.
 
 ### `Scripts/`
 
@@ -115,6 +145,8 @@ Useful scripts for common tasks such as setup, deployment, and testing.
 - `setup.hs`: Script to configure the development environment.
 - `deploy.sh`: Deployment script.
 - `test.sh`: Script to run tests.
+- `recipes.csv` Initial spreadsheets filled with data about recipes
+- `insert-recipes.ts` Script that would take the recipes in the .csv and insert them in the database through prisma.
 
 ### `conf/`
 
@@ -148,4 +180,5 @@ Temporary files folder.
 - `package.json`: Node project metadata, dependencies, and scripts.
 - `package-lock.json`: Locks exact dependency versions.
 - `tsconfig.json`: TypeScript compiler configuration.
+- `prisma.config.ts`: Configuration file for prisma 7.
 
