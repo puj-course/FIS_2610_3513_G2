@@ -8,6 +8,15 @@ export class RecetasController {
 
   @Get('buscar')
   buscarPorRelevancia(@Query() dto: BuscarRecetasDto) {
-    return this.recetasService.buscarPorIngredientes(dto.ingredientesIds);
+  const ids = Array.isArray(dto.ingredientesIds)
+    ? dto.ingredientesIds
+    : dto.ingredientesIds ? [dto.ingredientesIds] : [];
+  
+  return this.recetasService.buscarPorIngredientes(ids.map(Number));
+  }
+
+  @Get()
+  getAll() {
+    return this.recetasService.getAll();
   }
 }
