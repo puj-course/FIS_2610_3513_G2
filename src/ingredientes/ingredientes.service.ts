@@ -27,4 +27,9 @@ export class IngredientesService {
     })
   }
 
+  getAll() {
+    return this.prisma.ingrediente.findMany({
+      orderBy: { nombre: 'asc' },
+    });
+  }
 }
