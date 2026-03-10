@@ -131,5 +131,4 @@ server.listen(PORT, () => {
   console.log(`\n✅  RecetaYa mock server running at http://localhost:${PORT}`);
   console.log(`   GET /ingredientes/autocomplete?q=arr`);
   console.log(`   GET /ingredientes\n`);
-
 });

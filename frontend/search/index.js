@@ -228,5 +228,4 @@ document.addEventListener("click", e => {
 });
 
 renderAllTags();
-
-renderRecipes();  
+renderRecipes();
