@@ -154,18 +154,46 @@ recetasYaApp/
 # Instalation
 ## Requirements
 
-- Docker & Docker Compose
+- Node.js v18+
+- PostgreSQL
 - Git
-- ...
 
 ### Clone this repo
 
 Go into your Linux (important, jk) terminal and try this commands
-
 ```
 git clone https://github.com/puj-course/FIS_2610_3513_G2.git
 cd FIS_2610_3513_G2
 ```
+
+### Install dependencies
+```
+npm install
+```
+
+### Set up the database
+
+Make sure PostgreSQL is running, then create a `.env` file in the root with your connection string:
+```
+DATABASE_URL="postgresql://USER:PASSWORD@localhost:5432/recetaya"
+```
+
+Then run the Prisma migrations to set up the tables:
+```
+npx prisma generate
+npx prisma db push
+```
+
+### Run the backend
+```
+npm run start:dev
+```
+
+The server will be available at `http://localhost:3000`
+
+### Open the frontend
+
+Open `frontend/login-register/loginRecetaYa.html` directly in your browser, or use Live Server in VS Code.
 
 ### Docker Execution
 ### Testing
