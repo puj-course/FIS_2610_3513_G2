@@ -96,47 +96,75 @@ recetasYaApp/
 │   └── workflows
 │       ├── cd.yml
 │       └── ci.yml
+├── assets
+│   └── Database
+│       └── BaseDatosRecetaYa.sql
 ├── conf
-│   ├── config.yaml
-│   └── settings.json
+│   ├── config.yaml
+│   └── settings.json
 ├── docs
-│   ├── api
-│   │   └── .gitkeep
-│   ├── architecture
-│   │   └── .gitkeep
-│   └── user_guide
-│       └── .gitkeep
+│   ├── api
+│   ├── documentation
+│   │   ├── DiagramaRecetaYa.dmd
+│   │   ├── ModeloBDRecetaYa.pdf
+│   │   └── recetas_Basico_extendido.xlsx
+│   ├── user_guide
+│   └── Documentación login recetaya.pdf
+├── frontend
+│   ├── login-register
+│   │   ├── loginRecetaYa.css
+│   │   ├── loginRecetaYa.html
+│   │   ├── loginRecetaYa.js
+│   │   ├── registerRecetaYa.css
+│   │   ├── registerRecetaYa.html
+│   │   └── registerRecetaYa.js
+│   └── search
+│       ├── index.css
+│       ├── index.html
+│       └── index.js
 ├── prisma
-│   └── schema.prisma
+│   ├── migrations
+│   │   ├── 20260303041620_init
+│   │   │   └── migration.sql
+│   │   └── migration_lock.toml
+│   ├── prisma.service.ts
+│   └── schema.prisma
 ├── Scripts
-│   ├── deploy.sh
-│   ├── setup.hs
-│   └── test.sh
+│   ├── deploy.sh
+│   ├── insert-recipes.ts
+│   ├── recipes.csv
+│   ├── setup.hs
+│   └── test.sh
 ├── src
-│   ├── main
-│   │   ├── resources
-│   │   │   ├── .gitkeep
-│   │   │   └── prisma
-│   │   │       ├── prisma.module.ts
-│   │   │       └── prisma.service.ts
-│   │   └── ts
-│   │       ├── app.module.ts
-│   │       ├── common
-│   │       ├── main.ts
-│   │       └── modules
-│   └── test
-│       ├── java
-│       │   └── .gitkeep
-│       └── resources
-│           └── .gitkeep
+│   ├── ingredientes
+│   │   ├── dto
+│   │   │   └── buscar-ingrediente.dto.ts
+│   │   ├── ingredientes.controller.ts
+│   │   ├── ingredientes.module.ts
+│   │   └── ingredientes.service.ts
+│   ├── recetas
+│   │   ├── dto
+│   │   │   └── buscar-recetas.dto.ts
+│   │   ├── recetas.controller.ts
+│   │   ├── recetas.module.ts
+│   │   └── recetas.service.ts
+│   ├── test
+│   │   ├── java
+│   │   └── resources
+│   ├── usuarios
+│   │   ├── dto
+│   │   │   ├── login.dto.ts
+│   │   │   └── register.dto.ts
+│   │   ├── usuarios.controller.ts
+│   │   ├── usuarios.module.ts
+│   │   └── usuarios.service.ts
+│   ├── app.module.ts
+│   └── main.ts
 ├── temp
-│   ├── temp_data
-│   │   ├── temp1.tmp
-│   │   └── temp2.tmp
-│   └── temp_file.txt
-├── .dockerignore
-├── .gitignore
-├── .nvmrc
+│   ├── temp_data
+│   │   ├── temp1.tmp
+│   │   └── temp2.tmp
+│   └── temp_file.txt
 ├── BOILERPLATE.md
 ├── CHANGELOG.md
 ├── CONTRIBUTING.md
@@ -145,8 +173,9 @@ recetasYaApp/
 ├── LICENSE
 ├── Makefile
 ├── nest-cli.json
-├── package-lock.json
 ├── package.json
+├── package-lock.json
+├── prisma.config.ts
 ├── README.md
 └── tsconfig.json
 ```
