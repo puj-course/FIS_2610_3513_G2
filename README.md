@@ -48,11 +48,13 @@ Check out the [Wiki](https://github.com/puj-course/FIS_2610_3513_G2/wiki#present
 
 **The team behind RecetaYa:**
 
-|---|---|---|
-|---|---|---|
-|---|---|---|
-| Salomé Ávila | Back-end Developer, DevOps Engineer, Configuration Manager |[Salome's Profile](https://github.com/blurryavi)|
-| Ale Corredor | Back-end Developer, QA Lead |[Alejandro's Profile](https://github.com/Alendy-24)|
+
+| Name | Role | Profile |
+|------|------|---------|
+| Salomé Ávila | Back-end Developer, DevOps Engineer, Configuration Manager | [Salome's Profile](https://github.com/blurryavi) |
+| Ale Corredor | Back-end Developer, QA Lead | [Alejandro's Profile](https://github.com/Alendy-24) |
+| Juan Sánchez | Front-end Developer, Sprint Planner | [Juan's Profile](https://github.com/jsanchez312) |
+| German Rodríguez | Graphic Designer, Product Owner | [German's Profile](https://github.com/germandrzmr) |
 
 ---
 
@@ -81,8 +83,145 @@ Check out the [Wiki](https://github.com/puj-course/FIS_2610_3513_G2/wiki#present
 
 ---
 
-## 📌 Final Note
+# Structure
 
-RecetaYa encourages smarter cooking habits by helping users make the most out of what they already have — especially when time, money, and ingredients are limited.
+```
+recetasYaApp/
+├── .git/
+├── .github
+│   ├── ISSUE_TEMPLATE
+│   │   ├── bug_report.md
+│   │   └── feature_request.md
+│   ├── PULL_REQUEST_TEMPLATE.md
+│   └── workflows
+│       ├── cd.yml
+│       └── ci.yml
+├── conf
+│   ├── config.yaml
+│   └── settings.json
+├── docs
+│   ├── api
+│   │   └── .gitkeep
+│   ├── architecture
+│   │   └── .gitkeep
+│   └── user_guide
+│       └── .gitkeep
+├── prisma
+│   └── schema.prisma
+├── Scripts
+│   ├── deploy.sh
+│   ├── setup.hs
+│   └── test.sh
+├── src
+│   ├── main
+│   │   ├── resources
+│   │   │   ├── .gitkeep
+│   │   │   └── prisma
+│   │   │       ├── prisma.module.ts
+│   │   │       └── prisma.service.ts
+│   │   └── ts
+│   │       ├── app.module.ts
+│   │       ├── common
+│   │       ├── main.ts
+│   │       └── modules
+│   └── test
+│       ├── java
+│       │   └── .gitkeep
+│       └── resources
+│           └── .gitkeep
+├── temp
+│   ├── temp_data
+│   │   ├── temp1.tmp
+│   │   └── temp2.tmp
+│   └── temp_file.txt
+├── .dockerignore
+├── .gitignore
+├── .nvmrc
+├── BOILERPLATE.md
+├── CHANGELOG.md
+├── CONTRIBUTING.md
+├── docker-compose.yml
+├── Dockerfile
+├── LICENSE
+├── Makefile
+├── nest-cli.json
+├── package-lock.json
+├── package.json
+├── README.md
+└── tsconfig.json
+```
 
-- [German Rodriguez](https://github.com/germandrzmr)
+# Instalation
+## Requirements
+
+- Node.js v18+
+- PostgreSQL
+- Git
+
+### Clone this repo
+
+Go into your Linux (important, jk) terminal and try this commands
+```
+git clone https://github.com/puj-course/FIS_2610_3513_G2.git
+cd FIS_2610_3513_G2
+```
+
+### Install dependencies
+```
+npm install
+```
+
+### Set up the database
+
+Make sure PostgreSQL is running, then create a `.env` file in the root with your connection string:
+```
+DATABASE_URL="postgresql://USER:PASSWORD@localhost:5432/recetaya"
+```
+
+Then run the Prisma migrations to set up the tables:
+```
+npx prisma generate
+npx prisma db push
+```
+
+### Run the backend
+```
+npm run start:dev
+```
+
+The server will be available at `http://localhost:3000`
+
+### Open the frontend
+
+Open `frontend/login-register/loginRecetaYa.html` directly in your browser, or use Live Server in VS Code.
+
+### Docker Execution
+### Testing
+# Academic context
+
+- **Course:** Software Engineer Fundamentals
+- **Professor:**  Luis Gabriel Moreno Sandoval, PhD
+- **Contacto:** morenoluis@javeriana.edu.co
+
+# Contact 
+
+Leave us a message
+
+**Salomé Avila**
+Computer science student at Pontificia Universidad Javeriana.
+I'll be happy to get in touch.
+📧 savilat@javeriana.edu.co
+
+**Alejandro Corredor Morales**
+Computer science student at Pontificia Universidad Javeriana.
+Dm me anytime you need it!
+📧 daniel-corredor@javeriana.edu.co
+
+**Juan Pablo Sánchez Panqueva**
+Computer science student at Pontificia Universidad Javeriana.
+¡Here to solve any doubts you got!
+📧 sanchez.jp@javeriana.edu.co
+
+# License
+
+This project has been developed for academic purposes. 

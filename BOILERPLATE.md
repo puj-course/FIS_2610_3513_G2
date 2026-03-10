@@ -1,117 +1,184 @@
 # recetaYa_boilerplate
-## Descripción de cada directorio y archivos
+## Project Structure
+
 ```bash
 recetasYaApp/
-├── .github/
-│   ├── ISSUE_TEMPLATE/
+├── .git/
+├── .github
+│   ├── ISSUE_TEMPLATE
 │   │   ├── bug_report.md
-│   │   ├── feature_request.md
+│   │   └── feature_request.md
 │   ├── PULL_REQUEST_TEMPLATE.md
-│   └── workflows/
-│       ├── ci.yml
-│       └── cd.yml
-├── conf/
-│   ├── config.yaml
-│   └── settings.json
-├── docs/
-│   ├── api/
-│   ├── architecture/
-│   └── user_guide/
-├── jupyter/
-│   ├── notebooks/
-│   │   ├── exploration.ipynb
-│   │   └── analysis.ipynb
-│   └── datasets/
-│       ├── data1.csv
-│       └── data2.csv
-├── scripts/
-│   ├── setup.sh
-│   ├── deploy.sh
-│   └── test.sh
-├── src/
-│   ├── main/
-│   │   ├── java/ (o python/, etc. según el lenguaje)
-│   │   └── resources/
-│   ├── test/
-│   │   ├── java/ (o python/, etc. según el lenguaje)
-│   │   └── resources/
-├── temp/
-│   ├── temp_file.txt
-│   └── temp_data/
-│       ├── temp1.tmp
-│       └── temp2.tmp
-├── .gitignore
-├── README.md
-├── LICENSE
+│   └── workflows
+│       ├── cd.yml
+│       └── ci.yml
+├── assets
+│   └── Database
+│       └── BaseDatosRecetaYa.sql
+├── conf
+│   ├── config.yaml
+│   └── settings.json
+├── docs
+│   ├── api
+│   ├── documentation
+│   │   ├── DiagramaRecetaYa.dmd
+│   │   ├── ModeloBDRecetaYa.pdf
+│   │   └── recetas_Basico_extendido.xlsx
+│   ├── user_guide
+│   └── Documentación login recetaya.pdf
+├── frontend
+│   ├── login-register
+│   │   ├── loginRecetaYa.css
+│   │   ├── loginRecetaYa.html
+│   │   ├── loginRecetaYa.js
+│   │   ├── registerRecetaYa.css
+│   │   ├── registerRecetaYa.html
+│   │   └── registerRecetaYa.js
+│   └── search
+│       ├── index.css
+│       ├── index.html
+│       └── index.js
+├── prisma
+│   ├── migrations
+│   │   ├── 20260303041620_init
+│   │   │   └── migration.sql
+│   │   └── migration_lock.toml
+│   ├── prisma.service.ts
+│   └── schema.prisma
+├── Scripts
+│   ├── deploy.sh
+│   ├── insert-recipes.ts
+│   ├── recipes.csv
+│   ├── setup.hs
+│   └── test.sh
+├── src
+│   ├── ingredientes
+│   │   ├── dto
+│   │   │   └── buscar-ingrediente.dto.ts
+│   │   ├── ingredientes.controller.ts
+│   │   ├── ingredientes.module.ts
+│   │   └── ingredientes.service.ts
+│   ├── recetas
+│   │   ├── dto
+│   │   │   └── buscar-recetas.dto.ts
+│   │   ├── recetas.controller.ts
+│   │   ├── recetas.module.ts
+│   │   └── recetas.service.ts
+│   ├── test
+│   │   ├── java
+│   │   └── resources
+│   ├── usuarios
+│   │   ├── dto
+│   │   │   ├── login.dto.ts
+│   │   │   └── register.dto.ts
+│   │   ├── usuarios.controller.ts
+│   │   ├── usuarios.module.ts
+│   │   └── usuarios.service.ts
+│   ├── app.module.ts
+│   └── main.ts
+├── temp
+│   ├── temp_data
+│   │   ├── temp1.tmp
+│   │   └── temp2.tmp
+│   └── temp_file.txt
+├── BOILERPLATE.md
 ├── CHANGELOG.md
 ├── CONTRIBUTING.md
-├── Dockerfile
 ├── docker-compose.yml
-└── Makefile
-```
+├── Dockerfile
+├── LICENSE
+├── Makefile
+├── nest-cli.json
+├── package.json
+├── package-lock.json
+├── prisma.config.ts
+├── README.md
+└── tsconfig.json
+````
 
-// Esto se actualizará conforme continuemos en el proyecto...
-### .github/
-Contiene configuraciones específicas para GitHub, como plantillas para problemas (issues) y solicitudes de extracción (pull requests), y flujos de trabajo de GitHub Actions para integración continua (CI) y despliegue continuo (CD).
+## Folder Descriptions
 
-- `ISSUE_TEMPLATE/`: Plantillas para reportar bugs y solicitar nuevas características.
-- `workflows/`: Archivos YAML para definir los flujos de trabajo de CI/CD.
+### `assets/Database`
+SQL code and database structure that was later migrated to prisma.
+### `.github/`
 
-### docs/
-Documentación del proyecto.
+Contains GitHub-specific configurations, including templates for issues and pull requests, and GitHub Actions workflows for Continuous Integration (CI) and Continuous Deployment (CD).
 
-- `api/`: Documentación de la API.
-- `architecture/`: Diagramas y documentación de la arquitectura.
-- `user_guide/`: Guías para usuarios.
+- `ISSUE_TEMPLATE/`: Templates for reporting bugs and requesting new features.
+- `workflows/`: YAML files defining CI/CD workflows.
+- `PULL_REQUEST_TEMPLATE.md`: Template for pull request description.
 
-### src/
-Código fuente del proyecto.
+### `docs/`
 
-- `main/`: Código fuente principal.
-  - `java/` (o `python/`, etc.): Código fuente del proyecto según el lenguaje utilizado.
-  - `resources/`: Archivos de recursos como configuraciones y otros archivos necesarios.
-- `test/`: Código de pruebas.
-  - `java/` (o `python/`, etc.): Código de pruebas unitarias y de integración.
-  - `resources/`: Archivos de recursos para las pruebas.
+Project documentation.
 
-### scripts/
-Scripts útiles para tareas comunes como configuración, despliegue y pruebas.
+- `api/`: API documentation.
+- `architecture/`: Architecture diagrams and documentation.
+- `user_guide/`: User guides for end users.
+- `documentation/` All diagrams and files related to our project (UML, E-R, excel spreadsheet, etc.)
 
-- `setup.sh`: Script para configurar el entorno de desarrollo.
-- `deploy.sh`: Script para despliegue.
-- `test.sh`: Script para ejecutar pruebas.
+### `frontend/`
 
-### conf/
-Carpeta para archivos de configuración.
+All frontend html, css and javascript Files
 
-- `config.yaml`: Archivo de configuración en formato YAML.
-- `settings.json`: Archivo de configuración en formato JSON.
+### `prisma/`: 
+Prisma-specific configuration and modules.
 
-### jupyter/
-Carpeta para los notebooks de Jupyter y datasets utilizados.
+      - `schema.prisma`: Database schema according to prisma to then be migrated to postgresql
+      - `prisma.service.ts`: Prisma service for database access.
 
-- `notebooks/`: Carpeta para los notebooks de Jupyter.
-  - `exploration.ipynb`: Notebook para la exploración de datos.
-  - `analysis.ipynb`: Notebook para el análisis de datos.
-- `datasets/`: Carpeta para los datasets utilizados en los notebooks.
-  - `data1.csv`: Ejemplo de dataset en formato CSV.
-  - `data2.csv`: Otro ejemplo de dataset en formato CSV.
+### `src/`
 
-### temp/
-Carpeta para archivos temporales.
+Main source code folder.
 
-- `temp_file.txt`: Archivo temporal de ejemplo.
-- `temp_data/`: Subcarpeta para datos temporales.
-  - `temp1.tmp`: Archivo temporal de ejemplo.
-  - `temp2.tmp`: Otro archivo temporal de ejemplo.
+    - `ingredientes/`: Ingredients module, service, dto and controller.
+    - `recetas/`: Recipes module, service, dto and controller
+    - `usuarios/`: Usuarios module, service, dto and controller, logic for login authentication.
+    - `app.module.ts`: Root module importing other modules.
+    - `main.ts`: Application entry point.
+    - `test/`: Test code.
 
-### Archivos en la raíz del proyecto
+### `Scripts/`
 
-- `.gitignore`: Archivo para especificar qué archivos y directorios deben ser ignorados por Git.
-- `README.md`: Descripción general del proyecto, instrucciones de instalación, uso, contribución, etc.
-- `LICENSE`: Información sobre la licencia del proyecto.
-- `CHANGELOG.md`: Registro de cambios en el proyecto.
-- `CONTRIBUTING.md`: Guía para contribuir al proyecto.
-- `Dockerfile`: Archivo para construir la imagen Docker del proyecto.
-- `docker-compose.yml`: Archivo de configuración para Docker Compose.
-- `Makefile`: Archivo para automatizar tareas mediante comandos `make`.
+Useful scripts for common tasks such as setup, deployment, and testing.
+
+- `setup.hs`: Script to configure the development environment.
+- `deploy.sh`: Deployment script.
+- `test.sh`: Script to run tests.
+- `recipes.csv` Initial spreadsheets filled with data about recipes
+- `insert-recipes.ts` Script that would take the recipes in the .csv and insert them in the database through prisma.
+
+### `conf/`
+
+Configuration files.
+
+- `config.yaml`: YAML configuration file.
+- `settings.json`: JSON configuration file.
+
+### `temp/`
+
+Temporary files folder.
+
+- `temp_file.txt`: Example temporary file.
+- `temp_data/`: Subfolder for temporary data.
+
+  - `temp1.tmp`: Example temporary file.
+  - `temp2.tmp`: Another temporary file.
+
+### Root Project Files
+
+- `BOILERPLATE.md`: This file, containing information about the project’s structure.
+- `.gitignore`: Specifies which files and directories Git should ignore.
+- `README.md`: General project description, installation instructions, usage, contribution guidelines, etc.
+- `LICENSE`: Project license information.
+- `CHANGELOG.md`: Project change log.
+- `CONTRIBUTING.md`: Contribution guide.
+- `Dockerfile`: File to build the Docker image for the project.
+- `docker-compose.yml`: Docker Compose configuration.
+- `Makefile`: File to automate tasks with `make` commands.
+- `nest-cli.json`: NestJS CLI configuration (output folders, compiler options).
+- `package.json`: Node project metadata, dependencies, and scripts.
+- `package-lock.json`: Locks exact dependency versions.
+- `tsconfig.json`: TypeScript compiler configuration.
+- `prisma.config.ts`: Configuration file for prisma 7.
+
