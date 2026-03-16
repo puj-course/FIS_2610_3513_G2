@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 
 // Tipo para el resultado con score
@@ -14,7 +15,15 @@ export class RecetasService {
   constructor(private readonly prisma: PrismaService) {}
 
   async buscarPorIngredientes(ingredientesIds: number[]) {
-    const recetas = await this.prisma.$queryRaw<RecetaConScore[]>`
+     
+    if (!ingredientesIds?.length) return [];
+
+    const ids = ingredientesIds.map(Number).filter(n => !isNaN(n));
+
+    if (!ids.length) return [];
+
+    const recetas = await this.prisma.$queryRaw<RecetaConScore[]>(
+      Prisma.sql`
       SELECT 
         r.*,
         COUNT(ri.ingrediente_idingrediente) AS score,
@@ -24,12 +33,19 @@ export class RecetasService {
       WHERE ri.ingrediente_idingrediente = ANY(${ingredientesIds})
       GROUP BY r.idreceta
       ORDER BY score DESC
-    `;
+    `
+    );
 
     // Prisma devuelve COUNT como BigInt, hay que convertirlo
     return recetas.map(r => ({
       ...r,
       score: Number(r.score),
     }));
+  }
+
+  getAll(){
+    return this.prisma.receta.findMany({
+      orderBy: { nombre: 'asc' },
+    });
   }
 }

@@ -7,6 +7,11 @@ export class IngredientesController {
   // agregando autocompletado
   constructor(private ingredientesService: IngredientesService) {}
 
+  @Get()
+  getAll() {
+    return this.ingredientesService.getAll();
+  }
+
   @Get('autocomplete')
   async autocomplete(@Query('q') query: string) {
 
