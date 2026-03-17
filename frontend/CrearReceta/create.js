@@ -108,13 +108,28 @@ function populateForm(data) {
   if (!stepsList.children.length) addStep();
 }
  
-function saveDraft() {
+async function saveDraft() {
   const data = collectForm();
-  data.id = "draft_" + Date.now();
   data.estado = "borrador";
-  localStorage.setItem(DRAFT_KEY, JSON.stringify(data));
-  showToast("Borrador guardado");
-  setStatus("borrador");
+
+  try {
+    const response = await fetch("http://localhost:3000/recetas/borrador", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) { showToast("Error al guardar borrador"); return; }
+
+    localStorage.setItem(DRAFT_KEY, JSON.stringify({ ...data, idreceta: result.receta.idreceta }));
+    showToast("Borrador guardado");
+    setStatus("borrador");
+
+  } catch (err) {
+    showToast("No se pudo conectar con el servidor");
+  }
 }
  
 function loadDraft() {
@@ -193,41 +208,51 @@ function sendAdminNotif(receta) {
   localStorage.setItem(ADMIN_KEY, JSON.stringify(notifs));
 }
  
-document.getElementById("recetaForm").addEventListener("submit", e => {
+document.getElementById("recetaForm").addEventListener("submit", async e => {
   e.preventDefault();
   if (!validate()) return;
- 
+
   const btn = document.getElementById("submitBtn");
   btn.disabled = true; btn.classList.add("loading");
- 
-  setTimeout(() => {
-    const data   = collectForm();
-    data.id      = "u_" + Date.now();
-    data.estado  = "pendiente"; 
- 
-    const stored = JSON.parse(localStorage.getItem(RECETAS_KEY) || "[]");
-    stored.unshift(data);
-    localStorage.setItem(RECETAS_KEY, JSON.stringify(stored));
- 
-    sendAdminNotif(data);
- 
+
+  try {
+    const data = collectForm();
+    data.estado = "pendiente";
+
+    const response = await fetch("http://localhost:3000/recetas/crear", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      showToast(result.message || "Error al enviar la receta");
+      btn.disabled = false; btn.classList.remove("loading");
+      return;
+    }
+
     discardDraft();
- 
     setStatus("pendiente");
     document.getElementById("notifIndicator").style.display = "inline-flex";
     btn.disabled = false; btn.classList.remove("loading");
     btn.textContent = "✓ Enviada a revisión";
     btn.style.background = "#3b82f6";
     document.getElementById("saveDraftBtn").style.display = "none";
- 
+
     showToast("Receta enviada a verificación");
-    setTimeout(() => window.location.href = "index.html", 1800);
-  }, 700);
+    setTimeout(() => window.location.href = "../IndexMain/index.html", 1800);
+
+  } catch (err) {
+    showToast("No se pudo conectar con el servidor");
+    btn.disabled = false; btn.classList.remove("loading");
+  }
 });
  
 
 function getUserName() {
-  try { return JSON.parse(localStorage.getItem("recetaya_current_user")||"{}").name || "Anónimo"; }
+  try { return JSON.parse(sessionStorage.getItem("recetaya_user")||"{}").nickname || "Anónimo"; }
   catch { return "Anónimo"; }
 }
  

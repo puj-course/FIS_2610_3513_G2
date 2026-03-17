@@ -11,6 +11,33 @@ const activePills = document.getElementById("activePills");
 const cardsGrid   = document.getElementById("cardsGrid");
 const resultsInfo = document.getElementById("resultsInfo");
 
+function renderNav() {
+  const nav = document.getElementById('navLinks');
+  const user = JSON.parse(sessionStorage.getItem('recetaya_user') || 'null');
+
+  if (user) {
+    // Usuario logueado — mostrar nombre y botón crear receta
+    nav.innerHTML = `
+      <span class="nav-user">Hola, ${user.nickname} 👋</span>
+      <a href="../CrearReceta/create.html" class="nav-btn filled">+ Crear receta</a>
+      <button class="nav-btn outline" onclick="logout()">Cerrar sesión</button>
+    `;
+  } else {
+    // No logueado — mostrar login y register
+    nav.innerHTML = `
+      <a href="../login-register/loginRecetaYa.html" class="nav-btn outline">Iniciar sesión</a>
+      <a href="../login-register/registerRecetaYa.html" class="nav-btn filled">Registrarse</a>
+    `;
+  }
+}
+
+function logout() {
+  sessionStorage.removeItem('recetaya_user');
+  window.location.href = '../login-register/loginRecetaYa.html';
+}
+
+renderNav();
+
 async function fetchIngredients() {
   try {
     const res = await fetch(`${API_BASE}/ingredientes`);

@@ -34,6 +34,7 @@ model receta {
   tiempopreparacion String              @db.VarChar(30)
   calorias          String              @db.VarChar(10)
   imagenreceta      Bytes?
+  estado  String  @default("publicado") @db.VarChar(20)
   fechacreacion     DateTime            @db.Date
   paso              paso[]
   recetacategoria   recetacategoria[]
