@@ -2,6 +2,8 @@ import { Injectable, ConflictException, UnauthorizedException } from '@nestjs/co
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 import { CrearRecetaDto } from './dto/crear-receta.dto';
+import { TelegramService } from '../telegram/telegram.service'; // para las llamadas al telegra 
+
 
 
 // Tipo para el resultado con score
@@ -14,7 +16,10 @@ interface RecetaConScore {
 
 @Injectable()
 export class RecetasService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly telegram: TelegramService
+  ) {}
 
   async buscarPorIngredientes(ingredientesIds: number[]) {
     const recetas = await this.prisma.$queryRaw<RecetaConScore[]>`
@@ -74,7 +79,7 @@ async crearReceta(dto: CrearRecetaDto) {
         tiempopreparacion: dto.tiempopreparacion || 'N/A',
         calorias:          dto.calorias          || 'N/A',
         imagenreceta:      imagenBuffer,
-        estado:            dto.estado            || 'publicado',
+        estado:            dto.estado            || 'pendiente',
         fechacreacion:     new Date(),
 
         paso: {
@@ -98,6 +103,24 @@ async crearReceta(dto: CrearRecetaDto) {
         },
       },
     });
+
+
+    if (dto.estado === 'pendiente') {
+    const caption =
+    `📋 Nueva receta para verificar\n\n` +
+    `🍽️ Nombre: ${receta.nombre}\n` +
+    `📝 Descripción: ${receta.descripcion || 'Sin descripción'}\n` +
+    `🆔 ID: ${receta.idreceta}\n\n` +
+    `Estado: ⏳ Pendiente de revisión`;
+
+  if (imagenBuffer) {
+    // Si tiene imagen, enviar foto con el caption
+    await this.telegram.enviarFoto(imagenBuffer, caption);
+  } else {
+    // Si no tiene imagen, enviar solo texto
+    await this.telegram.enviarMensaje(caption);
+  }
+}
 
     return { message: 'La receta fue creada waow...', receta };
   }
