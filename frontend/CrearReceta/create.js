@@ -241,7 +241,7 @@ document.getElementById("recetaForm").addEventListener("submit", async e => {
     btn.style.background = "#3b82f6";
     document.getElementById("saveDraftBtn").style.display = "none";
 
-    showToast("Receta enviada a verificación");
+    showToast("Receta enviada a verificación. Gracias por compartirla!");
     setTimeout(() => window.location.href = "../IndexMain/index.html", 1800);
 
   } catch (err) {
