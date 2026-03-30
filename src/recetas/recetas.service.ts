@@ -76,6 +76,7 @@ async crearReceta(dto: CrearRecetaDto) {
       data: {
         nombre:            dto.titulo,
         descripcion:       dto.descripcion,
+        image_url:        dto.image_url,
         tiempopreparacion: dto.tiempopreparacion || 'N/A',
         calorias:          dto.calorias          || 'N/A',
         imagenreceta:      imagenBuffer,
