@@ -1,3 +1,4 @@
+import { IsOptional, IsUrl } from 'class-validator';
 export class IngredienteDto {
   nombre: string;
   cantidad: string;
@@ -12,6 +13,7 @@ export class CrearRecetaDto {
   calorias?: string;
   imagen?: string;            // base64
   ingredientes: IngredienteDto[];
+  image_url?: string;
   pasos: string[];
   estado?: string;            // borrardor o publicado 
-}
+  }
