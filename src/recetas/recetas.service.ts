@@ -76,7 +76,7 @@ async crearReceta(dto: CrearRecetaDto) {
       data: {
         nombre:            dto.titulo,
         descripcion:       dto.descripcion,
-        image_url:        dto.image_url,
+        image_url:         dto.image_url,
         tiempopreparacion: dto.tiempopreparacion || 'N/A',
         calorias:          dto.calorias          || 'N/A',
         imagenreceta:      imagenBuffer,
@@ -140,10 +140,23 @@ async crearReceta(dto: CrearRecetaDto) {
   }
 
 
-  getAll() {
-    return this.prisma.receta.findMany({
-      orderBy: { nombre: 'asc' },
-    });
-  }
+getAll() {
+  return this.prisma.receta.findMany({
+    orderBy: { nombre: 'asc' },
+    include: {
+      recetaingrediente: {
+        include: { ingrediente: true },
+      },
+    },
+  }).then(recetas => recetas.map(r => ({
+    ...r,
+    image_url: r.image_url ?? (
+      r.imagenreceta
+        ? `data:image/jpeg;base64,${Buffer.from(r.imagenreceta).toString('base64')}`
+        : null
+    ),
+    imagenreceta: undefined, // no enviar el buffer crudo al frontend
+  })));
+}
 }
 
