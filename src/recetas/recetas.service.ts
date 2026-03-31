@@ -3,6 +3,7 @@ import { Prisma } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 import { CrearRecetaDto } from './dto/crear-receta.dto';
 import { TelegramService } from '../telegram/telegram.service'; // para las llamadas al telegra 
+import { v2 as cloudinary } from 'cloudinary'; // para url de imagenes en cloudinary 
 
 
 
@@ -71,12 +72,25 @@ async crearReceta(dto: CrearRecetaDto) {
       ? Buffer.from(dto.imagen.split(',')[1], 'base64')
       : null;
 
+    let image_url: string | null = null;
+    if (imagenBuffer) {
+      image_url = await new Promise<string>((resolve, reject) => {
+        cloudinary.uploader.upload_stream(
+          { folder: 'recetasya' },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result!.secure_url);
+          }
+        ).end(imagenBuffer);
+      });
+    }
+
 
     const receta = await this.prisma.receta.create({
       data: {
         nombre:            dto.titulo,
         descripcion:       dto.descripcion,
-        image_url:         dto.image_url,
+        image_url:         image_url,
         tiempopreparacion: dto.tiempopreparacion || 'N/A',
         calorias:          dto.calorias          || 'N/A',
         imagenreceta:      imagenBuffer,
