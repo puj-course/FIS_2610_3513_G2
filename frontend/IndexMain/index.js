@@ -1,43 +1,5 @@
-var INGREDIENTES = [
-  {id:1,  nombre:"Arroz"},        {id:2,  nombre:"Pollo"},
-  {id:3,  nombre:"Papa criolla"}, {id:4,  nombre:"Papa pastusa"},
-  {id:5,  nombre:"Mazorca"},      {id:6,  nombre:"Guascas"},
-  {id:7,  nombre:"Hogao"},        {id:8,  nombre:"Cilantro"},
-  {id:9,  nombre:"Cebolla"},      {id:10, nombre:"Tomate"},
-  {id:11, nombre:"Ajo"},          {id:12, nombre:"Comino"},
-  {id:13, nombre:"Mantequilla"},  {id:14, nombre:"Leche"},
-  {id:15, nombre:"Queso"},        {id:16, nombre:"Huevo"},
-  {id:17, nombre:"Harina"},       {id:18, nombre:"Panela"},
-  {id:19, nombre:"Aguacate"},     {id:20, nombre:"Platano"},
-  {id:21, nombre:"Frijoles"},     {id:22, nombre:"Lentejas"},
-  {id:23, nombre:"Chicharron"},   {id:24, nombre:"Chorizo"},
-  {id:25, nombre:"Carne molida"}, {id:26, nombre:"Costilla"},
-  {id:27, nombre:"Camaron"},      {id:28, nombre:"Coco"},
-  {id:29, nombre:"Yuca"},         {id:30, nombre:"Zanahoria"},
-];
-
-var BUILTIN_RECETAS = [
-  {id:1,  nombre:"Ajiaco Santafereno",   imagen:null, ingredientes:[1,3,4,5,6,8,9,2],    categoria:"almuerzo", tipo:"builtin"},
-  {id:2,  nombre:"Bandeja Paisa",        imagen:null, ingredientes:[1,21,23,24,16,19,10,2], categoria:"almuerzo", tipo:"builtin"},
-  {id:3,  nombre:"Sancocho de Gallina",  imagen:null, ingredientes:[2,5,9,8,12,10,29],   categoria:"almuerzo", tipo:"builtin"},
-  {id:4,  nombre:"Arroz con Pollo",      imagen:null, ingredientes:[1,2,9,10,8,12,30],   categoria:"almuerzo", tipo:"builtin"},
-  {id:5,  nombre:"Arepas de Choclo",     imagen:null, ingredientes:[17,15,13,14],         categoria:"desayuno", tipo:"builtin"},
-  {id:6,  nombre:"Changua Bogotana",     imagen:null, ingredientes:[14,16,9,8],           categoria:"desayuno", tipo:"builtin"},
-  {id:7,  nombre:"Pandebono",            imagen:null, ingredientes:[17,15,16,13],         categoria:"desayuno", tipo:"builtin"},
-  {id:8,  nombre:"Natilla Colombiana",   imagen:null, ingredientes:[14,18,12,13],         categoria:"postre",   tipo:"builtin"},
-  {id:9,  nombre:"Bunuelos de Queso",    imagen:null, ingredientes:[17,15,16],            categoria:"postre",   tipo:"builtin"},
-  {id:10, nombre:"Cazuela de Mariscos",  imagen:null, ingredientes:[27,28,9,8,10],        categoria:"almuerzo", tipo:"builtin"},
-  {id:11, nombre:"Empanadas de Pipian",  imagen:null, ingredientes:[17,9,10,8,12],        categoria:"snack",    tipo:"builtin"},
-  {id:12, nombre:"Fritanga",             imagen:null, ingredientes:[23,24,26,19],         categoria:"cena",     tipo:"builtin"},
-  {id:13, nombre:"Sopa de Lentejas",     imagen:null, ingredientes:[22,9,10,30,8],        categoria:"cena",     tipo:"builtin"},
-  {id:14, nombre:"Caldo de Costilla",    imagen:null, ingredientes:[26,9,3,8,12],         categoria:"desayuno", tipo:"builtin"},
-  {id:15, nombre:"Arroz con Coco",       imagen:null, ingredientes:[1,28,18],             categoria:"almuerzo", tipo:"builtin"},
-  {id:16, nombre:"Patacones",            imagen:null, ingredientes:[20,11],               categoria:"snack",    tipo:"builtin"},
-  {id:17, nombre:"Sudado de Res",        imagen:null, ingredientes:[25,9,10,30,8,12],     categoria:"almuerzo", tipo:"builtin"},
-  {id:18, nombre:"Aguapanela",           imagen:null, ingredientes:[18],                  categoria:"bebida",   tipo:"builtin"},
-  {id:19, nombre:"Huevos Pericos",       imagen:null, ingredientes:[16,9,10,8],           categoria:"desayuno", tipo:"builtin"},
-  {id:20, nombre:"Frijoles Antioquenos", imagen:null, ingredientes:[21,9,10,23,8],        categoria:"almuerzo", tipo:"builtin"},
-];
+var INGREDIENTES = [];
+var API_BASE = "http://localhost:3000";
 
 var selected   = new Set();
 var ALL_RECETAS = [];
@@ -86,20 +48,42 @@ function normalizeUserReceta(r) {
   };
 }
 
-function buildAllRecetas() {
-  var user = getUserRecetas().map(normalizeUserReceta);
-  ALL_RECETAS = user.concat(BUILTIN_RECETAS);
+async function buildAllRecetas() {
+  try {
+    const resIng = await fetch(API_BASE + "/ingredientes");
+    INGREDIENTES = await resIng.json();
+
+    const resRec = await fetch(API_BASE + "/recetas");
+    const recetas = await resRec.json();
+
+    ALL_RECETAS = recetas.map(function(r) {
+      return {
+        id:           r.idreceta,
+        nombre:       r.nombre,
+        imagen:       r.image_url || null,
+        ingredientes: (r.recetaingrediente || []).map(function(ri) { return ri.ingrediente_idingrediente; }),
+        estado:       r.estado || "publicado",
+        tipo:         "bd",
+      };
+    });
+
+    renderAllTags();
+    renderRecipes();
+  } catch(err) {
+    console.error("Error cargando datos:", err);
+    cardsGrid.innerHTML = '<div class="no-results"><h3>Error de conexión</h3><p>Verifica el servidor.</p></div>';
+  }
 }
 
 function renderAllTags() {
   tagsWrap.innerHTML = "";
   INGREDIENTES.forEach(function(ing, i) {
     var chip = document.createElement("button");
-    chip.className = "tag-chip" + (selected.has(ing.id) ? " active" : "");
-    chip.dataset.id = ing.id;
+    chip.className = "tag-chip" + (selected.has(ing.idingrediente) ? " active" : "");
+    chip.dataset.id = ing.idingrediente;
     chip.style.animationDelay = (i * 18) + "ms";
     chip.innerHTML = ing.nombre + '<span class="tag-x">&#x2715;</span>';
-    chip.addEventListener("click", function() { toggleTag(ing.id, chip); });
+    chip.addEventListener("click", function() { toggleTag(ing.idingrediente, chip); });
     tagsWrap.appendChild(chip);
   });
 }
@@ -119,7 +103,7 @@ function updateActiveBar() {
     activeBar.classList.add("visible");
     tagsClear.classList.add("visible");
     activePills.innerHTML = Array.from(selected).map(function(id) {
-      var ing = INGREDIENTES.filter(function(i){ return i.id === id; })[0];
+      var ing = INGREDIENTES.filter(function(i){ return i.idingrediente === id; })[0];
       return '<span class="active-pill">' + (ing ? ing.nombre : id) + '</span>';
     }).join("");
   }
@@ -187,7 +171,7 @@ function renderRecipes() {
     results = results.filter(function(r) {
       if (r.nombre.toLowerCase().indexOf(q) >= 0) return true;
       return r.ingredientes.some(function(id) {
-        var ing = INGREDIENTES.filter(function(i){ return i.id === id; })[0];
+        var ing = INGREDIENTES.filter(function(i){ return i.idingrediente === id; })[0];
         return ing && ing.nombre.toLowerCase().indexOf(q) >= 0;
       });
     });
@@ -213,7 +197,7 @@ function renderRecipes() {
     var isUser = receta.tipo === "usuario";
 
     var ingChips = receta.ingredientes.map(function(id) {
-      var ing = INGREDIENTES.filter(function(x){ return x.id === id; })[0];
+      var ing = INGREDIENTES.filter(function(x){ return x.idingrediente === id; })[0];
       if (!ing) return "";
       var isMatch = selected.has(id) || (q && ing.nombre.toLowerCase().indexOf(q) >= 0);
       return '<span class="card-ing' + (isMatch ? " match" : "") + '">' + ing.nombre + '</span>';
@@ -284,7 +268,7 @@ input.addEventListener("input", function() {
     if (!matches.length) { sugBox.classList.remove("open"); renderRecipes(); return; }
     sugBox.innerHTML = matches.map(function(m) {
       var hi = m.nombre.replace(new RegExp("(" + q + ")", "gi"), '<span class="sug-hi">$1</span>');
-      return '<div class="sug-item" data-id="' + m.id + '" data-nombre="' + m.nombre + '">' +
+      return '<div class="sug-item" data-id="' + m.idingrediente + '" data-nombre="' + m.nombre + '">' +
         '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>' + hi + '</div>';
     }).join("");
     sugBox.classList.add("open");
@@ -342,8 +326,10 @@ function checkNewRecipes() {
     setTimeout(function(){ newBanner.classList.remove("show"); }, 5000);
   }
 }
-
+/*
 buildAllRecetas();
 renderAllTags();
 renderRecipes();
 checkNewRecipes();
+*/
+buildAllRecetas();

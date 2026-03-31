@@ -153,7 +153,10 @@ function renderRecipeCards(results, q = "") {
     card.className = "recipe-card";
     card.style.animationDelay = (i * 40) + "ms";
 
-    const ingredientesArr = receta.ingredientes ?? [];
+    const ingredientesArr = (receta.recetaingrediente ?? []).map(ri => ({
+      idingrediente: ri.ingrediente_idingrediente,
+      nombre: ri.ingrediente.nombre,
+    }));
     const ingChips = ingredientesArr.map(ingOrId => {
       const id     = typeof ingOrId === "object" ? ingOrId.idingrediente    : ingOrId;
       const nombre = typeof ingOrId === "object" ? ingOrId.nombre : (INGREDIENTES.find(x => x.idingrediente === id)?.nombre ?? id);
@@ -163,14 +166,21 @@ function renderRecipeCards(results, q = "") {
 
     card.innerHTML = `
       <div class="card-img">
-        <svg width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="#e8435a" stroke-width="1.2">
-          <path d="M3 11l19-9-9 19-2-8-8-2z"/>
-        </svg>
-      </div>
-      <div class="card-body">
-        <div class="card-name">${receta.nombre}</div>
-        <div class="card-tags-row">${ingChips}</div>
-      </div>`;
+  ${receta.image_url
+    ? `<img
+        src="${receta.image_url}"
+        alt="${receta.nombre}"
+        style="width:100%;height:100%;object-fit:cover;border-radius:12px 12px 0 0;"
+        onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"
+      />
+      <svg style="display:none" width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="#e8435a" stroke-width="1.2">
+        <path d="M3 11l19-9-9 19-2-8-8-2z"/>
+      </svg>`
+    : `<svg width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="#e8435a" stroke-width="1.2">
+        <path d="M3 11l19-9-9 19-2-8-8-2z"/>
+      </svg>`
+  }
+  </div>`;
     cardsGrid.appendChild(card);
   });
 }
