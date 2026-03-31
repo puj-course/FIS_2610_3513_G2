@@ -20,7 +20,12 @@ export class RecetasService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly telegram: TelegramService
-  ) {}
+  ) {
+  cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key:    process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+  });}
 
   async buscarPorIngredientes(ingredientesIds: number[]) {
     const recetas = await this.prisma.$queryRaw<RecetaConScore[]>`
@@ -49,7 +54,6 @@ async crearReceta(dto: CrearRecetaDto) {
     const categoria = await this.prisma.categoria.findFirst({
       where: { nombre: { equals: dto.categoria, mode: 'insensitive' } },
     });
-
 
     const ingredientesResueltos: { id: number; cantidad: string }[] = [];
     for (const ing of dto.ingredientes) {
