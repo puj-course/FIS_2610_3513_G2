@@ -88,6 +88,7 @@ function collectForm() {
     autor:        getUserName(),
     fecha:        new Date().toLocaleDateString("es-CO", {year:"numeric",month:"short",day:"numeric"}),
     tipo:         "usuario",
+    id_usuariocreador:    getUserId(),
   };
 }
  
@@ -254,6 +255,11 @@ document.getElementById("recetaForm").addEventListener("submit", async e => {
 function getUserName() {
   try { return JSON.parse(sessionStorage.getItem("recetaya_user")||"{}").nickname || "Anónimo"; }
   catch { return "Anónimo"; }
+}
+
+function getUserId() {
+  try { return JSON.parse(sessionStorage.getItem("recetaya_user") || "{}").idusuario || null; }
+  catch { return null; }
 }
  
 function showToast(msg) {

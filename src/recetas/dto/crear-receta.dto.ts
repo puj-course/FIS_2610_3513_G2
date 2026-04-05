@@ -16,4 +16,5 @@ export class CrearRecetaDto {
   image_url?: string;
   pasos: string[];
   estado?: string;            // borrardor o publicado 
+  id_usuariocreador?: number;
   }
