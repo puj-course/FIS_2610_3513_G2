@@ -1,10 +1,18 @@
-const DRAFT_KEY   = "recetaya_draft";
+console.log("Usuario en sesión:", sessionStorage.getItem("recetaya_user"));
+console.log("Draft key:", getDraftKey());
+console.log("Draft encontrado:", loadDraft());
+
 const RECETAS_KEY = "recetaya_recetas";
 const ADMIN_KEY   = "recetaya_admin_notifs";
  
 const ingList   = document.getElementById("ingList");
 const stepsList = document.getElementById("stepsList");
- 
+
+function getDraftKey() {
+  const userId = getUserId();
+  return userId ? `recetaya_draft_${userId}` : null;
+}
+
 function addIng(nombre="", cantidad="", unidad="") {
   const row = document.createElement("div");
   row.className = "ing-row";
@@ -88,6 +96,7 @@ function collectForm() {
     autor:        getUserName(),
     fecha:        new Date().toLocaleDateString("es-CO", {year:"numeric",month:"short",day:"numeric"}),
     tipo:         "usuario",
+    id_usuariocreador:    getUserId(),
   };
 }
  
@@ -111,6 +120,8 @@ function populateForm(data) {
 async function saveDraft() {
   const data = collectForm();
   data.estado = "borrador";
+  key = getDraftKey();
+  if (!key) { showToast("Debes iniciar sesión para guardar un borrador"); return; }
 
   try {
     const response = await fetch("http://localhost:3000/recetas/borrador", {
@@ -123,7 +134,7 @@ async function saveDraft() {
 
     if (!response.ok) { showToast("Error al guardar borrador"); return; }
 
-    localStorage.setItem(DRAFT_KEY, JSON.stringify({ ...data, idreceta: result.receta.idreceta }));
+    localStorage.setItem(key, JSON.stringify({ ...data, idreceta: result.receta.idreceta }));
     showToast("Borrador guardado");
     setStatus("borrador");
 
@@ -133,12 +144,14 @@ async function saveDraft() {
 }
  
 function loadDraft() {
-  try { return JSON.parse(localStorage.getItem(DRAFT_KEY)); }
+  const key = getDraftKey();
+  if (!key) return null;
+  try { return JSON.parse(localStorage.getItem(key)); }
   catch { return null; }
 }
  
 function discardDraft() {
-  localStorage.removeItem(DRAFT_KEY);
+  localStorage.removeItem(getDraftKey());
   document.getElementById("draftBanner").classList.remove("show");
 }
  
@@ -254,6 +267,11 @@ document.getElementById("recetaForm").addEventListener("submit", async e => {
 function getUserName() {
   try { return JSON.parse(sessionStorage.getItem("recetaya_user")||"{}").nickname || "Anónimo"; }
   catch { return "Anónimo"; }
+}
+
+function getUserId() {
+  try { return JSON.parse(sessionStorage.getItem("recetaya_user") || "{}").idusuario || null; }
+  catch { return null; }
 }
  
 function showToast(msg) {

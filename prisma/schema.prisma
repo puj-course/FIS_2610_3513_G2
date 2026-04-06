@@ -35,12 +35,14 @@ model receta {
   calorias          String              @db.VarChar(10)
   imagenreceta      Bytes?
   image_url         String?             
-  estado  String  @default("publicado") @db.VarChar(20)
+  estado  String  @default("borrador") @db.VarChar(20)
   fechacreacion     DateTime            @db.Date
   paso              paso[]
   recetacategoria   recetacategoria[]
   recetaguardada    recetaguardada[]
   recetaingrediente recetaingrediente[]
+  id_usuariocreador  Int?
+  usuario           usuario? @relation(fields: [id_usuariocreador], references: [idusuario])               
 }
 
 model recetacategoria {
@@ -78,4 +80,5 @@ model usuario {
   fecha_registro DateTime?       @db.Date
   fotoperfil     Bytes?
   recetaguardada recetaguardada?
+  recetas        receta[]
 }

@@ -101,6 +101,11 @@ async crearReceta(dto: CrearRecetaDto) {
         estado:            dto.estado            || 'pendiente',
         fechacreacion:     new Date(),
 
+        ...(dto.id_usuariocreador && {
+        id_usuariocreador: dto.id_usuariocreador,   // si llega null, no lo intenta asignar
+        }),
+
+
         paso: {
           create: dto.pasos.map((descripcion, i) => ({
             descripcion,
@@ -130,7 +135,8 @@ async crearReceta(dto: CrearRecetaDto) {
     `🍽️ Nombre: ${receta.nombre}\n` +
     `📝 Descripción: ${receta.descripcion || 'Sin descripción'}\n` +
     `🆔 ID: ${receta.idreceta}\n\n` +
-    `Estado: ⏳ Pendiente de revisión`;
+    `Estado: ⏳ Pendiente de revisión\n` +
+    `Creador: ${dto.id_usuariocreador || 'Anónimo'}`;
 
   if (imagenBuffer) {
     // Si tiene imagen, enviar foto con el caption
