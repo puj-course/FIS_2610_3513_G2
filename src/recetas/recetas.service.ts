@@ -3,6 +3,7 @@ import { Prisma } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 import { CrearRecetaDto } from './dto/crear-receta.dto';
 import { TelegramService } from '../telegram/telegram.service'; // para las llamadas al telegra 
+import { v2 as cloudinary } from 'cloudinary'; // para url de imagenes en cloudinary 
 
 
 
@@ -19,7 +20,12 @@ export class RecetasService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly telegram: TelegramService
-  ) {}
+  ) {
+  cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key:    process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+  });}
 
   async buscarPorIngredientes(ingredientesIds: number[]) {
     const recetas = await this.prisma.$queryRaw<RecetaConScore[]>`
@@ -49,7 +55,6 @@ async crearReceta(dto: CrearRecetaDto) {
       where: { nombre: { equals: dto.categoria, mode: 'insensitive' } },
     });
 
-
     const ingredientesResueltos: { id: number; cantidad: string }[] = [];
     for (const ing of dto.ingredientes) {
       let ingrediente = await this.prisma.ingrediente.findFirst({
@@ -71,12 +76,25 @@ async crearReceta(dto: CrearRecetaDto) {
       ? Buffer.from(dto.imagen.split(',')[1], 'base64')
       : null;
 
+    let image_url: string | null = null;
+    if (imagenBuffer) {
+      image_url = await new Promise<string>((resolve, reject) => {
+        cloudinary.uploader.upload_stream(
+          { folder: 'recetasya' },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result!.secure_url);
+          }
+        ).end(imagenBuffer);
+      });
+    }
+
 
     const receta = await this.prisma.receta.create({
       data: {
         nombre:            dto.titulo,
         descripcion:       dto.descripcion,
-        image_url:         dto.image_url,
+        image_url:         image_url,
         tiempopreparacion: dto.tiempopreparacion || 'N/A',
         calorias:          dto.calorias          || 'N/A',
         imagenreceta:      imagenBuffer,
