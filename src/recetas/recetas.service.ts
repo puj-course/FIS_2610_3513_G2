@@ -10,6 +10,8 @@ import { TelegramService } from "../telegram/telegram.service"; // para las llam
 import { v2 as cloudinary } from "cloudinary"; // para url de imagenes en cloudinary
 import { RecetaBuilder } from "./builder/receta.builder";
 import { RecetaImagelessBuilder } from "./builder/recetaImageless.builder";
+import { NotificacionesFacade } from "../telegram/NotificacionesFacade";
+import { dot } from "node:test/reporters";
 
 // Tipo para el resultado con score
 interface RecetaConScore {
@@ -23,7 +25,7 @@ interface RecetaConScore {
 export class RecetasService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly telegram: TelegramService
+    private readonly notificaciones: NotificacionesFacade,
   ) {
     cloudinary.config({
       cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -98,7 +100,7 @@ export class RecetasService {
     const receta = await this.prisma.receta.create({ data });
 
     if (dto.estado === "pendiente") {
-      await this.notificarTelegram(receta, (data as any).imagenreceta); // ← aquí
+      await this.notificaciones.notificarTelegram(receta);
     }
 
     return { message: "La receta fue creada waow...", receta };
@@ -126,25 +128,6 @@ export class RecetasService {
     });
 
     return { buffer, url };
-  }
-
-  // Metodo privado para notificar a telegram sobre la nueva receta, separado de crearReceta para levantar cohesión
-  private async notificarTelegram(
-    receta: any,
-    imagenBuffer?: Buffer
-  ): Promise<void> {
-    const caption =
-      `📋 Nueva receta para verificar\n\n` +
-      `🍽️ Nombre: ${receta.nombre}\n` +
-      `📝 Descripción: ${receta.descripcion || "Sin descripción"}\n` +
-      `🆔 ID: ${receta.idreceta}\n\n` +
-      `Estado: ⏳ Pendiente de revisión`;
-
-    if (imagenBuffer) {
-      await this.telegram.enviarFoto(imagenBuffer, caption);
-    } else {
-      await this.telegram.enviarMensaje(caption);
-    }
   }
   //----------------------------------------------------------------------------
 

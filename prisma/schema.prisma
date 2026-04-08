@@ -81,4 +81,5 @@ model usuario {
   fotoperfil     Bytes?
   recetaguardada recetaguardada?
   recetas        receta[]
+  rol            String   @default("usuario")  
 }

@@ -23,6 +23,9 @@ export class UsuariosService {
     return { message: '¡Cuenta creada exitosamente!', user };
   }
 //---------------------------------------------------------------------------------------------------------------------
+  async getById(id: number) {
+  return this.prisma.usuario.findUnique({ where: { idusuario: id } });
+}
 // login
   async login(dto: LoginDto) {
     const user = await this.prisma.usuario.findFirst({ where: { email: dto.email } });
