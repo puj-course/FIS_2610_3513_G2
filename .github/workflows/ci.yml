@@ -38,9 +38,9 @@ jobs:
     - name: Sync Database Schema
       run: npx prisma db push
       env:
-        DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/recetasya
     - name: Build
       run: npm run build
       env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/recetasya
   
