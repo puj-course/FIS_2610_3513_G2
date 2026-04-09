@@ -35,10 +35,6 @@ jobs:
         cache: 'npm'
     - name: Install dependencies
       run: npm ci
-    - name: Prisma Migrate
-      run: npx prisma migrate dev --preview-feature
-      env: 
-        DATABASE_URL: ${{ secrets.DATABASE_URL }}
     - name: Sync Database Schema
       run: npx prisma db push
       env:
