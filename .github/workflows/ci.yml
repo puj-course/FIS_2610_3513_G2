@@ -36,7 +36,7 @@ jobs:
       run: |
         psql -h localhost -U postgres -d recetasya -c "SELECT 1"
       env:
-          PGPASSWORD: password
+          PGPASSWORD: postgres
     - uses: actions/checkout@v4
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v4
