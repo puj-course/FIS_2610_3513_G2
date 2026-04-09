@@ -5,6 +5,7 @@ import { RecetasModule } from './recetas/recetas.module';
 import { UsuariosModule } from './usuarios/usuarios.module';
 import { TelegramModule } from './telegram/telegram.module';
 import { v2 as cloudinary } from 'cloudinary';
+import { ModeracionModule } from './moderacion/moderacion.module';
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -22,6 +23,7 @@ cloudinary.config({
     RecetasModule,
     UsuariosModule,
     TelegramModule,
+    ModeracionModule,
   ],
 })
 export class AppModule {}
