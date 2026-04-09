@@ -35,10 +35,6 @@ jobs:
         cache: 'npm'
     - name: Install dependencies
       run: npm ci
-    - name: Build
-      run: npm run build
-      env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
     - name: Prisma Migrate
       run: npx prisma migrate dev --preview-feature
       env: 
@@ -47,4 +43,8 @@ jobs:
       run: npx prisma db push
       env:
         DATABASE_URL: ${{ secrets.DATABASE_URL }}
+    - name: Build
+      run: npm run build
+      env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
   
