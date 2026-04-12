@@ -10,7 +10,7 @@ import { UsuariosModule } from '../usuarios/usuarios.module';
 import { TelegramModule } from '../telegram/telegram.module';
 
 @Module({
-  imports: [UsuariosModule],
+  imports: [UsuariosModule, TelegramModule],
   controllers: [ModeracionController],
   providers: [
     ModeracionService,
