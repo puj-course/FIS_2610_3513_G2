@@ -63,8 +63,8 @@ export abstract class RecetaCreacionBase {
     builder.setDatosBase(dto);
 
     if (dto.imagen) {
-      const { buffer, url } = await this.subirImagen(dto.imagen);
-      builder.setImage(url, buffer);
+      const buffer = Buffer.from(dto.imagen.split(",")[1], "base64");
+      builder.setImage("", buffer);
     }
 
     if (categoria) {
@@ -79,24 +79,6 @@ export abstract class RecetaCreacionBase {
   protected async guardarEnBD(data: any) {
     return this.prisma.receta.create({ data });
   }
-
-  private async subirImagen(
-    imagenBase64: string
-  ): Promise<{ buffer: Buffer; url: string }> {
-    const buffer = Buffer.from(imagenBase64.split(",")[1], "base64");
-
-    const url = await new Promise<string>((resolve, reject) => {
-      cloudinary.uploader
-        .upload_stream({ folder: "recetasya" }, (error, result) => {
-          if (error) reject(error);
-          else resolve(result!.secure_url);
-        })
-        .end(buffer);
-    });
-
-    return { buffer, url };
-  }
-
   // paso abstracto ( se decide si aplicar o no la notif )
   protected abstract notificar(receta: any): Promise<void>;
 }

@@ -10,7 +10,6 @@
   <link rel="stylesheet" href="admin.css" />
 </head>
 <body>
-
   <header>
     <a class="logo" href="../IndexMain/index.html">
       <img class="logo-img" src="../../assets/logo.png" alt="RecetaYa" onerror="this.style.display='none'" />
@@ -23,103 +22,25 @@
   </header>
 
   <div class="page">
-
     <div class="page-heading">
-      <h1>Recetas pendientes por aprobar</h1>
+      <h1>Recetas <span>pendientes</span></h1>
       <p>Revisa cada receta antes de publicarla. Puedes aprobarla, rechazarla o eliminarla.</p>
     </div>
 
-    <!-- Tarjeta de receta -->
-    <div class="recipe-card">
-      <div class="card-main">
-        <div class="card-thumb">
-          <img src="" alt="Miniatura" class="thumb-img" onerror="this.style.display='none'" />
-          <div class="thumb-placeholder">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <rect x="3" y="3" width="18" height="18" rx="4"/>
-              <circle cx="8.5" cy="8.5" r="1.5"/>
-              <path d="M21 15l-5-5L5 21"/>
-            </svg>
-          </div>
-        </div>
-
-        <div class="card-info">
-          <div class="card-meta">
-            <span class="estado-badge pendiente">Pendiente</span>
-            <span class="card-fecha">5 de abr de 2026</span>
-          </div>
-          <h2 class="card-title">Nombre de la receta</h2>
-          <p class="card-desc">Descripción breve de la receta. Aquí el autor explica de qué va el plato y qué lo hace especial.</p>
-          <div class="card-author">Por <strong>Usuario</strong></div>
-        </div>
-
-        <div class="card-actions">
-          <button class="btn-action aprobar">Aprobar</button>
-          <button class="btn-action rechazar">Rechazar</button>
-          <button class="btn-action eliminar">Eliminar</button>
-        </div>
-      </div>
-
-      <!-- Dropdown Ver más -->
-      <div class="card-expand">
-        <button class="btn-expand" onclick="toggleExpand(this)">
-          <span class="expand-label">▼ Ver más...</span>
-        </button>
-        <div class="expand-content">
-          <div class="expand-section">
-            <div class="expand-title">Ingredientes</div>
-            <ul class="expand-list">
-              <li>Carne — 100 gr</li>
-              <li>Sal — al gusto</li>
-              <li>Aceite — 2 cdas</li>
-            </ul>
-          </div>
-          <div class="expand-section">
-            <div class="expand-title">Pasos</div>
-            <ol class="expand-steps">
-              <li>Sazonar la carne con sal y pimienta.</li>
-              <li>Calentar el aceite en sartén a fuego medio-alto.</li>
-              <li>Cocinar la carne 4 minutos por cada lado.</li>
-            </ol>
-          </div>
-        </div>
-      </div>
+    <div class="loading-state" id="loadingState">
+      <div class="spinner"></div>
+      <p>Cargando recetas...</p>
     </div>
+
+    <div id="recetasContainer"></div>
 
     <div class="empty-state" id="emptyState" style="display:none">
       <div class="empty-icon">✓</div>
       <p>No hay recetas pendientes por revisar.</p>
     </div>
-
   </div>
 
   <div class="toast" id="toast"></div>
-
-  <script>
-    function toggleExpand(btn) {
-      const card = btn.closest('.card-expand');
-      const content = card.querySelector('.expand-content');
-      const label = btn.querySelector('.expand-label');
-      const isOpen = content.classList.toggle('open');
-      label.textContent = isOpen ? '▲ Ver menos' : '▼ Ver más...';
-    }
-
-    function showToast(msg) {
-      const t = document.getElementById('toast');
-      t.textContent = msg; t.classList.add('show');
-      setTimeout(() => t.classList.remove('show'), 2200);
-    }
-
-    document.querySelectorAll('.btn-action.aprobar').forEach(btn =>
-      btn.addEventListener('click', () => showToast('Receta aprobada ✓'))
-    );
-    document.querySelectorAll('.btn-action.rechazar').forEach(btn =>
-      btn.addEventListener('click', () => showToast('Receta enviada de vuelta a borrador'))
-    );
-    document.querySelectorAll('.btn-action.eliminar').forEach(btn =>
-      btn.addEventListener('click', () => showToast('Receta eliminada'))
-    );
-  </script>
-
+  <script src="admin.js"></script>
 </body>
 </html>

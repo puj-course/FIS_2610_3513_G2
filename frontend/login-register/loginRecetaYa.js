@@ -37,7 +37,13 @@ const eyeOpen = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" str
   } 
   sessionStorage.setItem('recetaya_user', JSON.stringify(data.user));
   showMsg(data.message, 'ok');
-  setTimeout(() => window.location.href = '../search/index.html', 1200);
+  setTimeout(() => {
+    if (data.user.rol === "admin") {
+      window.location.href = '../panelAdmin/admin.html';
+    } else {
+      window.location.href = '../search/index.html';
+    }
+  }, 1200);
   } catch (err) {                                               // ← y esto
       showMsg('No se pudo conectar con el servidor', 'err');
       btn.disabled = false;

@@ -23,7 +23,7 @@ export class NotificacionesFacade {
     `🍽️ Nombre: ${receta.nombre}\n` +
     `📝 Descripción: ${receta.descripcion || 'Sin descripción'}\n` +
     `🆔 ID: ${receta.idreceta}\n\n` +
-    `Estado: ⏳ Pendiente de revisión\n` +
+    `Estado: ${receta.estado}\n` +
     `Creador: ${receta.id_usuariocreador || 'Anónimo'}`;
   }
 }
