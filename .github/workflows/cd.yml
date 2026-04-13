@@ -4,7 +4,7 @@ name: Node.js CD
 
 on:
   push:
-    branches: [ "features-pipeline" ]
+    branches: [ "feature/pipelines" ]
 
 jobs:
   package:
