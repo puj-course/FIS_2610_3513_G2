@@ -51,6 +51,8 @@
     font-family: "Outfit", sans-serif; font-size: 14px; font-weight: 500;
     padding: 8px 18px; border-radius: 50px; cursor: pointer; text-decoration: none; transition: all 0.2s;
   }
+
+  .nav-btn-disabled {opacity: 0.5;cursor: not-allowed;   pointer-events: auto;}
   .nav-btn.outline { background: transparent; border: 1.5px solid #e8435a; color: #e8435a; }
   .nav-btn.outline:hover { background: #fef2f4; }
   .nav-btn.filled { background: #e8435a; border: 1.5px solid #e8435a; color: white; }
@@ -150,3 +152,12 @@
     .nav-btn { padding: 7px 13px; font-size: 13px; }
     .tags-section, .results-section { padding-left: 16px; padding-right: 16px; }
   }
+
+
+  .toast {
+    position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: #1c1010; color: white; padding: 14px 26px; border-radius: 50px;
+    font-size: 14px; font-weight: 500; opacity: 0; transition: all 0.3s; z-index: 999;
+    white-space: nowrap;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }

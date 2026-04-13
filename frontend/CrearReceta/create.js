@@ -1,7 +1,3 @@
-console.log("Usuario en sesión:", sessionStorage.getItem("recetaya_user"));
-console.log("Draft key:", getDraftKey());
-console.log("Draft encontrado:", loadDraft());
-
 const RECETAS_KEY = "recetaya_recetas";
 const ADMIN_KEY   = "recetaya_admin_notifs";
  
@@ -118,10 +114,17 @@ function populateForm(data) {
 }
  
 async function saveDraft() {
+  const userId = getUserId();
+  if (!userId) {
+    showToast("Debes iniciar sesión para guardar un borrador");
+    // Opcional: redirigir al login después de 2s
+    setTimeout(() => window.location.href = "../login-register/loginRecetaYa.html", 2000);
+    return;
+  }
+
   const data = collectForm();
   data.estado = "borrador";
-  key = getDraftKey();
-  if (!key) { showToast("Debes iniciar sesión para guardar un borrador"); return; }
+  const key = getDraftKey();
 
   try {
     const response = await fetch("http://localhost:3000/recetas/borrador", {
@@ -132,10 +135,13 @@ async function saveDraft() {
 
     const result = await response.json();
 
-    if (!response.ok) { showToast("Error al guardar borrador"); return; }
+    if (!response.ok) {
+      showToast(result.message || "Error al guardar borrador");
+      return;
+    }
 
     localStorage.setItem(key, JSON.stringify({ ...data, idreceta: result.receta.idreceta }));
-    showToast("Borrador guardado");
+    showToast("Borrador guardado ✓");
     setStatus("borrador");
 
   } catch (err) {
@@ -161,9 +167,23 @@ document.getElementById("draftLoad")?.addEventListener("click", () => {
   const draft = loadDraft();
   if (draft) { populateForm(draft); document.getElementById("draftBanner").classList.remove("show"); showToast("Borrador cargado"); }
 });
- 
-document.getElementById("draftDiscard")?.addEventListener("click", () => {
-  discardDraft(); showToast("Borrador descartado");
+
+document.getElementById("draftDiscard")?.addEventListener("click", async () => {
+  const id = sessionStorage.getItem("recetaya_borrador_activo") || 
+              loadDraft()?.idreceta;
+
+  discardDraft();
+
+  if (id) {
+    try {
+      await fetch(`http://localhost:3000/recetas/${id}`, { method: "DELETE" });
+    } catch(e) {
+      console.warn("No se pudo eliminar el borrador de la BD:", e);
+    }
+    sessionStorage.removeItem("recetaya_borrador_activo");
+  }
+
+  showToast("Borrador descartado");
 });
  
 
@@ -223,6 +243,12 @@ function sendAdminNotif(receta) {
  
 document.getElementById("recetaForm").addEventListener("submit", async e => {
   e.preventDefault();
+
+  if (!getUserId()) {
+    showToast("Debes iniciar sesión para enviar una receta");
+    setTimeout(() => window.location.href = "../login-register/loginRecetaYa.html", 2000);
+    return;
+  }
   if (!validate()) return;
 
   const btn = document.getElementById("submitBtn");
@@ -283,10 +309,51 @@ function showToast(msg) {
 document.querySelectorAll("input, textarea, select").forEach(el => {
   el.addEventListener("input", () => el.classList.remove("invalid"));
 });
- 
-const existingDraft = loadDraft();
-if (existingDraft?.titulo) {
-  document.getElementById("draftTitle").textContent = existingDraft.titulo;
-  document.getElementById("draftBanner").classList.add("show");
+
+// create.js — reemplaza toda la función checkAndLoadDraft
+async function checkAndLoadDraft() {
+  const userId = getUserId();
+  if (!userId) {
+    setStatus("borrador");
+    return;
+  }
+
+  const localDraft = loadDraft();
+  if (localDraft?.titulo) {
+    document.getElementById("draftTitle").textContent = localDraft.titulo;
+    document.getElementById("draftBanner").classList.add("show");
+    setStatus("borrador");
+    return;
+  }
+
+  try {
+    const res = await fetch(`http://localhost:3000/recetas/borrador/${userId}`);
+    if (res.ok) {
+      const borrador = await res.json();
+      if (borrador) {
+        const key = getDraftKey();
+        localStorage.setItem(key, JSON.stringify({   // ← setItem, no setItm
+          titulo:       borrador.nombre,
+          descripcion:  borrador.descripcion,
+          categoria:    borrador.recetacategoria?.[0]?.categoria_idcategoria || "",
+          ingredientes: borrador.recetaingrediente.map(ri => ({
+            nombre:   ri.ingrediente.nombre,
+            cantidad: ri.cantidadingrediente,
+            unidad:   "",
+          })),
+          pasos:    borrador.paso.map(p => p.descripcion),
+          idreceta: borrador.idreceta,
+        }));
+        document.getElementById("draftTitle").textContent = borrador.nombre || "Sin título";
+        document.getElementById("draftBanner").classList.add("show");
+      }
+    }
+  } catch(e) {
+    console.warn("No se pudo consultar borrador en BD:", e);
+  }
+
+  setStatus("borrador");
 }
-setStatus("borrador");
+
+checkAndLoadDraft();
+

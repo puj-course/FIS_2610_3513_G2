@@ -75,4 +75,16 @@ export class RecetasService {
         }))
       );
   }
+
+  async eliminarReceta(idreceta: number) {
+    await this.prisma.paso.deleteMany({ where: { receta_idreceta: idreceta } });
+    await this.prisma.recetaingrediente.deleteMany({ where: { receta_idreceta: idreceta } });
+    await this.prisma.recetacategoria.deleteMany({ where: { receta_idreceta: idreceta } });
+  
+    return this.prisma.receta.delete({
+      where: { idreceta },
+  });
+  }
 }
+
+
