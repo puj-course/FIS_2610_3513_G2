@@ -1,10 +1,13 @@
 
-# Deployment para releases
+# Deployment para releases, prueba con el push
 name: Node.js CD
 
 on:
   push:
-    branches: [ "features-pipeline" ]
+    branches: [ "develop" ]
+
+permissions:
+  contents: write
 
 jobs:
   package:
@@ -19,19 +22,19 @@ jobs:
           node-version: 20.x
           cache: 'npm'
 
-      # 1. Instalar dependencias 
+      # 1. Instalar dependencias
       - name: Install dependencies
         run: npm ci
 
-      # 2. Generar cliente Prisma
+       # 2. Generar cliente Prisma
       - name: Generate Prisma client
         run: npx prisma generate
 
-      # 3. Compilar TS → JS 
+       # 3. Compilar TS → JS
       - name: Build
         run: npm run build
 
-      # 4. Crear el artefacto
+      # 4. Crear el artefacto: empaquetar dist/ + lo necesario para correrlo
       - name: Create release package
         run: |
           mkdir -p release
@@ -41,7 +44,7 @@ jobs:
           cp package-lock.json release/
           cd release && zip -r ../recetasya.zip .
 
-      # 5. Verificar que el artefacto se generó correctamente 
+      # 5. Verificar que el artefacto se generó correctamente
       - name: Verify artifact
         run: |
           echo "Contenido del zip:"
@@ -60,6 +63,6 @@ jobs:
           tag_name: ${{ steps.tag.outputs.tag }}
           name: "Release ${{ steps.tag.outputs.tag }}"
           files: recetasya.zip
-          generate_release_notes: true
+          generate_release_notes: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
