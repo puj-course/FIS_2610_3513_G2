@@ -4,6 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+
 }
 
 model categoria {
@@ -75,7 +76,7 @@ model usuario {
   idusuario      Int             @id(map: "usuario_pk") @default(autoincrement())
   nickname       String          @db.VarChar(30)
   email          String          @db.VarChar(50)
-  contrasena     String          @db.VarChar(30)
+  contrasena     String          @db.VarChar(255)
   fecha_registro DateTime?       @db.Date
   fotoperfil     Bytes?
   recetaguardada recetaguardada?
