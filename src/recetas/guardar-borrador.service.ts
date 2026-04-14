@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { PrismaService } from "./../../prisma/prisma.service";
 import { CrearRecetaDto } from "./dto/crear-receta.dto";
 import { RecetaCreacionBase } from "./receta-creacion-base.service";
@@ -11,6 +11,11 @@ export class GuardarBorradorService extends RecetaCreacionBase {
 
   // Sobreescribe ejecutar solo para forzar el estado borrador
   async ejecutar(dto: CrearRecetaDto) {
+    if (!dto.id_usuariocreador){
+      throw new UnauthorizedException(
+        "Debes iniciar sesión para guardar un borrador"
+      );
+    }
     return super.ejecutar({ ...dto, estado: "borrador" });
   }
 

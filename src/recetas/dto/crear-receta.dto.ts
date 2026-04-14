@@ -14,7 +14,8 @@ export class CrearRecetaDto {
   imagen?: string;            // base64
   ingredientes: IngredienteDto[];
   image_url?: string;
+  video_url?: string;
   pasos: string[];
   estado?: string;            // borrardor o publicado 
   id_usuariocreador?: number;
-  }
+}

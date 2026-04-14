@@ -93,6 +93,30 @@
     </div>
 
     <div class="form-section">
+      <div class="section-label">Video <span style="font-size:11px;color:#c0a0a0;text-transform:none;letter-spacing:0">(opcional)</span></div>
+      <div class="img-upload-area" id="videoArea" style="position:relative" onclick="document.getElementById('videoFile').click()">
+        <input type="file" id="videoFile" accept="video/*"/>
+        <div class="upload-icon" id="videoIcon">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/>
+          </svg>
+        </div>
+        <span class="upload-label" id="videoLabel">Haz clic para subir un video</span>
+        <span class="upload-hint">MP4, MOV o AVI · máx 50 MB</span>
+        <span id="videoName" style="display:none; color:var(--rose); font-weight:600; font-size:14px;"></span>
+        <button type="button" id="videoRemove"
+          style="display:none; background:rgba(0,0,0,0.5); color:white; border:none; border-radius:50%; width:28px; height:28px; cursor:pointer; font-size:14px; align-items:center; justify-content:center; flex-shrink:0; margin-left:auto;"
+          onclick="event.stopPropagation(); removeVideo()">✕</button>
+      </div>
+      <div id="videoProgress" style="display:none; margin-top:10px;">
+        <div style="background:var(--border); border-radius:50px; overflow:hidden; height:6px;">
+          <div id="progressBar" style="height:100%; background:var(--rose); width:0%; transition:width 0.3s; border-radius:50px;"></div>
+        </div>
+        <span id="progressText" style="font-size:12px; color:var(--muted); display:block; margin-top:6px; text-align:center;">Leyendo video...</span>
+      </div>
+    </div>
+
+    <div class="form-section">
       <div class="section-label">Ingredientes <span class="req" style="margin-left:2px">*</span></div>
       <div class="ing-list" id="ingList"></div>
       <div class="err-msg" id="err-ingredientes">Agrega al menos un ingrediente</div>

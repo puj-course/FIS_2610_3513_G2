@@ -32,14 +32,20 @@ export class UsuariosService {
   return this.prisma.usuario.findUnique({ where: { idusuario: id } });
 }
 // login
-  async login(dto: LoginDto) {
-    const user = await this.prisma.usuario.findFirst({ where: { email: dto.email } });
-    if (!user) throw new UnauthorizedException('No existe una cuenta con este correo');
+async login(dto: LoginDto) {
+  const user = await this.prisma.usuario.findFirst({ where: { email: dto.email } });
+  if (!user) throw new UnauthorizedException('No existe una cuenta con este correo');
 
-    const passwordMatch = await bcrypt.compare(dto.contrasena, user.contrasena); // Compara el la contraseña plana ingresada con lo hasheado
-                                                                                 // en la BD, es un bool si acaso
-    if (!passwordMatch) throw new UnauthorizedException('Contraseña incorrecta');
+  const passwordMatch = await bcrypt.compare(dto.contrasena, user.contrasena);
+  if (!passwordMatch) throw new UnauthorizedException('Contraseña incorrecta');
 
-    return { message: `¡Bienvenido, ${user.nickname}!`, user: { idusuario: user.idusuario, nickname: user.nickname, email: user.email } };
-  }
-}
+  return {
+    message: `¡Bienvenido, ${user.nickname}!`,
+    user: {
+      idusuario: user.idusuario,
+      nickname:  user.nickname,
+      email:     user.email,
+      rol:       user.rol,     
+    },
+  };
+}}

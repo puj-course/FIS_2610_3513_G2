@@ -16,18 +16,28 @@ function renderNav() {
   const user = JSON.parse(sessionStorage.getItem('recetaya_user') || 'null');
 
   if (user) {
-    // Usuario logueado — mostrar nombre y botón crear receta
     nav.innerHTML = `
-      <span class="nav-user">Hola, ${user.nickname} 👋</span>
+      <span class="nav-user">${user.nickname}</span>
       <a href="../CrearReceta/create.html" class="nav-btn filled">+ Crear receta</a>
       <button class="nav-btn outline" onclick="logout()">Cerrar sesión</button>
     `;
   } else {
-    // No logueado — mostrar login y register
     nav.innerHTML = `
       <a href="../login-register/loginRecetaYa.html" class="nav-btn outline">Iniciar sesión</a>
-      <a href="../login-register/registerRecetaYa.html" class="nav-btn filled">Registrarse</a>
+      <a href="../login-register/registerRecetaYa.html" class="nav-btn outline">Registrarse</a>
+      <button class="nav-btn filled nav-btn-disabled" onclick="alertLogin(event)">+ Crear receta</button>
     `;
+  }
+}
+
+function alertLogin(e) {
+  e.preventDefault();
+  // Muestra un toast o alert
+  const toast = document.getElementById('toast');
+  if (toast) {
+    toast.textContent = "Debes iniciar sesión para crear una receta";
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2500);
   }
 }
 

@@ -35,6 +35,7 @@ model receta {
   calorias          String              @db.VarChar(10)
   imagenreceta      Bytes?
   image_url         String?             
+  video_url         String?
   estado  String  @default("borrador") @db.VarChar(20)
   fechacreacion     DateTime            @db.Date
   paso              paso[]

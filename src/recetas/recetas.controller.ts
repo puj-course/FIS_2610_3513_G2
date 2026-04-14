@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Patch, Body, Query, Param, HttpCode } from '@nestjs/common';
+import { Controller, Get, Delete, Post, Patch, Body, Query, Param, HttpCode } from '@nestjs/common';
 import { RecetasService } from './recetas.service';
 import { BuscarRecetasDto } from './dto/buscar-recetas.dto';
 import { CrearRecetaDto } from './dto/crear-receta.dto';
@@ -41,5 +41,9 @@ export class RecetasController {
     @Body('estado') estado: string,
   ) {
     return this.recetasService.actualizarEstado(Number(id), estado);
+  }
+  @Delete(':id')
+  async eliminarReceta(@Param('id') id: string) {
+    return this.recetasService.eliminarReceta(Number(id));
   }
 }

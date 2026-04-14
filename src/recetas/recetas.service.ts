@@ -1,8 +1,10 @@
 import { Injectable } from "@nestjs/common";
+import { NotificacionesFacade } from "./../telegram/NotificacionesFacade";
 import { PrismaService } from "../../prisma/prisma.service";
 import { CrearRecetaDto } from "./dto/crear-receta.dto";
 import { CrearRecetaService } from "./crear-receta.service";
 import { GuardarBorradorService } from "./guardar-borrador.service";
+import { v2 as cloudinary } from "cloudinary";
 
 interface RecetaConScore {
   id: number;
@@ -16,7 +18,8 @@ export class RecetasService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly crearRecetaService: CrearRecetaService,
-    private readonly guardarBorradorService: GuardarBorradorService
+    private readonly guardarBorradorService: GuardarBorradorService,
+    private readonly notificaciones: NotificacionesFacade,
   ) {}
 
   crearReceta(dto: CrearRecetaDto) {
@@ -46,33 +49,94 @@ export class RecetasService {
     }));
   }
 
-  async actualizarEstado(idreceta: number, estado: string) {
+async actualizarEstado(idreceta: number, estado: string) {
+  if (estado === "aprobado") {
+
+
+    const receta = await this.prisma.receta.findUnique({
+      where: { idreceta },
+    });
+
+    await this.notificaciones.notificarTelegram(receta);
+
+    const imageUrl = await this.uploadImageCloudinary(idreceta);
+
+    return this.prisma.receta.update({
+      where: { idreceta },
+      data: {
+        estado: "aprobado",
+        image_url: imageUrl,
+        imagenreceta: null, 
+      },
+    });
+
+  } else {
+
+    const receta = await this.prisma.receta.findUnique({
+      where: { idreceta },
+    });
+
+    await this.notificaciones.notificarTelegram(receta);
     return this.prisma.receta.update({
       where: { idreceta },
       data: { estado },
     });
   }
+}
 
-  getAll() {
-    return this.prisma.receta
-      .findMany({
-        orderBy: { nombre: "asc" },
-        include: {
-          recetaingrediente: {
-            include: { ingrediente: true },
-          },
-        },
-      })
-      .then((recetas) =>
-        recetas.map((r) => ({
-          ...r,
-          image_url:
-            r.image_url ??
-            (r.imagenreceta
-              ? `data:image/jpeg;base64,${Buffer.from(r.imagenreceta).toString("base64")}`
-              : null),
-          imagenreceta: undefined,
-        }))
-      );
+async uploadImageCloudinary(idreceta: number) {
+
+  const receta = await this.prisma.receta.findUnique({
+    where: { idreceta },
+  });
+
+  if (!receta) {
+    throw new Error("Receta no encontrada");
+  }
+
+  let imageUrl = receta.image_url;
+
+  if (receta.imagenreceta && !receta.image_url) {
+    imageUrl = await new Promise<string>((resolve, reject) => {
+      cloudinary.uploader
+        .upload_stream({ folder: "recetasya" }, (error, result) => {
+          if (error) reject(error);
+          else resolve(result!.secure_url);
+        })
+        .end(receta.imagenreceta); // ✅ correcto
+    });
+    return imageUrl;
   }
 }
+
+getAll() {
+  return this.prisma.receta.findMany({
+    orderBy: { nombre: 'asc' },
+    include: {
+      recetaingrediente: { include: { ingrediente: true } },
+      paso: { orderBy: { numeropaso: 'asc' } },
+    },
+  }).then(recetas => recetas.map(r => {
+    return {
+      ...r,
+      image_url: r.image_url
+        ?? (r.imagenreceta
+          ? `data:image/jpeg;base64,${Buffer.from(r.imagenreceta as Buffer).toString('base64')}`
+          : null),
+      imagenreceta: undefined,
+    };
+  }));
+}
+
+  async eliminarReceta(idreceta: number) {
+    await this.prisma.paso.deleteMany({ where: { receta_idreceta: idreceta } });
+    await this.prisma.recetaingrediente.deleteMany({ where: { receta_idreceta: idreceta } });
+    await this.prisma.recetacategoria.deleteMany({ where: { receta_idreceta: idreceta } });
+  
+    return this.prisma.receta.delete({
+      where: { idreceta },
+  });
+  }
+}
+
+

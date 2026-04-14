@@ -63,10 +63,24 @@ export abstract class RecetaCreacionBase {
     builder.setDatosBase(dto);
 
     if (dto.imagen) {
-      const { buffer, url } = await this.subirImagen(dto.imagen);
-      builder.setImage(url, buffer);
+      const buffer = Buffer.from(dto.imagen.split(",")[1], "base64");
+      builder.setImage("", buffer);
     }
 
+    // PARA SUBIR VIDEO
+    if (dto.video_url) {
+      const buffer = Buffer.from(dto.video_url.split(',')[1], 'base64');
+      const videoUrl = await new Promise<string>((resolve, reject) => {
+        cloudinary.uploader.upload_stream(
+          { folder: 'recetasya/pendientes', resource_type: 'video' },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result!.secure_url);
+          }
+        ).end(buffer);
+      });
+      builder.setVideo(videoUrl);
+    }
     if (categoria) {
       builder.setCategory(categoria.idcategoria);
     }
@@ -79,24 +93,8 @@ export abstract class RecetaCreacionBase {
   protected async guardarEnBD(data: any) {
     return this.prisma.receta.create({ data });
   }
-
-  private async subirImagen(
-    imagenBase64: string
-  ): Promise<{ buffer: Buffer; url: string }> {
-    const buffer = Buffer.from(imagenBase64.split(",")[1], "base64");
-
-    const url = await new Promise<string>((resolve, reject) => {
-      cloudinary.uploader
-        .upload_stream({ folder: "recetasya" }, (error, result) => {
-          if (error) reject(error);
-          else resolve(result!.secure_url);
-        })
-        .end(buffer);
-    });
-
-    return { buffer, url };
-  }
-
   // paso abstracto ( se decide si aplicar o no la notif )
   protected abstract notificar(receta: any): Promise<void>;
 }
+
+

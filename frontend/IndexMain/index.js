@@ -215,6 +215,13 @@ function renderRecipes() {
       (isUser ? '<div class="card-author">Por ' + receta.autor + (receta.fecha ? " · " + receta.fecha : "") + '</div>' : "");
     card.appendChild(body);
 
+  if (receta.estado === "borrador") {
+    card.style.cursor = "pointer";
+    card.addEventListener("click", function() {
+      sessionStorage.setItem("recetaya_edit_id", receta.id);
+      window.location.href = "../CrearReceta/create.html";
+   });
+  }
     cardsGrid.appendChild(card);
   });
 }
