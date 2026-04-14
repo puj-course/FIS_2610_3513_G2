@@ -1,0 +1,44 @@
+name: Move Project Cards by Commit Keywords
+on:
+  push:
+    branches: [ features-alejandro, features-salome ]
+
+jobs:
+  process_commit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Extract Issue and Keyword
+        id: parse
+        run: |
+         
+          MESSAGE=$(git log -1 --pretty=%B)
+          
+          
+          if [[ $MESSAGE =~ (Closes|Refs)\ \(#([0-9]+)\) ]]; then
+            echo "keyword=${BASH_REMATCH[1]}" >> $GITHUB_OUTPUT
+            echo "issue_num=${BASH_REMATCH[2]}" >> $GITHUB_OUTPUT
+            echo "found=true" >> $GITHUB_OUTPUT
+          else
+            echo "found=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Set Status Value
+        if: steps.parse.outputs.found == 'true'
+        id: status
+        run: |
+          
+          if [ "${{ steps.parse.outputs.keyword }}" == "Closes" ]; then
+            echo "val=In review" >> $GITHUB_OUTPUT
+          elif [ "${{ steps.parse.outputs.keyword }}" == "Refs" ]; then
+            echo "val=In progress" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Update Project V2 Item
+        if: steps.parse.outputs.found == 'true'
+        uses: leonsteinhaeuser/project-beta-automations@v2.2.1
+        with:
+          gh_token: ${{ secrets.PROJECT_AUTOMATION_TOKEN }}
+          user: puj-course
+          project_id: 56
+          resource_node_id: ${{ steps.parse.outputs.issue_num }} 
+          status_value: ${{ steps.status.outputs.val }}
