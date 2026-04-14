@@ -87,6 +87,7 @@ function collectForm() {
     descripcion:  document.getElementById("descripcion").value.trim(),
     categoria:    document.getElementById("categoria").value,
     imagen:       imageData || null,
+    video_url:    videoUrl || null, 
     ingredientes: ings,
     pasos:        steps,
     autor:        getUserName(),
@@ -357,3 +358,48 @@ async function checkAndLoadDraft() {
 
 checkAndLoadDraft();
 
+// SUBIR VIDEO --------
+
+const videoFile     = document.getElementById('videoFile');
+const videoArea     = document.getElementById('videoArea');
+const videoName     = document.getElementById('videoName');
+const videoProgress = document.getElementById('videoProgress');
+const progressBar   = document.getElementById('progressBar');
+const progressText  = document.getElementById('progressText');
+let videoData = null;
+
+videoFile.addEventListener('change', () => {
+  const file = videoFile.files[0];
+  if (!file) return;
+  if (file.size > 50 * 1024 * 1024) { showToast('El video no debe superar 50 MB'); return; }
+
+  document.getElementById('videoProgress').style.display = 'block';
+  document.getElementById('progressText').textContent = 'Leyendo video...';
+
+  const reader = new FileReader();
+  reader.onload = e => {
+    videoData = e.target.result;
+    videoArea.classList.add('has-img');
+    document.getElementById('videoName').style.display = 'block';
+    videoArea.setAttribute('style', 'position:relative; min-height:40px; display:flex; align-items:center; padding: 8px 16px;');
+    document.getElementById('videoName').textContent = file.name;
+    document.getElementById('progressBar').style.width = '100%';
+    document.getElementById('progressText').textContent = 'Video listo ✓';
+    document.getElementById('videoRemove').style.display = 'flex';
+    setTimeout(() => document.getElementById('videoProgress').style.display = 'none', 1200);
+  };
+  reader.readAsDataURL(file);
+});
+
+function removeVideo() {
+  videoData = null;
+  videoFile.value = '';
+  videoArea.style.minHeight = ''; 
+  videoArea.classList.remove('has-img');
+  videoArea.setAttribute('style', 'position:relative;');
+  document.getElementById('videoName').style.display = 'none';
+  document.getElementById('videoName').textContent = '';
+  document.getElementById('videoProgress').style.display = 'none';
+  document.getElementById('videoRemove').style.display = 'none';
+  document.getElementById('progressBar').style.width = '0%';
+}
