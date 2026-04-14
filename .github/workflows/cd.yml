@@ -4,7 +4,7 @@ name: Node.js CD
 
 on:
   push:
-    branches: [ "feature/pipelines" ]
+    branches: [ "develop" ]
 
 permissions:
   contents: write
