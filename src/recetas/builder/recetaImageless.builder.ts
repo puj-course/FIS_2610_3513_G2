@@ -28,6 +28,10 @@ export class RecetaImagelessBuilder implements IRecetaBuilder {
     return this;
   }
 
+  setVideo(url: string): this {
+    this.recetaFinal.video_url = url;
+    return this;
+  }
   // Relación con la categoría (solo el ID)
   setCategory(id: number): this {
     this.recetaFinal.recetacategoria = {

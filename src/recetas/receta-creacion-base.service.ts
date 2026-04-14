@@ -67,6 +67,20 @@ export abstract class RecetaCreacionBase {
       builder.setImage("", buffer);
     }
 
+    // PARA SUBIR VIDEO
+    if (dto.video_url) {
+      const buffer = Buffer.from(dto.video_url.split(',')[1], 'base64');
+      const videoUrl = await new Promise<string>((resolve, reject) => {
+        cloudinary.uploader.upload_stream(
+          { folder: 'recetasya/pendientes', resource_type: 'video' },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result!.secure_url);
+          }
+        ).end(buffer);
+      });
+      builder.setVideo(videoUrl);
+    }
     if (categoria) {
       builder.setCategory(categoria.idcategoria);
     }
@@ -82,3 +96,5 @@ export abstract class RecetaCreacionBase {
   // paso abstracto ( se decide si aplicar o no la notif )
   protected abstract notificar(receta: any): Promise<void>;
 }
+
+

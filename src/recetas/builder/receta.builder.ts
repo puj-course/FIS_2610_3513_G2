@@ -24,14 +24,19 @@ export class RecetaBuilder implements IRecetaBuilder {
     return this;
   }
 
-    // ( Recordar que este es el builder de la receta completa, contiene imagen )
-    // Buffer de la imagen adjunta
-    setImage(url: string, buffer: Buffer): this {
-    this.recetaFinal.image_url     = url;
-    this.recetaFinal.imagenreceta  = buffer;
+  // ( Recordar que este es el builder de la receta completa, contiene imagen )
+  // Buffer de la imagen adjunta
+  setImage(url: string, buffer: Buffer): this {
+  this.recetaFinal.image_url     = url;
+  this.recetaFinal.imagenreceta  = buffer;
+  return this;
+}
+
+// set video
+  setVideo(url: string): this {
+    this.recetaFinal.video_url = url;
     return this;
   }
-
   // Relación con la categoría (solo el ID)
   setCategory(id: number): this {
     this.recetaFinal.recetacategoria = {

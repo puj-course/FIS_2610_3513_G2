@@ -59,29 +59,14 @@ async actualizarEstado(idreceta: number, estado: string) {
 
     await this.notificaciones.notificarTelegram(receta);
 
-    if (!receta) {
-      throw new Error("Receta no encontrada");
-    }
-
-    let imageUrl = receta.image_url;
-
-    if (receta.imagenreceta && !receta.image_url) {
-      imageUrl = await new Promise<string>((resolve, reject) => {
-        cloudinary.uploader
-          .upload_stream({ folder: "recetasya" }, (error, result) => {
-            if (error) reject(error);
-            else resolve(result!.secure_url);
-          })
-          .end(receta.imagenreceta); // ✅ correcto
-      });
-    }
+    const imageUrl = await this.uploadImageCloudinary(idreceta);
 
     return this.prisma.receta.update({
       where: { idreceta },
       data: {
         estado: "aprobado",
         image_url: imageUrl,
-        imagenreceta: null, // ✅ correcto
+        imagenreceta: null, 
       },
     });
 
@@ -99,6 +84,31 @@ async actualizarEstado(idreceta: number, estado: string) {
   }
 }
 
+async uploadImageCloudinary(idreceta: number) {
+
+  const receta = await this.prisma.receta.findUnique({
+    where: { idreceta },
+  });
+
+  if (!receta) {
+    throw new Error("Receta no encontrada");
+  }
+
+  let imageUrl = receta.image_url;
+
+  if (receta.imagenreceta && !receta.image_url) {
+    imageUrl = await new Promise<string>((resolve, reject) => {
+      cloudinary.uploader
+        .upload_stream({ folder: "recetasya" }, (error, result) => {
+          if (error) reject(error);
+          else resolve(result!.secure_url);
+        })
+        .end(receta.imagenreceta); // ✅ correcto
+    });
+    return imageUrl;
+  }
+}
+
 getAll() {
   return this.prisma.receta.findMany({
     orderBy: { nombre: 'asc' },
@@ -107,7 +117,6 @@ getAll() {
       paso: { orderBy: { numeropaso: 'asc' } },
     },
   }).then(recetas => recetas.map(r => {
-    console.log('tipo:', typeof r.imagenreceta, '| constructor:', r.imagenreceta?.constructor?.name);
     return {
       ...r,
       image_url: r.image_url

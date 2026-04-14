@@ -5,6 +5,7 @@ export interface IRecetaBuilder {
   setDatosBase(dto: CrearRecetaDto): this;
   setImage(url: string, buffer: Buffer): this;
   setCategory(id: number): this;
+  setVideo(url: string): this;
   setIngredients(ingredientes: any[]): this;
   setPasos(pasos: string[]): this;
   build(): Prisma.recetaCreateInput;
