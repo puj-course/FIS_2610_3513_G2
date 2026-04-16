@@ -1,7 +1,10 @@
-import { Controller, Get, Delete, Post, Patch, Body, Query, Param, HttpCode } from '@nestjs/common';
+import { Controller, Get, Delete, Post, Patch, UploadedFile, UseInterceptors, Body, Query, Param, HttpCode } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { memoryStorage } from 'multer';
 import { RecetasService } from './recetas.service';
 import { BuscarRecetasDto } from './dto/buscar-recetas.dto';
 import { CrearRecetaDto } from './dto/crear-receta.dto';
+import { v2 as cloudinary } from "cloudinary";
 
 @Controller('recetas')
 export class RecetasController {
@@ -45,5 +48,11 @@ export class RecetasController {
   @Delete(':id')
   async eliminarReceta(@Param('id') id: string) {
     return this.recetasService.eliminarReceta(Number(id));
+  }
+  @Post('upload-video')
+  @UseInterceptors(FileInterceptor('video', { storage: memoryStorage() }))
+  async uploadVideo(@UploadedFile() file: Express.Multer.File) {
+    const url = await this.recetasService.subirVideoCloudinary(file.buffer);
+    return { video_url: url };
   }
 }
