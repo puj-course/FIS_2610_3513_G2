@@ -18,7 +18,7 @@ jobs:
           MESSAGE=$(git log -1 --pretty=%B)
           echo "Commit: $MESSAGE"
           
-          # Regex mejorada
+          # Regex mejorada, test
           if [[ $MESSAGE =~ (Closes|Refs).?\(?#([0-9]+) ]]; then
             echo "keyword=${BASH_REMATCH[1]}" >> $GITHUB_OUTPUT
             echo "issue_num=${BASH_REMATCH[2]}" >> $GITHUB_OUTPUT
@@ -27,6 +27,15 @@ jobs:
             echo "found=false" >> $GITHUB_OUTPUT
           fi
 
+      - name: Verificar si el Secret existe
+        run: |
+          if [ -z "${{ secrets.GH_PAT }}" ]; then
+            echo "❌ ERROR: El secret GH_PAT está vacío o no se encuentra."
+            exit 1
+          else
+            echo "✅ El secret GH_PAT tiene contenido."
+          fi
+          
       - name: Obtener node ID del issue
         if: steps.parse.outputs.found == 'true'
         id: issue_node
