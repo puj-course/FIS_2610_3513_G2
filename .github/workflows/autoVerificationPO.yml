@@ -43,22 +43,36 @@ jobs:
           FLD_ID: ${{ secrets.STATUS_FIELD_ID }}
           OPT_DONE: ${{ secrets.STATUS_DONE_ID }} 
         run: |
-          ITEM_ID=$(gh api graphql -f query='
-            query($org: String!, $num: Int!) {
-              organization(login: $org) {
-                projectV2(number: $num) {
-                  items(first: 100) {
-                    nodes {
-                      id
-                      content { ... on Issue { id } }
+          CURSOR=""
+          ITEM_ID=""
+
+          while [ -z "$ITEM_ID" ]; do
+            RESULT=$(gh api graphql -f query='
+              query($org: String!, $num: Int!, $cursor: String) {
+                organization(login: $org) {
+                  projectV2(number: $num) {
+                    items(first: 100, after: $cursor) {
+                      pageInfo { hasNextPage endCursor }
+                      nodes {
+                        id
+                        content { ... on Issue { id } }
+                      }
                     }
                   }
                 }
-              }
-            }' \
-            -f org="puj-course" \
-            -F num=56 \
-            --jq ".data.organization.projectV2.items.nodes[] | select(.content.id == \"$ISSUE_NODE\") | .id")
+              }' \
+              -f org="puj-course" \
+              -F num=56 \
+              -f cursor="$CURSOR")
+
+            ITEM_ID=$(echo "$RESULT" | jq -r ".data.organization.projectV2.items.nodes[] | select(.content.id == \"$ISSUE_NODE\") | .id")
+            HAS_NEXT=$(echo "$RESULT" | jq -r '.data.organization.projectV2.items.pageInfo.hasNextPage')
+            CURSOR=$(echo "$RESULT" | jq -r '.data.organization.projectV2.items.pageInfo.endCursor')
+
+            if [ "$HAS_NEXT" != "true" ]; then
+              break
+            fi
+          done
 
           if [ -z "$ITEM_ID" ]; then
             echo "No se encontró el issue en el proyecto."
