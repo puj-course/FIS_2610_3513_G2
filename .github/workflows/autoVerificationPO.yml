@@ -11,7 +11,7 @@ permissions:
 jobs:
   close_card:
     runs-on: ubuntu-latest
-    # me pongo yo por ahora para probar jeje
+    # alguien que me recuerde poner a blurry cuando termine de testear
     if: |
       github.event.comment.user.login == 'Alendy-24' && 
       contains(github.event.comment.body, 'cerrar')
@@ -41,12 +41,12 @@ jobs:
           ISSUE_NODE: ${{ steps.issue_node.outputs.node_id }}
           PRJ_ID: ${{ secrets.PROJECT_NODE_ID }}
           FLD_ID: ${{ secrets.STATUS_FIELD_ID }}
-          OPT_DONE: ${{ secrets.STATUS_DONE_ID }} 
+          OPT_DONE: ${{ secrets.STATUS_DONE_ID }}
         run: |
           CURSOR=""
           ITEM_ID=""
 
-          while [ -z "$ITEM_ID" ]; do
+          while true; do
             RESULT=$(gh api graphql -f query='
               query($org: String!, $num: Int!, $cursor: String) {
                 organization(login: $org) {
@@ -69,7 +69,7 @@ jobs:
             HAS_NEXT=$(echo "$RESULT" | jq -r '.data.organization.projectV2.items.pageInfo.hasNextPage')
             CURSOR=$(echo "$RESULT" | jq -r '.data.organization.projectV2.items.pageInfo.endCursor')
 
-            if [ "$HAS_NEXT" != "true" ]; then
+            if [ -n "$ITEM_ID" ] || [ "$HAS_NEXT" != "true" ]; then
               break
             fi
           done
@@ -79,30 +79,8 @@ jobs:
             exit 0
           fi
 
-      - name: Debug - Verificar item en proyecto
-        if: steps.issue_node.outputs.node_id != ''
-        env:
-          GH_TOKEN: ${{ secrets.GH_PAT }}
-          ISSUE_NODE: ${{ steps.issue_node.outputs.node_id }}
-        run: |
-          echo "🔍 Buscando ISSUE_NODE: $ISSUE_NODE"
-          gh api graphql -f query='
-            query($org: String!, $num: Int!) {
-              organization(login: $org) {
-                projectV2(number: $num) {
-                  items(first: 100) {
-                    nodes {
-                      id
-                      content { ... on Issue { id number } }
-                    }
-                  }
-                }
-              }
-            }' \
-            -f org="puj-course" \
-            -F num=56 \
-            --jq '.data.organization.projectV2.items.nodes[] | select(.content != null) | {item_id: .id, issue_id: .content.id, issue_num: .content.number}'
-          # Mover a Done en el Kanban
+          echo "✅ ITEM_ID encontrado: $ITEM_ID"
+
           gh api graphql -f query='
             mutation($prj: ID!, $item: ID!, $field: ID!, $opt: String!) {
               updateProjectV2ItemFieldValue(input: {
