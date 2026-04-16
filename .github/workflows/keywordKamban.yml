@@ -17,13 +17,11 @@ jobs:
         run: |
           MESSAGE=$(git log -1 --pretty=%B)
           echo "Commit: $MESSAGE"
-          if [[ $MESSAGE =~ Closes\ #([0-9]+) ]]; then
-            echo "issue_num=${BASH_REMATCH[1]}" >> $GITHUB_OUTPUT
-            echo "status=In review" >> $GITHUB_OUTPUT
-            echo "found=true" >> $GITHUB_OUTPUT
-          elif [[ $MESSAGE =~ Refs\ #([0-9]+) ]]; then
-            echo "issue_num=${BASH_REMATCH[1]}" >> $GITHUB_OUTPUT
-            echo "status=In progress" >> $GITHUB_OUTPUT
+          
+          # Regex mejorada
+          if [[ $MESSAGE =~ (Closes|Refs).?\(?#([0-9]+) ]]; then
+            echo "keyword=${BASH_REMATCH[1]}" >> $GITHUB_OUTPUT
+            echo "issue_num=${BASH_REMATCH[2]}" >> $GITHUB_OUTPUT
             echo "found=true" >> $GITHUB_OUTPUT
           else
             echo "found=false" >> $GITHUB_OUTPUT
@@ -76,12 +74,16 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GH_PAT }}
           ITEM_ID: ${{ steps.project_item.outputs.item_id }}
-          STATUS: ${{ steps.parse.outputs.status }}
+          KEYWORD: ${{ steps.parse.outputs.keyword }}
+          PROJECT_ID: ${{ secrets.PROJECT_NODE_ID }}
+          STATUS_FIELD: ${{ secrets.STATUS_FIELD_ID }}
+          ID_IN_PROGRESS: ${{ secrets.STATUS_IN_PROGRESS_ID }}
+          ID_IN_REVIEW: ${{ secrets.STATUS_IN_REVIEW_ID }}
         run: |
-          if [ "$STATUS" = "In review" ]; then
-            OPTION_ID="${{ vars.STATUS_IN_REVIEW_ID }}"
+          if [ "$KEYWORD" == "Closes" ]; then
+            OPTION_ID="$ID_IN_REVIEW"
           else
-            OPTION_ID="${{ vars.STATUS_IN_PROGRESS_ID }}"
+            OPTION_ID="$ID_IN_PROGRESS"
           fi
 
           gh api graphql -f query='
@@ -95,7 +97,7 @@ jobs:
                 projectV2Item { id }
               }
             }' \
-            -f projectId="${{ vars.PROJECT_NODE_ID }}" \
+            -f projectId="$PROJECT_ID" \
             -f itemId="$ITEM_ID" \
-            -f fieldId="${{ vars.STATUS_FIELD_ID }}" \
+            -f fieldId="$STATUS_FIELD" \
             -f optionId="$OPTION_ID"
