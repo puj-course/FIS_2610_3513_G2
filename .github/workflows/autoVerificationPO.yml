@@ -11,6 +11,7 @@ permissions:
 jobs:
   close_card:
     runs-on: ubuntu-latest
+    environment: .env
     # alguien que me recuerde poner a blurry cuando termine de testear
     if: |
       github.event.comment.user.login == 'Alendy-24' && 
