@@ -18,7 +18,7 @@ jobs:
           MESSAGE=$(git log -1 --pretty=%B)
           echo "Commit: $MESSAGE"
           
-          # Regex mejorada
+          # Regex mejorada, test
           if [[ $MESSAGE =~ (Closes|Refs).?\(?#([0-9]+) ]]; then
             echo "keyword=${BASH_REMATCH[1]}" >> $GITHUB_OUTPUT
             echo "issue_num=${BASH_REMATCH[2]}" >> $GITHUB_OUTPUT
