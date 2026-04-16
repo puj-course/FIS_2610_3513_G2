@@ -4,6 +4,10 @@ on:
   push:
     branches: [ features-alejandro, features-salome ]
 
+permissions:
+  contents: read
+  repository-projects: write
+
 jobs:
   move_card:
     runs-on: ubuntu-latest
@@ -18,7 +22,7 @@ jobs:
           MESSAGE=$(git log -1 --pretty=%B)
           echo "Commit: $MESSAGE"
           
-          # Regex mejorada, test
+          # Regex mejorada: detecta Closes/Refs con o sin paréntesis y el #
           if [[ $MESSAGE =~ (Closes|Refs).?\(?#([0-9]+) ]]; then
             echo "keyword=${BASH_REMATCH[1]}" >> $GITHUB_OUTPUT
             echo "issue_num=${BASH_REMATCH[2]}" >> $GITHUB_OUTPUT
@@ -26,22 +30,12 @@ jobs:
           else
             echo "found=false" >> $GITHUB_OUTPUT
           fi
-        
-        # test 4
-      - name: Verificar si el Secret existe
-        run: |
-          if [ -z "${{ secrets.GH_PAT }}" ]; then
-            echo "❌ ERROR: El secret GH_PAT está vacío o no se encuentra."
-            exit 1
-          else
-            echo "✅ El secret GH_PAT tiene contenido."
-          fi
 
       - name: Obtener node ID del issue
         if: steps.parse.outputs.found == 'true'
         id: issue_node
         env:
-          GH_TOKEN: ${{ secrets.GH_PAT }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           NODE_ID=$(gh api graphql -f query='
             query($owner: String!, $repo: String!, $num: Int!) {
@@ -55,17 +49,23 @@ jobs:
             --jq '.data.repository.issue.id')
           echo "node_id=$NODE_ID" >> $GITHUB_OUTPUT
 
-      - name: Obtener item ID en el proyecto
+      - name: Mover tarjeta en el kanban
         if: steps.parse.outputs.found == 'true'
-        id: project_item
         env:
           GH_TOKEN: ${{ secrets.GH_PAT }}
           ISSUE_NODE_ID: ${{ steps.issue_node.outputs.node_id }}
+          KEYWORD: ${{ steps.parse.outputs.keyword }}
+          # Tus secretos configurados con el candado
+          PROJECT_ID: ${{ secrets.PROJECT_NODE_ID }}
+          STATUS_FIELD: ${{ secrets.STATUS_FIELD_ID }}
+          ID_IN_PROGRESS: ${{ secrets.STATUS_IN_PROGRESS_ID }}
+          ID_IN_REVIEW: ${{ secrets.STATUS_IN_REVIEW_ID }}
         run: |
+          # 1. Obtener el ID del item en el proyecto
           ITEM_ID=$(gh api graphql -f query='
-            query($org: String!, $projNum: Int!) {
-              organization(login: $org) {
-                projectV2(number: $projNum) {
+            query($projId: ID!, $issueId: ID!) {
+              node(id: $projId) {
+                ... on ProjectV2 {
                   items(first: 100) {
                     nodes {
                       id
@@ -74,28 +74,22 @@ jobs:
                   }
                 }
               }
-            }' \
-            -f org="puj-course" -F projNum=56 \
-            --jq ".data.organization.projectV2.items.nodes[] | select(.content.id == \"$ISSUE_NODE_ID\") | .id")
-          echo "item_id=$ITEM_ID" >> $GITHUB_OUTPUT
+            }' -f projId="$PROJECT_ID" \
+            --jq ".data.node.items.nodes[] | select(.content.id == \"$ISSUE_NODE_ID\") | .id")
 
-      - name: Mover tarjeta en el kanban
-        if: steps.parse.outputs.found == 'true' && steps.project_item.outputs.item_id != ''
-        env:
-          GH_TOKEN: ${{ secrets.GH_PAT }}
-          ITEM_ID: ${{ steps.project_item.outputs.item_id }}
-          KEYWORD: ${{ steps.parse.outputs.keyword }}
-          PROJECT_ID: ${{ secrets.PROJECT_NODE_ID }}
-          STATUS_FIELD: ${{ secrets.STATUS_FIELD_ID }}
-          ID_IN_PROGRESS: ${{ secrets.STATUS_IN_PROGRESS_ID }}
-          ID_IN_REVIEW: ${{ secrets.STATUS_IN_REVIEW_ID }}
-        run: |
+          if [ -z "$ITEM_ID" ]; then
+            echo "No se encontró el issue en el proyecto."
+            exit 0
+          fi
+
+          # 2. Decidir el estado
           if [ "$KEYWORD" == "Closes" ]; then
             OPTION_ID="$ID_IN_REVIEW"
           else
             OPTION_ID="$ID_IN_PROGRESS"
           fi
 
+          # 3. Actualizar
           gh api graphql -f query='
             mutation($projectId: ID!, $itemId: ID!, $fieldId: ID!, $optionId: String!) {
               updateProjectV2ItemFieldValue(input: {
@@ -103,11 +97,5 @@ jobs:
                 itemId: $itemId
                 fieldId: $fieldId
                 value: { singleSelectOptionId: $optionId }
-              }) {
-                projectV2Item { id }
-              }
-            }' \
-            -f projectId="$PROJECT_ID" \
-            -f itemId="$ITEM_ID" \
-            -f fieldId="$STATUS_FIELD" \
-            -f optionId="$OPTION_ID"
+              }) { projectV2Item { id } }
+            }' -f projectId="$PROJECT_ID" -f itemId="$ITEM_ID" -f fieldId="$STATUS_FIELD" -f optionId="$OPTION_ID"
