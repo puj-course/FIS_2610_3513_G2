@@ -17,10 +17,10 @@ export class RecetaBuilder implements IRecetaBuilder {
     this.recetaFinal.calorias          = dto.calorias          || 'N/A';
     this.recetaFinal.estado            = dto.estado            || 'pendiente';
     this.recetaFinal.fechacreacion     = new Date();
-
     if (dto.id_usuariocreador) {
     this.recetaFinal.id_usuariocreador = dto.id_usuariocreador;
     }
+    this.recetaFinal.video_url = dto.video_url || null;
     return this;
   }
 

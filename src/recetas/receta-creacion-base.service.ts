@@ -62,25 +62,52 @@ export abstract class RecetaCreacionBase {
 
     builder.setDatosBase(dto);
 
-    if (dto.imagen) {
+    // VALIDACIÓN PARA IMAGEN
+    if (dto.imagen && dto.imagen.includes(',')) {
       const buffer = Buffer.from(dto.imagen.split(",")[1], "base64");
-      builder.setImage("", buffer);
+      
+      try {
+        const imageUrl = await new Promise<string>((resolve, reject) => {
+          const upload = cloudinary.uploader.upload_stream(
+            { folder: "recetasya" },
+            (error, result) => {
+              if (error) reject(error);
+              else resolve(result!.secure_url);
+            }
+          );
+          upload.end(buffer);
+        });
+
+        builder.setImage(imageUrl, buffer); 
+      } catch (error) {
+        console.error("Error subiendo imagen a Cloudinary:", error);
+        builder.setImage("", buffer); 
+      }
+    }
+    // VALIDACIÓN PARA VIDEO
+    if (dto.video_url) {
+      // Si es un base64 (trae la coma del data:video/...)
+      if (dto.video_url.includes(',')) {
+        const base64Data = dto.video_url.split(',')[1];
+        if (base64Data) {
+          const buffer = Buffer.from(base64Data, 'base64');
+          const videoUrl = await new Promise<string>((resolve, reject) => {
+            cloudinary.uploader.upload_stream(
+              { folder: 'recetasya/pendientes', resource_type: 'video' },
+              (error, result) => {
+                if (error) reject(error);
+                else resolve(result!.secure_url);
+              }
+            ).end(buffer);
+          });
+          builder.setVideo(videoUrl);
+        }
+      } else {
+        // Si no tiene coma, asumimos que ya es una URL de video o un string plano
+        builder.setVideo(dto.video_url);
+      }
     }
 
-    // PARA SUBIR VIDEO
-    if (dto.video_url) {
-      const buffer = Buffer.from(dto.video_url.split(',')[1], 'base64');
-      const videoUrl = await new Promise<string>((resolve, reject) => {
-        cloudinary.uploader.upload_stream(
-          { folder: 'recetasya/pendientes', resource_type: 'video' },
-          (error, result) => {
-            if (error) reject(error);
-            else resolve(result!.secure_url);
-          }
-        ).end(buffer);
-      });
-      builder.setVideo(videoUrl);
-    }
     if (categoria) {
       builder.setCategory(categoria.idcategoria);
     }

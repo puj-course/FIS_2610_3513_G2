@@ -366,35 +366,48 @@ const videoName     = document.getElementById('videoName');
 const videoProgress = document.getElementById('videoProgress');
 const progressBar   = document.getElementById('progressBar');
 const progressText  = document.getElementById('progressText');
-let videoData = null;
+let videoUrl = null;
 
-videoFile.addEventListener('change', () => {
+videoFile.addEventListener('change', async () => {
   const file = videoFile.files[0];
   if (!file) return;
   if (file.size > 50 * 1024 * 1024) { showToast('El video no debe superar 50 MB'); return; }
 
   document.getElementById('videoProgress').style.display = 'block';
-  document.getElementById('progressText').textContent = 'Leyendo video...';
+  document.getElementById('progressText').textContent = 'Subiendo video...';
 
-  const reader = new FileReader();
-  reader.onload = e => {
-    videoData = e.target.result;
+  try {
+    const formData = new FormData();
+    formData.append('video', file);
+
+    const res = await fetch('http://localhost:3000/recetas/upload-video', {
+      method: 'POST',
+      body: formData, 
+    });
+
+    if (!res.ok) throw new Error();
+    const data = await res.json();
+    videoUrl = data.video_url;
+
     videoArea.classList.add('has-img');
-    document.getElementById('videoName').style.display = 'block';
     videoArea.setAttribute('style', 'position:relative; min-height:40px; display:flex; align-items:center; padding: 8px 16px;');
     document.getElementById('videoName').textContent = file.name;
-    document.getElementById('progressBar').style.width = '100%';
-    document.getElementById('progressText').textContent = 'Video listo ✓';
+    document.getElementById('videoName').style.display = 'block';
     document.getElementById('videoRemove').style.display = 'flex';
+    document.getElementById('progressBar').style.width = '100%';
+    document.getElementById('progressText').textContent = 'Video subido ✓';
     setTimeout(() => document.getElementById('videoProgress').style.display = 'none', 1200);
-  };
-  reader.readAsDataURL(file);
+    showToast('Video subido ✓');
+
+  } catch (err) {
+    showToast('Error al subir el video');
+    document.getElementById('videoProgress').style.display = 'none';
+  }
 });
 
 function removeVideo() {
-  videoData = null;
+  videoUrl = null;
   videoFile.value = '';
-  videoArea.style.minHeight = ''; 
   videoArea.classList.remove('has-img');
   videoArea.setAttribute('style', 'position:relative;');
   document.getElementById('videoName').style.display = 'none';

@@ -137,6 +137,18 @@ getAll() {
       where: { idreceta },
   });
   }
+
+  async subirVideoCloudinary(buffer: Buffer): Promise<string> {
+    return new Promise((resolve, reject) => {
+      cloudinary.uploader.upload_stream(
+        { folder: 'recetasya/pendientes', resource_type: 'video' },
+        (error, result) => {
+          if (error) reject(error);
+          else resolve(result!.secure_url);
+        }
+      ).end(buffer);
+    });
+  }
 }
 
 
