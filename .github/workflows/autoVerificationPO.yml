@@ -65,6 +65,29 @@ jobs:
             exit 0
           fi
 
+      - name: Debug - Verificar item en proyecto
+        if: steps.issue_node.outputs.node_id != ''
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+          ISSUE_NODE: ${{ steps.issue_node.outputs.node_id }}
+        run: |
+          echo "🔍 Buscando ISSUE_NODE: $ISSUE_NODE"
+          gh api graphql -f query='
+            query($org: String!, $num: Int!) {
+              organization(login: $org) {
+                projectV2(number: $num) {
+                  items(first: 100) {
+                    nodes {
+                      id
+                      content { ... on Issue { id number } }
+                    }
+                  }
+                }
+              }
+            }' \
+            -f org="puj-course" \
+            -F num=56 \
+            --jq '.data.organization.projectV2.items.nodes[] | select(.content != null) | {item_id: .id, issue_id: .content.id, issue_num: .content.number}'
           # Mover a Done en el Kanban
           gh api graphql -f query='
             mutation($prj: ID!, $item: ID!, $field: ID!, $opt: String!) {
