@@ -10,6 +10,7 @@ permissions:
 jobs:
   move_card:
     runs-on: ubuntu-latest
+    environment: .env 
     steps:
       - uses: actions/checkout@v4
         with:
