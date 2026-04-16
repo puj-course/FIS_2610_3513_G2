@@ -1,0 +1,101 @@
+name: Kanban - Mover por keyword en commit
+
+on:
+  push:
+    branches: [ features-alejandro, features-salome ]
+
+jobs:
+  move_card:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Parsear mensaje del commit
+        id: parse
+        run: |
+          MESSAGE=$(git log -1 --pretty=%B)
+          echo "Commit: $MESSAGE"
+          if [[ $MESSAGE =~ Closes\ #([0-9]+) ]]; then
+            echo "issue_num=${BASH_REMATCH[1]}" >> $GITHUB_OUTPUT
+            echo "status=In review" >> $GITHUB_OUTPUT
+            echo "found=true" >> $GITHUB_OUTPUT
+          elif [[ $MESSAGE =~ Refs\ #([0-9]+) ]]; then
+            echo "issue_num=${BASH_REMATCH[1]}" >> $GITHUB_OUTPUT
+            echo "status=In progress" >> $GITHUB_OUTPUT
+            echo "found=true" >> $GITHUB_OUTPUT
+          else
+            echo "found=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Obtener node ID del issue
+        if: steps.parse.outputs.found == 'true'
+        id: issue_node
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+        run: |
+          NODE_ID=$(gh api graphql -f query='
+            query($owner: String!, $repo: String!, $num: Int!) {
+              repository(owner: $owner, name: $repo) {
+                issue(number: $num) { id }
+              }
+            }' \
+            -f owner="puj-course" \
+            -f repo="FIS_2610_3513_G2" \
+            -F num=${{ steps.parse.outputs.issue_num }} \
+            --jq '.data.repository.issue.id')
+          echo "node_id=$NODE_ID" >> $GITHUB_OUTPUT
+
+      - name: Obtener item ID en el proyecto
+        if: steps.parse.outputs.found == 'true'
+        id: project_item
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+          ISSUE_NODE_ID: ${{ steps.issue_node.outputs.node_id }}
+        run: |
+          ITEM_ID=$(gh api graphql -f query='
+            query($org: String!, $projNum: Int!) {
+              organization(login: $org) {
+                projectV2(number: $projNum) {
+                  items(first: 100) {
+                    nodes {
+                      id
+                      content { ... on Issue { id } }
+                    }
+                  }
+                }
+              }
+            }' \
+            -f org="puj-course" -F projNum=56 \
+            --jq ".data.organization.projectV2.items.nodes[] | select(.content.id == \"$ISSUE_NODE_ID\") | .id")
+          echo "item_id=$ITEM_ID" >> $GITHUB_OUTPUT
+
+      - name: Mover tarjeta en el kanban
+        if: steps.parse.outputs.found == 'true' && steps.project_item.outputs.item_id != ''
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+          ITEM_ID: ${{ steps.project_item.outputs.item_id }}
+          STATUS: ${{ steps.parse.outputs.status }}
+        run: |
+          if [ "$STATUS" = "In review" ]; then
+            OPTION_ID="${{ vars.STATUS_IN_REVIEW_ID }}"
+          else
+            OPTION_ID="${{ vars.STATUS_IN_PROGRESS_ID }}"
+          fi
+
+          gh api graphql -f query='
+            mutation($projectId: ID!, $itemId: ID!, $fieldId: ID!, $optionId: String!) {
+              updateProjectV2ItemFieldValue(input: {
+                projectId: $projectId
+                itemId: $itemId
+                fieldId: $fieldId
+                value: { singleSelectOptionId: $optionId }
+              }) {
+                projectV2Item { id }
+              }
+            }' \
+            -f projectId="${{ vars.PROJECT_NODE_ID }}" \
+            -f itemId="$ITEM_ID" \
+            -f fieldId="${{ vars.STATUS_FIELD_ID }}" \
+            -f optionId="$OPTION_ID"
