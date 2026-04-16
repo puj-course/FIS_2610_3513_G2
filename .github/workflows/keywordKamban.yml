@@ -20,7 +20,6 @@ jobs:
         run: |
           MESSAGE=$(git log -1 --pretty=%B)
           echo "Commit: $MESSAGE"
-          # Regex que captura la palabra y el número ignorando paréntesis
           if [[ $MESSAGE =~ (Closes|Refs).?\(?#([0-9]+) ]]; then
             echo "keyword=${BASH_REMATCH[1]}" >> $GITHUB_OUTPUT
             echo "issue_num=${BASH_REMATCH[2]}" >> $GITHUB_OUTPUT
@@ -28,16 +27,18 @@ jobs:
           else
             echo "found=false" >> $GITHUB_OUTPUT
           fi
+
       - name: Debug token
         env:
           GH_TOKEN: ${{ secrets.GH_PAT }}
         run: |
-                if [ -z "$GH_TOKEN" ]; then
-                echo "❌ GH_TOKEN está vacío"
-                else
-                echo "✅ GH_TOKEN tiene valor"
-                gh auth status
-                fi
+          if [ -z "$GH_TOKEN" ]; then
+            echo "❌ GH_TOKEN está vacío"
+          else
+            echo "✅ GH_TOKEN tiene valor"
+            gh auth status
+          fi
+
       - name: Obtener node ID del issue
         if: steps.parse.outputs.found == 'true'
         id: issue_node
@@ -67,10 +68,9 @@ jobs:
           OPT_PROGRESS: ${{ secrets.STATUS_IN_PROGRESS_ID }}
           OPT_REVIEW: ${{ secrets.STATUS_IN_REVIEW_ID }}
         run: |
-          # Verifica que el token existe (no imprime el valor)
           echo "Token set: $([[ -n "$GH_TOKEN" ]] && echo 'YES' || echo 'NO')"
-          gh auth status   # Esto confirma si el token es válido
-          # 1. Buscar el item_id del issue dentro del proyecto
+          gh auth status
+
           ITEM_ID=$(gh api graphql -f query='
             query($org: String!, $num: Int!) {
               organization(login: $org) {
@@ -83,7 +83,9 @@ jobs:
                   }
                 }
               }
-            }' -f org="puj-course" -F num=56 \
+            }' \
+            -f org="puj-course" \
+            -F num=56 \
             --jq ".data.organization.projectV2.items.nodes[] | select(.content.id == \"$ISSUE_NODE\") | .id")
 
           if [ -z "$ITEM_ID" ]; then
@@ -91,17 +93,19 @@ jobs:
             exit 0
           fi
 
-          # 2. Seleccionar el ID de la columna según la palabra
           if [ "$KEYWORD" == "Closes" ]; then
             TARGET_OPT="$OPT_REVIEW"
           else
             TARGET_OPT="$OPT_PROGRESS"
           fi
 
-          # 3. Mover la tarjeta
           gh api graphql -f query='
             mutation($prj: ID!, $item: ID!, $field: ID!, $opt: String!) {
               updateProjectV2ItemFieldValue(input: {
                 projectId: $prj, itemId: $item, fieldId: $field, value: { singleSelectOptionId: $opt }
               }) { projectV2Item { id } }
-            }' -f prj="$PRJ_ID" -f item="$ITEM_ID" -f field="$FLD_ID" -f opt="$TARGET_OPT"
+            }' \
+            -f prj="$PRJ_ID" \
+            -f item="$ITEM_ID" \
+            -f field="$FLD_ID" \
+            -f opt="$TARGET_OPT"
