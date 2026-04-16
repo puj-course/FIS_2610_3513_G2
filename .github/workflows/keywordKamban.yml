@@ -28,7 +28,16 @@ jobs:
           else
             echo "found=false" >> $GITHUB_OUTPUT
           fi
-
+      - name: Debug token
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+        run: |
+                if [ -z "$GH_TOKEN" ]; then
+                echo "❌ GH_TOKEN está vacío"
+                else
+                echo "✅ GH_TOKEN tiene valor"
+                gh auth status
+                fi
       - name: Obtener node ID del issue
         if: steps.parse.outputs.found == 'true'
         id: issue_node
