@@ -255,8 +255,4 @@ Computer science student at Pontificia Universidad Javeriana.
 
 This project has been developed for academic purposes. 
 
-<<<<<<< HEAD
-test2
-=======
-test 3
->>>>>>> 13234d3 (testing Kamban pipeline 1. Closes (#172))
+test 4
