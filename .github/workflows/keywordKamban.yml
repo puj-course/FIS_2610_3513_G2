@@ -58,6 +58,9 @@ jobs:
           OPT_PROGRESS: ${{ secrets.STATUS_IN_PROGRESS_ID }}
           OPT_REVIEW: ${{ secrets.STATUS_IN_REVIEW_ID }}
         run: |
+          # Verifica que el token existe (no imprime el valor)
+          echo "Token set: $([[ -n "$GH_TOKEN" ]] && echo 'YES' || echo 'NO')"
+          gh auth status   # Esto confirma si el token es válido
           # 1. Buscar el item_id del issue dentro del proyecto
           ITEM_ID=$(gh api graphql -f query='
             query($org: String!, $num: Int!) {
