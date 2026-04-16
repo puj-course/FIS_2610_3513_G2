@@ -26,7 +26,8 @@ jobs:
           else
             echo "found=false" >> $GITHUB_OUTPUT
           fi
-
+        
+        # test 4
       - name: Verificar si el Secret existe
         run: |
           if [ -z "${{ secrets.GH_PAT }}" ]; then
@@ -35,7 +36,7 @@ jobs:
           else
             echo "✅ El secret GH_PAT tiene contenido."
           fi
-          
+
       - name: Obtener node ID del issue
         if: steps.parse.outputs.found == 'true'
         id: issue_node
