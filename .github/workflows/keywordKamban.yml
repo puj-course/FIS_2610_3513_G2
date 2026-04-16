@@ -34,7 +34,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_PAT }}
         run: |
           if [ -z "$GH_TOKEN" ]; then
-            echo "❌ GH_TOKEN está vacío"
+            echo "❌ GH_TOKEN está vacío, chucha"
           else
             echo "✅ GH_TOKEN tiene valor YIPPEE"
             gh auth status
