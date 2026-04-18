@@ -5,38 +5,19 @@ name: CI pipeline
 
 on:
   push:
-    branches: [ "develop" ]
+    branches: [ "features-salome", "features-alejandro", "develop" ]
   pull_request:
     branches: [ "develop" ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:latest
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: recetasya
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5432:5432
     strategy:
       matrix:
-        node-version: [25.x]
+        node-version: [25.x] # Esta es la version que soporta nuestro proyecto en otras versiones falla
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
-    - name: Connect to Database
-      run: |
-        psql -h localhost -U postgres -d recetasya -c "SELECT 1"
-      env:
-          PGPASSWORD: postgres
     - uses: actions/checkout@v4
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v4
@@ -47,12 +28,6 @@ jobs:
       run: npm ci
     - name: Generate Prisma Client
       run: npx prisma generate
-    - name: Sync Database Schema
-      run: npx prisma db push
-      env:
-        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/recetasya
     - name: Build
       run: npm run build
-      env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/recetasya
   
