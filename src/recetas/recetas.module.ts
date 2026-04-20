@@ -5,15 +5,16 @@ import { PrismaService } from '../../prisma/prisma.service';
 import { CrearRecetaService } from './crear-receta.service';
 import { GuardarBorradorService } from './guardar-borrador.service';
 import { TelegramModule } from '../telegram/telegram.module';
+import { IngredientesModule } from '../ingredientes/ingredientes.module'
 
 @Module({
-  imports: [TelegramModule],
+  imports: [TelegramModule, IngredientesModule],
   controllers: [RecetasController],
   providers: [
     RecetasService,
     CrearRecetaService,
     GuardarBorradorService,
-    PrismaService,   // ← así, directo
+    PrismaService,  
   ],
 })
 export class RecetasModule {}

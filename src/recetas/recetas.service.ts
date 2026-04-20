@@ -5,6 +5,7 @@ import { CrearRecetaDto } from "./dto/crear-receta.dto";
 import { CrearRecetaService } from "./crear-receta.service";
 import { GuardarBorradorService } from "./guardar-borrador.service";
 import { v2 as cloudinary } from "cloudinary";
+import { IngredienteFlyweightFactory } from '../ingredientes/flyweight/ingrediente-flyweight.factory';
 
 interface RecetaConScore {
   id: number;
@@ -20,6 +21,7 @@ export class RecetasService {
     private readonly crearRecetaService: CrearRecetaService,
     private readonly guardarBorradorService: GuardarBorradorService,
     private readonly notificaciones: NotificacionesFacade,
+    private readonly flyweightFactory: IngredienteFlyweightFactory,
   ) {}
 
   crearReceta(dto: CrearRecetaDto) {
@@ -110,22 +112,49 @@ async uploadImageCloudinary(idreceta: number) {
 }
 
 getAll() {
-  return this.prisma.receta.findMany({
-    orderBy: { nombre: 'asc' },
-    include: {
-      recetaingrediente: { include: { ingrediente: true } },
-      paso: { orderBy: { numeropaso: 'asc' } },
-    },
-  }).then(recetas => recetas.map(r => {
+  return this.prisma.receta
+    .findMany({
+      orderBy: { nombre: 'asc' },
+      include: {
+        recetaingrediente: { include: { ingrediente: true } },
+      },
+    })
+    .then(recetas => ({
+      ingredientes: this.flyweightFactory.getPool(),
+      recetas:      recetas.map(r => this.mapearReceta(r)),
+    }));
+}
+
+private mapearReceta(r: any) {
+  return {
+    idreceta:          r.idreceta,
+    nombre:            r.nombre,
+    descripcion:       r.descripcion,
+    estado:            r.estado,
+    image_url:         this.resolverImagen(r),
+    id_usuariocreador: r.id_usuariocreador,
+    ingredienteIds:    this.resolverIngredientes(r),
+  };
+}
+
+private resolverImagen(r: any): string | null {
+  return r.image_url ?? (r.imagenreceta
+    ? `data:image/jpeg;base64,${Buffer.from(r.imagenreceta).toString('base64')}`
+    : null);
+}
+
+private resolverIngredientes(r: any): number[] {
+  return r.recetaingrediente.map(ri => {
+    this.flyweightFactory.getFlyweight(
+      ri.ingrediente.idingrediente,
+      ri.ingrediente.nombre,
+    );
+
     return {
-      ...r,
-      image_url: r.image_url
-        ?? (r.imagenreceta
-          ? `data:image/jpeg;base64,${Buffer.from(r.imagenreceta as Buffer).toString('base64')}`
-          : null),
-      imagenreceta: undefined,
+      idingrediente: ri.ingrediente.idingrediente,
+      cantidad: ri.cantidadingrediente ?? null,
     };
-  }));
+  });
 }
 
   async eliminarReceta(idreceta: number) {
