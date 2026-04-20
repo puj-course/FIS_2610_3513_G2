@@ -39,8 +39,9 @@ async function cargarRecetasPendientes(usuarioId) {
   try {
     const res = await fetch(`${API_BASE}/recetas`);
     if (!res.ok) throw new Error('Error al obtener recetas');
-    const recetas    = await res.json();
-    const pendientes = recetas.filter(r => r.estado === 'pendiente');
+    const { ingredientes, recetas } = await res.json();
+    const recetasArray = Object.values(recetas);
+    const pendientes = recetasArray.filter(r => r.estado === 'pendiente');
 
     loading.style.display = 'none';
 
