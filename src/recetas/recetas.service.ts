@@ -149,7 +149,11 @@ private resolverIngredientes(r: any): number[] {
       ri.ingrediente.idingrediente,
       ri.ingrediente.nombre,
     );
-    return ri.ingrediente.idingrediente;
+
+    return {
+      idingrediente: ri.ingrediente.idingrediente,
+      cantidad: ri.cantidadingrediente ?? null,
+    };
   });
 }
 
