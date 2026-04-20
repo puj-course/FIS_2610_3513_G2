@@ -50,23 +50,21 @@ function normalizeUserReceta(r) {
 
 async function buildAllRecetas() {
   try {
-    const resIng = await fetch(API_BASE + "/ingredientes");
-    INGREDIENTES = await resIng.json();
-
     const resRec = await fetch(API_BASE + "/recetas");
-    const recetas = await resRec.json();
+    const { ingredientes, recetas } = await resRec.json();
 
+    INGREDIENTES = Object.values(ingredientes);
     ALL_RECETAS = recetas.map(function(r) {
       return {
-        id:           r.idreceta,
-        nombre:       r.nombre,
-        imagen:       r.image_url || null,
-        ingredientes: (r.recetaingrediente || []).map(function(ri) { return ri.ingrediente_idingrediente; }),
-        estado:       r.estado || "publicado",
-        tipo:         "bd",
+        id:                r.idreceta,
+        nombre:            r.nombre,
+        imagen:            r.image_url || null,
+        ingredientes:      r.ingredienteIds,
+        estado:            r.estado || "publicado",
+        id_usuariocreador: r.id_usuariocreador || null,
+        tipo:              "bd",
       };
     });
-
     renderAllTags();
     renderRecipes();
   } catch(err) {
