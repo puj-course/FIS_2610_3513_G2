@@ -178,6 +178,36 @@ private resolverIngredientes(r: any): number[] {
       ).end(buffer);
     });
   }
+
+
+  //para recetas guardadas 
+  //
+  
+  async guardarReceta(usuarioId: number, recetaId: number) {
+    return this.prisma.recetaguardada.create({
+      data: {
+        usuario_idusuario: usuarioId,
+        receta_idreceta:   recetaId,
+        fecha_guardado:    new Date(),
+      },
+    });
+  }
+
+  async quitarRecetaGuardada(usuarioId: number, recetaId: number) {
+    return this.prisma.recetaguardada.delete({
+      where: {
+        usuario_idusuario_receta_idreceta: {
+          usuario_idusuario: usuarioId,
+          receta_idreceta:   recetaId,
+        },
+      },
+    });
+  }
+
+  async getRecetasGuardadas(usuarioId: number) {
+    return this.prisma.recetaguardada.findMany({
+      where: { usuario_idusuario: usuarioId },
+      select: { receta_idreceta: true },
+    });
+  }
 }
-
-

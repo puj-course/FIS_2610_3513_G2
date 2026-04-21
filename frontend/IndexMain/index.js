@@ -50,10 +50,12 @@ function normalizeUserReceta(r) {
 
 async function buildAllRecetas() {
   try {
+    const resIng = await fetch(API_BASE + "/ingredientes");
+    INGREDIENTES = await resIng.json();
+
     const resRec = await fetch(API_BASE + "/recetas");
     const { ingredientes, recetas } = await resRec.json();
 
-    INGREDIENTES = Object.values(ingredientes);
     ALL_RECETAS = recetas.map(function(r) {
       return {
         id:                r.idreceta,
@@ -65,6 +67,8 @@ async function buildAllRecetas() {
         tipo:              "bd",
       };
     });
+
+    await cargarRecetasGuardadas();
     renderAllTags();
     renderRecipes();
   } catch(err) {
@@ -165,6 +169,12 @@ function renderRecipes() {
   var q = input.value.trim().toLowerCase();
   var results = ALL_RECETAS.slice();
 
+  if (vistaActual === "guardadas") {
+    results = results.filter(function(r) {
+      return recetasGuardadas.has(r.id);
+    });
+  }
+
   if (q) {
     results = results.filter(function(r) {
       if (r.nombre.toLowerCase().indexOf(q) >= 0) return true;
@@ -193,6 +203,7 @@ function renderRecipes() {
 
   results.forEach(function(receta, i) {
     var isUser = receta.tipo === "usuario";
+    var isSaved = recetasGuardadas.has(receta.id); // si la receta es receta guardada o no
 
     var ingChips = receta.ingredientes.map(function(id) {
       var ing = INGREDIENTES.filter(function(x){ return x.idingrediente === id; })[0];
@@ -211,15 +222,34 @@ function renderRecipes() {
     body.className = "card-body";
     body.innerHTML = '<div class="card-name">' + receta.nombre + '</div><div class="card-tags-row">' + ingChips + '</div>' +
       (isUser ? '<div class="card-author">Por ' + receta.autor + (receta.fecha ? " · " + receta.fecha : "") + '</div>' : "");
-    card.appendChild(body);
 
-  if (receta.estado === "borrador") {
-    card.style.cursor = "pointer";
-    card.addEventListener("click", function() {
-      sessionStorage.setItem("recetaya_edit_id", receta.id);
-      window.location.href = "../CrearReceta/create.html";
-   });
-  }
+    // Boton de guardado si hay sesion 
+
+
+  var user = null;
+  try { user = JSON.parse(sessionStorage.getItem("recetaya_user") || "null"); } catch(e) {}
+
+  if (receta.estado !== "borrador") {
+      var btnGuardar = document.createElement("button");
+      btnGuardar.className = "btn-guardar " + (isSaved ? "saved" : "");
+      btnGuardar.title = isSaved ? "Quitar de guardados" : "Guardar receta";
+      btnGuardar.innerHTML = isSaved
+        ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>'
+        : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>';
+
+      btnGuardar.addEventListener("click", function(e) {
+        e.stopPropagation();
+        if (!user) {
+          window.location.href = "../login-register/loginRecetaYa.html";
+          return;
+        }
+        toggleGuardar(receta.id, btnGuardar, user.idusuario);
+      });
+
+      body.appendChild(btnGuardar);
+    }
+
+    card.appendChild(body);
     cardsGrid.appendChild(card);
   });
 }
@@ -337,4 +367,76 @@ renderAllTags();
 renderRecipes();
 checkNewRecipes();
 */
+
+var recetasGuardadas = new Set();
+
+async function cargarRecetasGuardadas() {
+  var user = null;
+  try { user = JSON.parse(sessionStorage.getItem("recetaya_user") || "null"); } catch(e) {}
+  if (!user) return;
+
+  try {
+    var res = await fetch(API_BASE + "/recetas/guardadas/" + user.idusuario);
+    if (res.ok) {
+      var data = await res.json();
+      recetasGuardadas = new Set(data.map(function(r) { return r.receta_idreceta; }));
+    }
+  } catch(e) {
+    console.warn("No se pudieron cargar recetas guardadas:", e);
+  }
+}
+
+async function toggleGuardar(recetaId, btn, usuarioId) {
+  var guardada = recetasGuardadas.has(recetaId);
+  var method = guardada ? "DELETE" : "POST";
+
+  try {
+    var res = await fetch(API_BASE + "/recetas/" + recetaId + "/guardar", {
+      method: method,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ usuarioId: usuarioId }),
+    });
+
+    if (!res.ok) return;
+
+    if (guardada) {
+      recetasGuardadas.delete(recetaId);
+      btn.classList.remove("saved");
+      btn.title = "Guardar receta";
+      btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>';
+    } else {
+      recetasGuardadas.add(recetaId);
+      btn.classList.add("saved");
+      btn.title = "Quitar de guardados";
+      btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>';
+    }
+  } catch(e) {
+    console.warn("Error al guardar/quitar receta:", e);
+  }
+}
+
+// ver recetas guardadas solo
+//
+var vistaActual = "todas"; // "todas" o "guardadas"
+
+document.getElementById("tabTodas").addEventListener("click", function() {
+  vistaActual = "todas";
+  document.getElementById("tabTodas").classList.add("active");
+  document.getElementById("tabGuardadas").classList.remove("active");
+  renderRecipes();
+});
+
+document.getElementById("tabGuardadas").addEventListener("click", function() {
+  var user = null;
+  try { user = JSON.parse(sessionStorage.getItem("recetaya_user") || "null"); } catch(e) {}
+  if (!user) {
+    window.location.href = "../login-register/loginRecetaYa.html";
+    return;
+  }
+  vistaActual = "guardadas";
+  document.getElementById("tabGuardadas").classList.add("active");
+  document.getElementById("tabTodas").classList.remove("active");
+  renderRecipes();
+});
+
 buildAllRecetas();
