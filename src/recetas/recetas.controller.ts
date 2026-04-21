@@ -55,4 +55,26 @@ export class RecetasController {
     const url = await this.recetasService.subirVideoCloudinary(file.buffer);
     return { video_url: url };
   }
+
+  @Get('guardadas/:userId')
+  async getGuardadas(@Param('userId') userId: string) {
+    return this.recetasService.getRecetasGuardadas(Number(userId));
+  }
+
+  @Post(':id/guardar')
+  @HttpCode(201)
+  async guardar(
+    @Param('id') id: string,
+    @Body('usuarioId') usuarioId: number,
+  ) {
+    return this.recetasService.guardarReceta(usuarioId, Number(id));
+  }
+
+  @Delete(':id/guardar')
+  async quitar(
+    @Param('id') id: string,
+    @Body('usuarioId') usuarioId: number,
+  ) {
+    return this.recetasService.quitarRecetaGuardada(usuarioId, Number(id));
+  }
 }
