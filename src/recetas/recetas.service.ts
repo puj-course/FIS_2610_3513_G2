@@ -122,7 +122,7 @@ async uploadImageCloudinary(idreceta: number) {
           if (error) reject(error);
           else resolve(result!.secure_url);
         })
-        .end(receta.imagenreceta); // ✅ correcto
+        .end(receta.imagenreceta); 
     });
     return imageUrl;
   }
