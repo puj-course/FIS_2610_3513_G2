@@ -17,4 +17,20 @@ export class UsuariosController {
   async login(@Body() dto: LoginDto) {
     return this.usuariosService.login(dto);
   }
+
+
+  @Post('crear-moderador')
+crearModerador(@Body() dto: RegisterDto, @Body('rolCreador') rolCreador: string) {
+  return this.usuariosService.crearModerador(dto, rolCreador);
+}
+
+@Post('crear-admin')
+crearAdmin(@Body() dto: RegisterDto, @Body('rolCreador') rolCreador: string) {
+  return this.usuariosService.crearAdmin(dto, rolCreador);
+}
+
+@Post('crear-verificado')
+crearChef(@Body() dto: RegisterDto, @Body('rolCreador') rolCreador: string) {
+  return this.usuariosService.crearVerificado(dto, rolCreador);
+}
 }
