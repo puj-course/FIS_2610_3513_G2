@@ -143,3 +143,31 @@
     .lightbox-close { top:8px; right:8px; }
   }
 
+  /*Boton de favorito*/
+  .btn-guardar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border);
+    background: white;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.18s;
+    margin-top: 10px;
+    flex-shrink: 0;
+    align-self: flex-end;
+  }
+
+  .btn-guardar:hover {
+    border-color: var(--rose);
+    color: var(--rose);
+  }
+
+  .btn-guardar.saved {
+    background: var(--rose);
+    border-color: var(--rose);
+    color: white;
+  }
