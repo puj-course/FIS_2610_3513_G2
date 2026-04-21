@@ -143,6 +143,69 @@
     .lightbox-close { top:8px; right:8px; }
   }
 
+  /*Boton de favorito*/
+  .btn-guardar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border);
+    background: white;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.18s;
+    margin-top: 10px;
+    flex-shrink: 0;
+    align-self: flex-end;
+  }
+
+  .btn-guardar:hover {
+    border-color: var(--rose);
+    color: var(--rose);
+  }
+
+  .btn-guardar.saved {
+    background: var(--rose);
+    border-color: var(--rose);
+    color: white;
+  }
+
+
+  /*Ver solo recetas guardadas en main*/
+  .tabs-bar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .tab {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: "Outfit", sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 8px 20px;
+    border-radius: 50px;
+    border: 1.5px solid var(--border);
+    background: white;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+
+  .tab:hover {
+    border-color: var(--rose);
+    color: var(--rose);
+  }
+
+  .tab.active {
+    background: var(--rose);
+    border-color: var(--rose);
+    color: white;
+  }
 /* ── Recipe Detail Modal ──────────────────────────────────────────────── */
 .rmd-overlay {
   position:fixed; inset:0; z-index:500;
