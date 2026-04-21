@@ -32,6 +32,23 @@ export class RecetasService {
     return this.guardarBorradorService.ejecutar(dto);
   }
 
+  async getBorradorByUsuario(userId: number) {
+  return this.prisma.receta.findFirst({
+    where: {
+      id_usuariocreador: userId,
+      estado: 'borrador',
+    },
+    orderBy: { idreceta: 'desc' },
+    include: {
+      recetaingrediente: {
+        include: { ingrediente: true },
+      },
+      paso: true,
+      recetacategoria: true,
+    },
+  });
+}
+
   async buscarPorIngredientes(ingredientesIds: number[]) {
     const recetas = await this.prisma.$queryRaw<RecetaConScore[]>`
       SELECT 
@@ -117,6 +134,7 @@ getAll() {
       orderBy: { nombre: 'asc' },
       include: {
         recetaingrediente: { include: { ingrediente: true } },
+        paso: true,
       },
     })
     .then(recetas => ({
@@ -134,6 +152,7 @@ private mapearReceta(r: any) {
     image_url:         this.resolverImagen(r),
     id_usuariocreador: r.id_usuariocreador,
     ingredienteIds:    this.resolverIngredientes(r),
+    pasos:             (r.paso || []).map((p: any) => p.descripcion),
   };
 }
 
@@ -179,5 +198,4 @@ private resolverIngredientes(r: any): number[] {
     });
   }
 }
-
 
