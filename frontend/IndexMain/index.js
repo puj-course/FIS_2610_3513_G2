@@ -169,6 +169,12 @@ function renderRecipes() {
   var q = input.value.trim().toLowerCase();
   var results = ALL_RECETAS.slice();
 
+  if (vistaActual === "guardadas") {
+    results = results.filter(function(r) {
+      return recetasGuardadas.has(r.id);
+    });
+  }
+
   if (q) {
     results = results.filter(function(r) {
       if (r.nombre.toLowerCase().indexOf(q) >= 0) return true;
@@ -408,5 +414,29 @@ async function toggleGuardar(recetaId, btn, usuarioId) {
     console.warn("Error al guardar/quitar receta:", e);
   }
 }
+
+// ver recetas guardadas solo
+//
+var vistaActual = "todas"; // "todas" o "guardadas"
+
+document.getElementById("tabTodas").addEventListener("click", function() {
+  vistaActual = "todas";
+  document.getElementById("tabTodas").classList.add("active");
+  document.getElementById("tabGuardadas").classList.remove("active");
+  renderRecipes();
+});
+
+document.getElementById("tabGuardadas").addEventListener("click", function() {
+  var user = null;
+  try { user = JSON.parse(sessionStorage.getItem("recetaya_user") || "null"); } catch(e) {}
+  if (!user) {
+    window.location.href = "../login-register/loginRecetaYa.html";
+    return;
+  }
+  vistaActual = "guardadas";
+  document.getElementById("tabGuardadas").classList.add("active");
+  document.getElementById("tabTodas").classList.remove("active");
+  renderRecipes();
+});
 
 buildAllRecetas();

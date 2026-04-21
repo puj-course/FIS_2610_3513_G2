@@ -56,11 +56,12 @@ model recetacategoria {
 }
 
 model recetaguardada {
-  fecha_guardado    DateTime? @db.Date
-  usuario_idusuario Int       @id(map: "recetaguardada_pk")
-  receta_idreceta   Int
-  receta            receta    @relation(fields: [receta_idreceta], references: [idreceta], onDelete: NoAction, onUpdate: NoAction, map: "recetaguardada_receta_fk")
-  usuario           usuario   @relation(fields: [usuario_idusuario], references: [idusuario], onDelete: NoAction, onUpdate: NoAction, map: "recetaguardada_usuario_fk")
+    fecha_guardado    DateTime? @db.Date
+    usuario_idusuario Int
+    receta_idreceta   Int
+    receta            receta  @relation(fields: [receta_idreceta], references: [idreceta], onDelete: NoAction, onUpdate: NoAction, map: "recetaguardada_receta_fk")
+    usuario           usuario @relation(fields: [usuario_idusuario], references: [idusuario], onDelete: NoAction, onUpdate: NoAction, map: "recetaguardada_usuario_fk")
+    @@id([usuario_idusuario, receta_idreceta], map: "recetaguardada_pk")
 }
 
 model recetaingrediente {
@@ -80,7 +81,7 @@ model usuario {
   contrasena     String          @db.VarChar(255)
   fecha_registro DateTime?       @db.Date
   fotoperfil     Bytes?
-  recetaguardada recetaguardada?
+  recetaguardada recetaguardada[]
   recetas        receta[]
   rol            String   @default("usuario")  
 }

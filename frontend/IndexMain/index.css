@@ -171,3 +171,38 @@
     border-color: var(--rose);
     color: white;
   }
+
+
+  /*Ver solo recetas guardadas en main*/
+  .tabs-bar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .tab {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: "Outfit", sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 8px 20px;
+    border-radius: 50px;
+    border: 1.5px solid var(--border);
+    background: white;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+
+  .tab:hover {
+    border-color: var(--rose);
+    color: var(--rose);
+  }
+
+  .tab.active {
+    background: var(--rose);
+    border-color: var(--rose);
+    color: white;
+  }
