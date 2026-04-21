@@ -55,7 +55,7 @@ async getBorradorByUsuario(@Param('userId') userId: string) {
   async eliminarReceta(@Param('id') id: string) {
     return this.recetasService.eliminarReceta(Number(id));
   }
-  /*
+  
   @Post('upload-video')
   
   @UseInterceptors(FileInterceptor('video', { storage: memoryStorage() }))
