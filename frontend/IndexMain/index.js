@@ -433,6 +433,33 @@ function openRecipeModal(receta) {
 
   rmdOverlay.classList.add("open");
   document.body.style.overflow = "hidden";
+
+
+  rmdClose.addEventListener("click", closeRecipeModal);
+  rmdOverlay.addEventListener("click", function(e) {
+    if (e.target === rmdOverlay) closeRecipeModal();
+  });
+  
+
+  document.addEventListener("keydown", function(e) {
+    if (e.key === "Escape" && rmdOverlay.classList.contains("open")) closeRecipeModal();
+  });
+
+
+  rmdBtnSave.addEventListener("click", function() {
+    var user = null;
+    try { user = JSON.parse(sessionStorage.getItem("recetaya_user") || "null"); } catch(e) {}
+    if (!user) {
+      window.location.href = "../login-register/loginRecetaYa.html";
+      return;
+    }
+    toggleGuardar(receta.id, rmdBtnSave, user.idusuario);
+    console.log("Guardar receta:", rmdTitle.textContent);
+  });
+  rmdBtnFlag.addEventListener("click", function() {
+    // TODO: implementar reportar/marcar receta
+    console.log("Flag receta:", rmdTitle.textContent);
+  });
 }
 
 function closeRecipeModal() {
@@ -440,24 +467,7 @@ function closeRecipeModal() {
   document.body.style.overflow = "";
 }
 
-rmdClose.addEventListener("click", closeRecipeModal);
-rmdOverlay.addEventListener("click", function(e) {
-  if (e.target === rmdOverlay) closeRecipeModal();
-});
 
-document.addEventListener("keydown", function(e) {
-  if (e.key === "Escape" && rmdOverlay.classList.contains("open")) closeRecipeModal();
-});
-
-
-rmdBtnSave.addEventListener("click", function() {
-  // TODO: implementar guardar receta en perfil del usuario
-  console.log("Guardar receta:", rmdTitle.textContent);
-});
-rmdBtnFlag.addEventListener("click", function() {
-  // TODO: implementar reportar/marcar receta
-  console.log("Flag receta:", rmdTitle.textContent);
-});
 /*
 buildAllRecetas();
 renderAllTags();
