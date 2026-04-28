@@ -388,6 +388,15 @@ function checkNewRecipes() {
 
 // ── Recipe Detail Modal ──────────────────────────────────────────────────
 function openRecipeModal(receta) {
+
+  if (!receta || !receta.id) {
+    showRecipeError("Esta receta no está disponible.");
+    return;
+  }
+
+  if (receta.estado === "borrador"){
+    document.getElementById("rmdEstado").classList.remove("show");
+  }
   // Imagen
   if (receta.imagen) {
     rmdPhoto.src = receta.imagen;
@@ -433,6 +442,33 @@ function openRecipeModal(receta) {
 
   rmdOverlay.classList.add("open");
   document.body.style.overflow = "hidden";
+
+
+  rmdClose.addEventListener("click", closeRecipeModal);
+  rmdOverlay.addEventListener("click", function(e) {
+    if (e.target === rmdOverlay) closeRecipeModal();
+  });
+  
+
+  document.addEventListener("keydown", function(e) {
+    if (e.key === "Escape" && rmdOverlay.classList.contains("open")) closeRecipeModal();
+  });
+
+
+  rmdBtnSave.addEventListener("click", function() {
+    var user = null;
+    try { user = JSON.parse(sessionStorage.getItem("recetaya_user") || "null"); } catch(e) {}
+    if (!user) {
+      window.location.href = "../login-register/loginRecetaYa.html";
+      return;
+    }
+    toggleGuardar(receta.id, rmdBtnSave, user.idusuario);
+    console.log("Guardar receta:", rmdTitle.textContent);
+  });
+  rmdBtnFlag.addEventListener("click", function() {
+    // TODO: implementar reportar/marcar receta
+    console.log("Flag receta:", rmdTitle.textContent);
+  });
 }
 
 function closeRecipeModal() {
@@ -440,24 +476,30 @@ function closeRecipeModal() {
   document.body.style.overflow = "";
 }
 
-rmdClose.addEventListener("click", closeRecipeModal);
-rmdOverlay.addEventListener("click", function(e) {
-  if (e.target === rmdOverlay) closeRecipeModal();
-});
+// error en recetas
+function showRecipeError(mensaje) {
+  rmdPhoto.style.display = "none";
+  rmdPhotoFallback.style.display = "flex";
+  rmdTitle.textContent = "Receta no encontrada";
+  rmdChips.innerHTML = "";
+  rmdTiempo.textContent = "—";
+  rmdCalorias.textContent = "—";
+  rmdDesc.textContent = mensaje;
+  rmdDesc.style.display = "block";
+  rmdStepsWrap.innerHTML = `
+    <div class="rmd-error">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#e8435a" stroke-width="1.5">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="12" y1="8" x2="12" y2="12"/>
+        <line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+      <p>${mensaje}</p>
+    </div>
+  `;
+  rmdOverlay.classList.add("open");
+  document.body.style.overflow = "hidden";
+}
 
-document.addEventListener("keydown", function(e) {
-  if (e.key === "Escape" && rmdOverlay.classList.contains("open")) closeRecipeModal();
-});
-
-
-rmdBtnSave.addEventListener("click", function() {
-  // TODO: implementar guardar receta en perfil del usuario
-  console.log("Guardar receta:", rmdTitle.textContent);
-});
-rmdBtnFlag.addEventListener("click", function() {
-  // TODO: implementar reportar/marcar receta
-  console.log("Flag receta:", rmdTitle.textContent);
-});
 /*
 buildAllRecetas();
 renderAllTags();
