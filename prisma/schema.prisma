@@ -76,7 +76,7 @@ model recetaingrediente {
 
 model usuario {
   idusuario                 Int             @id(map: "usuario_pk") @default(autoincrement())
-  nickname                  String          @db.VarChar(30)
+  nickname                  String          @unique   @db.VarChar(30)
   username                  String?         @db.VarChar(30)
   profile_picture_url       String?         @db.VarChar(500)
   email                     String          @db.VarChar(50)
