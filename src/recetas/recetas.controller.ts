@@ -36,7 +36,10 @@ export class RecetasController {
   async guardarBorrador(@Body() dto: CrearRecetaDto) {
     return this.recetasService.guardarBorrador(dto);
   }
-
+  @Get('borrador/:userId')
+async getBorradorByUsuario(@Param('userId') userId: string) {
+  return this.recetasService.getBorradorByUsuario(Number(userId));
+}
   // PATCH /recetas/:id/estado → cambia estado de una receta
   @Patch(':id/estado')
   async actualizarEstado(
@@ -45,11 +48,16 @@ export class RecetasController {
   ) {
     return this.recetasService.actualizarEstado(Number(id), estado);
   }
+
+  
+
   @Delete(':id')
   async eliminarReceta(@Param('id') id: string) {
     return this.recetasService.eliminarReceta(Number(id));
   }
+  
   @Post('upload-video')
+  
   @UseInterceptors(FileInterceptor('video', { storage: memoryStorage() }))
   async uploadVideo(@UploadedFile() file: Express.Multer.File) {
     const url = await this.recetasService.subirVideoCloudinary(file.buffer);

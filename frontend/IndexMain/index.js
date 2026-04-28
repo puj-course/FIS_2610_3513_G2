@@ -25,6 +25,20 @@ var lightboxNext  = document.getElementById("lightboxNext");
 var lbImages = [];
 var lbIndex  = 0;
 
+// ── Recipe Detail Modal refs ──
+var rmdOverlay       = document.getElementById("rmdOverlay");
+var rmdPhoto         = document.getElementById("rmdPhoto");
+var rmdPhotoFallback = document.getElementById("rmdPhotoFallback");
+var rmdTitle         = document.getElementById("rmdTitle");
+var rmdChips         = document.getElementById("rmdChips");
+var rmdTiempo        = document.getElementById("rmdTiempo");
+var rmdCalorias      = document.getElementById("rmdCalorias");
+var rmdDesc          = document.getElementById("rmdDesc");
+var rmdStepsWrap     = document.getElementById("rmdStepsWrap");
+var rmdClose         = document.getElementById("rmdClose");
+var rmdBtnSave       = document.getElementById("rmdBtnSave");
+var rmdBtnFlag       = document.getElementById("rmdBtnFlag");
+
 function getUserRecetas() {
   try { return JSON.parse(localStorage.getItem("recetaya_recetas") || "[]"); } catch(e) { return []; }
 }
@@ -57,16 +71,21 @@ async function buildAllRecetas() {
     const { ingredientes, recetas } = await resRec.json();
 
     ALL_RECETAS = recetas.map(function(r) {
-      return {
-        id:                r.idreceta,
-        nombre:            r.nombre,
-        imagen:            r.image_url || null,
-        ingredientes:      r.ingredienteIds,
-        estado:            r.estado || "publicado",
-        id_usuariocreador: r.id_usuariocreador || null,
-        tipo:              "bd",
-      };
-    });
+  return {
+    id:          r.idreceta,
+    nombre:      r.nombre,
+    imagen:      r.image_url || null,
+    descripcion: r.descripcion || null,
+    pasos:       (r.pasos || []),
+    tiempo:      r.tiempo_preparacion || null,
+    calorias:    r.calorias || null,
+    estado:      r.estado || "publicado",
+    tipo:        "bd",
+    ingredientes: (r.ingredienteIds || []).map(function(ri) {
+      return ri.idingrediente ?? ri;
+    }),
+  };
+});
 
     await cargarRecetasGuardadas();
     renderAllTags();
@@ -250,6 +269,11 @@ function renderRecipes() {
     }
 
     card.appendChild(body);
+
+  card.addEventListener("click", function(e) {
+  if (e.target.closest(".card-img-wrap")) return; // imagen ya tiene su propio click (lightbox)
+  openRecipeModal(receta);
+});
     cardsGrid.appendChild(card);
   });
 }
@@ -361,6 +385,79 @@ function checkNewRecipes() {
     setTimeout(function(){ newBanner.classList.remove("show"); }, 5000);
   }
 }
+
+// ── Recipe Detail Modal ──────────────────────────────────────────────────
+function openRecipeModal(receta) {
+  // Imagen
+  if (receta.imagen) {
+    rmdPhoto.src = receta.imagen;
+    rmdPhoto.style.display = "block";
+    rmdPhotoFallback.style.display = "none";
+  } else {
+    rmdPhoto.style.display = "none";
+    rmdPhotoFallback.style.display = "flex";
+  }
+
+  // Título
+  rmdTitle.textContent = receta.nombre;
+
+  // Chips de ingredientes
+  rmdChips.innerHTML = receta.ingredientes.map(function(id) {
+    var ing = INGREDIENTES.filter(function(i){ return i.idingrediente === id; })[0];
+    return ing ? '<span class="rmd-chip">' + ing.nombre + '</span>' : "";
+  }).join("");
+
+  // Meta
+  rmdTiempo.textContent   = receta.tiempo    || "—";
+  rmdCalorias.textContent = receta.calorias  || "—";
+
+  // Descripción
+  rmdDesc.textContent  = receta.descripcion || "";
+  rmdDesc.style.display = receta.descripcion ? "block" : "none";
+
+  // Pasos
+  rmdStepsWrap.innerHTML = "";
+  var pasos = receta.pasos || [];
+  if (typeof pasos === "string") {
+    try { pasos = JSON.parse(pasos); } catch(e) { pasos = pasos ? [pasos] : []; }
+  }
+  pasos.forEach(function(paso, i) {
+    var text = typeof paso === "object"
+      ? (paso.descripcion || paso.texto || paso.instruccion || JSON.stringify(paso))
+      : paso;
+    var div = document.createElement("div");
+    div.className = "rmd-step";
+    div.innerHTML = '<div class="rmd-step-label">Paso ' + (i + 1) + '</div>' + text;
+    rmdStepsWrap.appendChild(div);
+  });
+
+  rmdOverlay.classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+
+function closeRecipeModal() {
+  rmdOverlay.classList.remove("open");
+  document.body.style.overflow = "";
+}
+
+rmdClose.addEventListener("click", closeRecipeModal);
+rmdOverlay.addEventListener("click", function(e) {
+  if (e.target === rmdOverlay) closeRecipeModal();
+});
+
+document.addEventListener("keydown", function(e) {
+  if (e.key === "Escape" && rmdOverlay.classList.contains("open")) closeRecipeModal();
+});
+
+
+rmdBtnSave.addEventListener("click", function() {
+  // TODO: implementar guardar receta en perfil del usuario
+  console.log("Guardar receta:", rmdTitle.textContent);
+});
+rmdBtnFlag.addEventListener("click", function() {
+  // TODO: implementar reportar/marcar receta
+  console.log("Flag receta:", rmdTitle.textContent);
+});
 /*
 buildAllRecetas();
 renderAllTags();

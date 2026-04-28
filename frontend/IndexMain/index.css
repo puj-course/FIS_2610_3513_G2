@@ -206,3 +206,90 @@
     border-color: var(--rose);
     color: white;
   }
+/* ── Recipe Detail Modal ──────────────────────────────────────────────── */
+.rmd-overlay {
+  position:fixed; inset:0; z-index:500;
+  background:rgba(28,16,16,0);
+  display:flex; align-items:center; justify-content:center;
+  padding:24px;
+  pointer-events:none;
+  transition:background .25s ease;
+}
+.rmd-overlay.open {
+  background:rgba(28,16,16,.62);
+  pointer-events:auto;
+}
+.rmd-card {
+  background:white; border-radius:22px;
+  width:100%; max-width:420px; max-height:90vh;
+  overflow-y:auto; position:relative;
+  box-shadow:0 24px 64px rgba(28,16,16,.24);
+  transform:scale(.9) translateY(20px); opacity:0;
+  transition:transform .3s cubic-bezier(.22,.68,0,1.15),opacity .25s ease;
+  display:flex; flex-direction:column;
+}
+.rmd-overlay.open .rmd-card { transform:scale(1) translateY(0); opacity:1; }
+
+.rmd-close {
+  position:absolute; top:12px; right:12px; z-index:10;
+  width:32px; height:32px; border-radius:50%;
+  background:rgba(255,255,255,.88); border:none; cursor:pointer;
+  font-size:16px; display:flex; align-items:center; justify-content:center;
+  box-shadow:0 2px 8px rgba(28,16,16,.18);
+  transition:transform .18s,background .18s; color:var(--text);
+}
+.rmd-close:hover { transform:scale(1.1) rotate(90deg); background:white; }
+
+.rmd-img-area {
+  width:100%; aspect-ratio:16/9; position:relative; overflow:hidden;
+  background:linear-gradient(135deg,#fde8eb 0%,#fdf3ee 100%);
+  flex-shrink:0; border-radius:22px 22px 0 0;
+  display:flex; align-items:center; justify-content:center;
+}
+.rmd-photo { width:100%; height:100%; object-fit:cover; display:block; }
+.rmd-photo-fallback { display:flex; align-items:center; justify-content:center; opacity:.35; }
+
+.rmd-body { padding:20px 22px 24px; display:flex; flex-direction:column; gap:12px; }
+
+.rmd-title {
+  font-family:"Playfair Display",serif;
+  font-size:20px; font-weight:700; color:var(--text); line-height:1.3;
+}
+.rmd-chips { display:flex; flex-wrap:wrap; gap:6px; }
+.rmd-chip {
+  font-size:11px; padding:3px 10px; border-radius:50px;
+  background:var(--rose-pale); color:#c73450; font-weight:500;
+}
+.rmd-meta { display:flex; flex-direction:column; gap:4px; font-size:13px; color:var(--text); }
+.rmd-desc {
+  font-size:13px; color:#6a5a5a; line-height:1.65;
+  white-space:pre-wrap; max-height:80px; overflow-y:auto;
+}
+.rmd-steps-wrap {
+  display:flex; flex-direction:column; gap:10px;
+  max-height:200px; overflow-y:auto; padding-right:4px;
+}
+.rmd-step {
+  background:var(--rose-pale); border-radius:12px;
+  padding:12px 14px; font-size:13px; color:var(--text); line-height:1.55;
+}
+.rmd-step-label {
+  font-weight:600; font-size:11px; color:var(--rose);
+  margin-bottom:4px; text-transform:uppercase; letter-spacing:.5px;
+}
+.rmd-footer { display:flex; align-items:center; gap:10px; margin-top:4px; }
+.rmd-btn-save {
+  flex:1; background:var(--rose); color:white;
+  border:none; border-radius:50px; padding:13px 20px;
+  font-family:"Outfit",sans-serif; font-size:15px; font-weight:600;
+  cursor:pointer; transition:background .2s;
+}
+.rmd-btn-save:hover { background:var(--rose-dark); }
+.rmd-btn-flag {
+  width:46px; height:46px; border-radius:50%;
+  background:var(--rose-pale); border:1.5px solid #fac5cb;
+  color:var(--rose); cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  transition:background .2s,color .2s; flex-shrink:0;
+}
+.rmd-btn-flag:hover { background:var(--rose); color:white; }

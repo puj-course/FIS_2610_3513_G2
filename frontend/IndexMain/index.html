@@ -71,6 +71,46 @@
   </div>
 </div>
 
+<!-- Related to the recipe card to save and report recipes -->
+<div class="rmd-overlay" id="rmdOverlay">
+  <div class="rmd-card" id="rmdCard">
+    <button class="rmd-close" id="rmdClose">&#x2715;</button>
+
+    <div class="rmd-img-area">
+      <img class="rmd-photo" id="rmdPhoto" src="" alt="" style="display:none"/>
+      <div class="rmd-photo-fallback" id="rmdPhotoFallback">
+        <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="#e8435a" stroke-width="1.2">
+          <rect x="3" y="3" width="18" height="18" rx="4"/>
+          <circle cx="8.5" cy="8.5" r="1.5"/>
+          <polyline points="21 15 16 10 5 21"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="rmd-body">
+      <h2 class="rmd-title" id="rmdTitle">—</h2>
+      <div class="rmd-chips" id="rmdChips"></div>
+      <div class="rmd-meta">
+        <span><strong>Tiempo preparación:</strong> <span id="rmdTiempo">—</span></span>
+        <span><strong>Calorías:</strong> <span id="rmdCalorias">—</span></span>
+      </div>
+      <p class="rmd-desc" id="rmdDesc"></p>
+      <div class="rmd-steps-wrap" id="rmdStepsWrap"></div>
+      <div class="rmd-footer">
+        <button class="rmd-btn-save" id="rmdBtnSave">Guardar Receta</button>
+        <button class="rmd-btn-flag" id="rmdBtnFlag" title="Reportar">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/>
+            <line x1="4" y1="22" x2="4" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- End of related to the recipe card to save and report recipes -->
+
+
 <script src="index.js">
 </script>
 </body>
