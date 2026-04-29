@@ -1,3 +1,8 @@
+* ::after, ::before{
+  margin: 0;
+  box-sizing: border-box;
+}
+
 :root {
   --rose: #e8435a;
   --rose-dark: #c73450;
@@ -9,8 +14,15 @@
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: "Outfit", sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+body { font-family: "Outfit", sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; 
+display: block;
+}
 
+.admin-wrapper{
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+}
 /* —— Header —— */
 header {
   position: sticky; top: 0; z-index: 100;
@@ -38,7 +50,9 @@ header {
 
 /* —— Page —— */
 .page {
-  max-width: 860px; margin: 0 auto;
+  flex: 1;
+  max-width: 860px; 
+  margin: 0;
   padding: 48px 32px 80px;
   animation: fadeUp 0.4s ease both;
 }
@@ -216,3 +230,44 @@ header {
 
 /* —— Card ID —— */
 .card-id { font-size: 11px; color: #c0a8a8; font-weight: 500; margin-left: auto; }
+
+.sidebar {
+  position:sticky;
+  top:68px;
+  height: calc(100vh-68px);
+  background-color: #faf8f6;
+  width: 220px;
+  border-right: 1px solid var(--border);
+  padding: 2rem 1rem;
+  flex-shrink: 0;
+}
+.sidebar__list {
+  list-style: none;
+  padding: 0;
+  min-height: 600px;
+  display: flex;
+  flex-direction: column;
+  gap: .4rem;
+}
+.sidebar:hover .sidebar__element{
+  grid-template-columns: 40px 1fr;
+}
+
+.sidebar__element{
+  padding: .8rem 1.3rem;
+  border-radius: 12px; 
+  display: grid; 
+  align-items: center;
+  grid-template-columns: 40px 0fr;
+  color: var(--muted);
+  transition: grid-template-columns .4s;
+}
+
+.sidebar__element:hover{
+  background-color: #fce7e9;
+  color: var(--rose);
+  cursor: pointer;
+}
+.sidebar__hide {
+  overflow: hidden;
+}
