@@ -7,6 +7,8 @@ import { UsuarioNormalFactory } from './factory/usuarioNormal.factory';
 import { UsuarioModeradorFactory } from './factory/usuarioModerador.factory';
 import { UsuarioAdminFactory } from './factory/usuarioAdmin.factory';
 import { UsuarioVerificadoFactory } from './factory/usuarioVerificado.factory';
+import { EditarPerfilDto } from './dto/editar-perfil.dto';
+import { v2 as cloudinary } from 'cloudinary'; // para lo de la imagen de perfil
 import * as bcrypt from 'bcrypt';
 
 const SALT = 10;
@@ -82,5 +84,60 @@ async login(dto: LoginDto) {
       rol:       user.rol,     
     },
   };
+}
+
+
+// editar perfil (nickname y foto de perfil)
+async editarPerfil(id: number, dto: EditarPerfilDto) {
+  if (dto.solicitanteId !== id) {
+    throw new UnauthorizedException('No puedes editar el perfil de otro usuario');
+  }
+  
+  cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key:    process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+  });
+
+  const data: any = {};
+
+  if (dto.username !== undefined) {
+    data.username = dto.username;
+  }
+
+  if (dto.imagen) {
+    const buffer = Buffer.from(dto.imagen.split(',')[1], 'base64');
+    data.fotoperfil = buffer;
+
+    try {
+      const url = await new Promise<string>((resolve, reject) => {
+        cloudinary.uploader.upload_stream(
+          { folder: 'recetasya/perfiles' },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result!.secure_url);
+          },
+        ).end(buffer);
+      });
+      data.profile_picture_url = url;
+    } catch (e) {
+      console.error('Error subiendo foto de perfil a Cloudinary:', e);
+    }
+  }
+
+  const usuario = await this.prisma.usuario.update({
+    where: { idusuario: id },
+    data,
+    select: {
+      idusuario: true,
+      nickname: true,
+      username: true,
+      email: true,
+      rol: true,
+      profile_picture_url: true,
+    },
+  });
+
+  return { message: 'Perfil actualizado correctamente', usuario };
 }
 }

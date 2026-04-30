@@ -3,6 +3,9 @@ import { UsuariosService } from './usuarios.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 
+import { Patch, Param, ParseIntPipe } from '@nestjs/common';
+import { EditarPerfilDto } from './dto/editar-perfil.dto';
+
 @Controller('usuarios')
 export class UsuariosController {
   constructor(private usuariosService: UsuariosService) {}
@@ -32,5 +35,13 @@ crearAdmin(@Body() dto: RegisterDto, @Body('rolCreador') rolCreador: string) {
 @Post('crear-verificado')
 crearChef(@Body() dto: RegisterDto, @Body('rolCreador') rolCreador: string) {
   return this.usuariosService.crearVerificado(dto, rolCreador);
+}
+
+@Patch(':id/perfil')
+editarPerfil(
+  @Param('id', ParseIntPipe) id: number,
+  @Body() dto: EditarPerfilDto,
+) {
+  return this.usuariosService.editarPerfil(id, dto);
 }
 }
