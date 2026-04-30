@@ -74,8 +74,58 @@ function showToast(msg, type = '') {
   setTimeout(() => t.classList.remove('show'), 3000);
 }
 
-// ── Guardar (placeholder para el backend) ──
-document.getElementById('btnSave').addEventListener('click', () => {
+
+// ── Helpers de pfp para cargarla en prev ──
+function setAvatar(url) {
+  avatarImg.src = url;
+  cardAvatarImg.src = url;
+  avatarImg.onload = () => {
+    avatarImg.classList.add('loaded');
+    cardAvatarImg.classList.add('loaded');
+    placeholder.style.display = 'none';
+    cardPlaceholder.style.display = 'none';
+  };
+}
+
+function clearAvatar() {
+  avatarImg.src = '';
+  cardAvatarImg.src = '';
+  avatarImg.classList.remove('loaded');
+  cardAvatarImg.classList.remove('loaded');
+  placeholder.style.display = '';
+  cardPlaceholder.style.display = '';
+}
+
+
+// ── Cargar datos actuales del usuario ──────────────────
+const usuarioGuardado = JSON.parse(sessionStorage.getItem('recetaya_user') || '{}');
+
+// poblar campos editables, lo pongo para q los datos q tenga el usuario actual se pongan de por si en la preview al abrir la pag
+if (usuarioGuardado.username || usuarioGuardado.nickname) {
+  nicknameInput.value = usuarioGuardado.username || usuarioGuardado.nickname;
+}
+if (usuarioGuardado.rol) {
+  document.getElementById('cardRole').textContent = usuarioGuardado.rol;
+}
+
+// Disparar el evento input manualmente para que la preview se sincronice
+nicknameInput.dispatchEvent(new Event('input'));
+
+// Foto de perfil actual
+if (usuarioGuardado.profile_picture_url) {
+  setAvatar(usuarioGuardado.profile_picture_url);
+}
+
+// Fecha de registro si existe, si no usa la fecha actual
+if (usuarioGuardado.fecha_registro) {
+  const fecha = new Date(usuarioGuardado.fecha_registro);
+  const months = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  document.getElementById('cardDate').textContent =
+    `Miembro desde ${months[fecha.getMonth()]} ${fecha.getFullYear()}`;
+}
+
+
+document.getElementById('btnSave').addEventListener('click', async () => {
   const nick = nicknameInput.value.trim();
   const errEl = document.getElementById('err-nickname');
 
@@ -88,14 +138,56 @@ document.getElementById('btnSave').addEventListener('click', () => {
   nicknameInput.classList.remove('invalid');
   errEl.classList.remove('show');
 
+  const user = JSON.parse(sessionStorage.getItem('recetaya_user') || 'null');
+  if (!user) {
+    showToast('No hay sesión activa', 'error');
+    return;
+  }
+
   const btn = document.getElementById('btnSave');
   btn.classList.add('loading');
   btn.disabled = true;
 
-  // TODO: reemplazar con fetch al backend
-  setTimeout(() => {
+  // Armar el body
+  const body = {
+    solicitanteId: user.idusuario,
+    username: nick,
+  };
+
+  // Si hay imagen nueva, convertirla a base64
+  const file = avatarInput.files[0];
+  if (file) {
+    body.imagen = await new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (e) => resolve(e.target.result);
+      reader.readAsDataURL(file);
+    });
+  }
+
+  try {
+    const res = await fetch(`http://localhost:3000/usuarios/${user.idusuario}/perfil`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      showToast(data.message || 'Error al guardar', 'error');
+      return;
+    }
+
+    // Actualizar sessionStorage con los datos nuevos
+    const userActualizado = { ...user, ...data.usuario };
+    sessionStorage.setItem('recetaya_user', JSON.stringify(userActualizado));
+
+    showToast('✓ Perfil actualizado con éxito', 'success');
+  } catch (e) {
+    console.error(e);
+    showToast('No se pudo conectar con el servidor', 'error');
+  } finally {
     btn.classList.remove('loading');
     btn.disabled = false;
-    showToast('✓ Perfil actualizado con éxito', 'success');
-  }, 1200);
+  }
 });

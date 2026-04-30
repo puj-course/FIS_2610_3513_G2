@@ -41,7 +41,7 @@ const eyeOpen = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" str
     if (data.user.rol === "admin") {
       window.location.href = '../panelAdmin/admin.html';
     } else {
-      window.location.href = '../search/index.html';
+      window.location.href = '../indexMain/index.html';
     }
   }, 1200);
   } catch (err) {                                               // ← y esto
