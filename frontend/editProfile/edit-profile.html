@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Editar perfil – RecetaYa</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,700;0,900;1,700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="edit-profile.css" />
+</head>
+<body>
+
+  <!-- ── Header ── -->
+  <header>
+    <img class="logo-img" src="logo.png" alt="Logo" onerror="this.style.display='none'" />
+    <a href="index.html" class="logo">
+      <span class="tx">Receta<span>Ya</span></span>
+    </a>
+    <div class="header-right">
+      <a href="create.html" class="btn-create">+ Crear receta</a>
+    </div>
+  </header>
+
+  <!-- ── Page ── -->
+  <main class="page">
+    <div class="page-heading">
+      <h1>Editar perfil</h1>
+    </div>
+
+    <div class="edit-layout">
+
+      <!-- LEFT: Formulario -->
+      <div class="form-col">
+
+        <!-- Información básica -->
+        <div class="form-section">
+          <div class="section-label">Información básica</div>
+
+          <div class="field">
+            <label class="field-label" for="nickname">
+              Nickname <span class="req">*</span>
+            </label>
+            <input type="text" id="nickname" placeholder="Tu apodo en la comunidad" maxlength="30" autocomplete="off" />
+            <div class="err-msg" id="err-nickname">El nickname es obligatorio.</div>
+          </div>
+
+          <div class="field">
+            <label class="field-label">Foto de perfil</label>
+            <div class="photo-row">
+              <div class="avatar-wrap">
+                <div class="avatar-preview" id="avatarPreview">
+                  <img id="avatarImg" src="" alt="Avatar" />
+                  <span class="avatar-placeholder">
+                    <svg width="36" height="36" fill="none" viewBox="0 0 24 24">
+                      <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.8"/>
+                      <path d="M4 20c0-4 3.582-7 8-7s8 3 8 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                    </svg>
+                  </span>
+                </div>
+              </div>
+              <div class="photo-actions">
+                <input type="file" id="avatarInput" accept="image/*" />
+                <button class="btn-photo change" type="button" id="btnChangePhoto">Cambiar foto</button>
+                <button class="btn-photo remove" type="button" id="btnRemovePhoto">Eliminar foto</button>
+              </div>
+            </div>
+            <p class="field-hint">JPG, PNG o WebP. Máximo 2 MB.</p>
+          </div>
+        </div>
+
+        <!-- Sobre ti -->
+        <div class="form-section">
+          <div class="section-label">Sobre ti</div>
+
+          <div class="field">
+            <label class="field-label" for="bio">
+              Sobre mí…
+              <span class="char-count"><span id="bioCount">0</span>/150</span>
+            </label>
+            <textarea id="bio" rows="4" maxlength="150"
+              placeholder="Escribe algo sobre ti, tus recetas favoritas, de dónde eres…"></textarea>
+          </div>
+        </div>
+
+        <!-- Acciones -->
+        <div class="action-row">
+          <a href="index.html" class="btn-cancel">Cancelar</a>
+          <button class="btn-save" id="btnSave" type="button">Guardar cambios</button>
+        </div>
+
+      </div><!-- /form-col -->
+
+      <!-- RIGHT: Tarjeta de previsualización -->
+      <div class="card-col">
+        <div class="preview-label">Vista previa</div>
+        <div class="profile-card">
+          <div class="card-cover"></div>
+          <div class="card-avatar-area">
+            <div class="card-avatar" id="cardAvatar">
+              <img id="cardAvatarImg" src="" alt="" />
+              <span class="card-avatar-placeholder">
+                <svg width="28" height="28" fill="none" viewBox="0 0 24 24">
+                  <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.8"/>
+                  <path d="M4 20c0-4 3.582-7 8-7s8 3 8 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+              </span>
+            </div>
+            <span class="card-role" id="cardRole">Usuario</span>
+            <p class="card-nickname empty" id="cardNickname">Tu nickname…</p>
+            <p class="card-date" id="cardDate">Miembro desde —</p>
+          </div>
+          <div class="card-bio-wrap">
+            <div class="card-bio-label">Sobre mí</div>
+            <div class="card-bio empty" id="cardBio">Tu descripción aparecerá aquí…</div>
+          </div>
+          <div class="card-footer">
+            <a href="#" class="btn-recipes">
+              <svg width="14" height="14" fill="none" viewBox="0 0 24 24">
+                <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                  stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+              Recetas creadas
+            </a>
+          </div>
+        </div>
+      </div><!-- /card-col -->
+
+    </div><!-- /edit-layout -->
+  </main>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script src="edit-profile.js"></script>
+</body>
+</html>
