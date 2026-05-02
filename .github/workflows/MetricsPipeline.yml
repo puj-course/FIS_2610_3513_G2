@@ -40,7 +40,7 @@ jobs:
           name: test-report
           path: test-report/report.html
         # El reporte se sube siempre, incluso si las pruebas fallaron
-        if: always() # esto para que siempre se subaame: Metrics Tests pipeline
+        if: always() # esto para que siempre se suba
 
 on:
   push:
