@@ -1,4 +1,4 @@
-nname: Metrics Tests pipeline
+name: Metrics Tests pipeline
 
 on:
   push:
