@@ -14,7 +14,6 @@
     "prisma:generate": "prisma generate",
     "test": "jest",
     "prisma:migrate": "prisma migrate deploy"
-    
   },
   "repository": {
     "type": "git",
@@ -44,6 +43,7 @@
     "cloudinary": "^2.9.0",
     "csv-parse": "^6.1.0",
     "dotenv": "^17.2.3",
+    "jest-mock-extended": "^4.0.1",
     "multer": "^2.1.1",
     "reflect-metadata": "^0.1.14"
   },
@@ -58,6 +58,7 @@
     "@types/multer": "^2.1.0",
     "@types/node": "^20.11.0",
     "jest": "^30.3.0",
+    "jest-html-reporters": "^3.1.7",
     "prisma": "^7.4.2",
     "ts-jest": "^29.4.9",
     "ts-node": "^10.9.2",
