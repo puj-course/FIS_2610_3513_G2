@@ -12,7 +12,9 @@
     "start": "node dist/src/main",
     "start:dev": "nest start --watch",
     "prisma:generate": "prisma generate",
+    "test": "jest",
     "prisma:migrate": "prisma migrate deploy"
+    
   },
   "repository": {
     "type": "git",
@@ -52,9 +54,12 @@
     "@prisma/config": "^7.4.2",
     "@types/bcrypt": "^6.0.0",
     "@types/express": "^5.0.6",
+    "@types/jest": "^30.0.0",
     "@types/multer": "^2.1.0",
     "@types/node": "^20.11.0",
+    "jest": "^30.3.0",
     "prisma": "^7.4.2",
+    "ts-jest": "^29.4.9",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
   }
