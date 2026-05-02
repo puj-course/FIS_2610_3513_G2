@@ -56,13 +56,6 @@ async getBorradorByUsuario(@Param('userId') userId: string) {
     return this.recetasService.eliminarReceta(Number(id));
   }
   
-  @Post('upload-video')
-  
-  @UseInterceptors(FileInterceptor('video', { storage: memoryStorage() }))
-  async uploadVideo(@UploadedFile() file: Express.Multer.File) {
-    const url = await this.recetasService.subirVideoCloudinary(file.buffer);
-    return { video_url: url };
-  }
 
   @Get('guardadas/:userId')
   async getGuardadas(@Param('userId') userId: string) {
