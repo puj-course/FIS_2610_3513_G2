@@ -6,7 +6,7 @@ async function bootstrap() {
 
     app.enableCors({
     origin: '*', // puse esto para que acepte cualquier origen
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],  // esto pq me daba errores con el preflight
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],  // Agregué patch para hacer cambios en la bd...
     allowedHeaders: ['Content-Type', 'Authorization'],
   });
   app.use(require('express').json({ limit: '10mb' }));
