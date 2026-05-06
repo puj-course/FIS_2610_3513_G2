@@ -8,9 +8,10 @@ import { NotificacionesFacade } from './facades/notificaciones.facade';
 import { PrismaService } from '../../prisma/prisma.service';
 import { UsuariosModule } from '../usuarios/usuarios.module';
 import { TelegramModule } from '../telegram/telegram.module';
+import { RecetasModule } from '../recetas/recetas.module'; // ← cambiar import
 
 @Module({
-  imports: [UsuariosModule, TelegramModule],
+  imports: [UsuariosModule, TelegramModule, RecetasModule], // ← agregar RecetasModule
   controllers: [ModeracionController],
   providers: [
     ModeracionService,
