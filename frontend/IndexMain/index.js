@@ -43,6 +43,7 @@ function getUserRecetas() {
   try { return JSON.parse(localStorage.getItem("recetaya_recetas") || "[]"); } catch(e) { return []; }
 }
 
+
 function normalizeUserReceta(r) {
   var ingIds = (r.ingredientes || []).map(function(ing) {
     var nombre = typeof ing === "object" ? ing.nombre : ing;
@@ -599,5 +600,14 @@ function renderNav() {
       '<a href="/CrearReceta/create.html" class="nav-btn filled">+ Crear receta</a>';
   }
 }
+
+var tagsToggle = document.getElementById("tagsToggle");
+if (tagsToggle) {
+  tagsToggle.addEventListener("click", function() {
+    var expanded = tagsWrap.classList.toggle("expanded");
+    tagsToggle.textContent = expanded ? "Ver menos ▴" : "Ver más ▾";
+  });
+}
+
 renderNav();
 buildAllRecetas();
