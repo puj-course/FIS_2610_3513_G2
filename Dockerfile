@@ -18,4 +18,4 @@ RUN npm run build
 ENV PORT=8080
 EXPOSE 8080
 
-CMD ["node", "dist/ts/main.js"]
+CMD ["node", "dist/src/main.js"]
