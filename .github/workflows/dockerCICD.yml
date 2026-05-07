@@ -37,7 +37,7 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD }}
 
     - name: Build docker image
-      run: docker build -t alenddy/fis-backend:latest
+      run: docker build -t alenddy/fis-backend:latest .
       
     - name: Build Database image
       run: docker build -t alenddy/fis-database:latest ./prisma
