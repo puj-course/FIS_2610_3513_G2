@@ -124,6 +124,21 @@ async editarPerfil(id: number, dto: EditarPerfilDto) {
       console.error('Error subiendo foto de perfil a Cloudinary:', e);
     }
   }
+  // Revisa que el nuevo username no esté en uso por otro usuario (si se está cambiando)
+  if (dto.username !== undefined) {
+  const existente = await this.prisma.usuario.findFirst({
+    where: {
+      username: dto.username,
+      NOT: { idusuario: id },
+    },
+  });
+
+  if (existente) {
+    throw new ConflictException('Ese nickname ya está en uso');
+  }
+
+  data.username = dto.username;
+}
 
   const usuario = await this.prisma.usuario.update({
     where: { idusuario: id },
