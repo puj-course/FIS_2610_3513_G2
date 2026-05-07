@@ -5,7 +5,7 @@ name: Docker CI/CD
 
 on:
   push:
-    branches: [ "features-salome", "features-alejandro", "develop" ]
+    branches: [ "features-salome", "features-alejandro", "develop", "docker-deploy" ]
   pull_request:
     branches: [ "develop" ]
 
