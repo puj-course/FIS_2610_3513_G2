@@ -1,5 +1,5 @@
 var INGREDIENTES = [];
-var API_BASE = "http://localhost:3000";
+var API_BASE = "http://localhost:8080";
 
 var selected   = new Set();
 var ALL_RECETAS = [];

@@ -24,7 +24,7 @@ const eyeOpen = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" str
     const btn = document.getElementById('btn');
     btn.disabled = true; btn.classList.add('loading');
      try {
-    const response = await fetch('http://localhost:3000/usuarios/register', {
+    const response = await fetch('http://localhost:8080/usuarios/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ nickname: name, email, contrasena: password }),

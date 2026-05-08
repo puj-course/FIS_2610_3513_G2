@@ -125,7 +125,7 @@ function handleRequest(req, res) {
 }
 
 // ── START ─────────────────────────────────────
-const PORT = 3000;
+const PORT = 8080;
 const server = http.createServer(handleRequest);
 server.listen(PORT, () => {
   console.log(`\n✅  RecetaYa mock server running at http://localhost:${PORT}`);
