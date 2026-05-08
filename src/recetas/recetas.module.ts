@@ -16,5 +16,6 @@ import { IngredientesModule } from '../ingredientes/ingredientes.module'
     GuardarBorradorService,
     PrismaService,  
   ],
+  exports: [RecetasService],
 })
 export class RecetasModule {}

@@ -1,5 +1,7 @@
 .env
+.env.docker
 dist/
 node_modules/
 prisma/migrations/
 /generated/prisma
+test-report

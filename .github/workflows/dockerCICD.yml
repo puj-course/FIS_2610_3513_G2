@@ -1,11 +1,11 @@
 # This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
 
-name: CI pipeline
+name: Docker CI/CD 
 
 on:
   push:
-    branches: [ "features-salome", "features-alejandro", "develop" ]
+    branches: [ "features-salome", "features-alejandro", "develop", "docker-deploy" ]
   pull_request:
     branches: [ "develop" ]
 
@@ -36,14 +36,21 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
-    - name: Build docker image
-      run: docker build -t alenddy/fis-backend:latest
-      
-    - name: Build Database image
-      run: docker build -t alenddy/fis-database:latest ./prisma
+    # imagen Backend
+    - name: Build and push backend
+      run: |
+        docker build -t alenddy/fis-backend:latest .
+        docker push alenddy/fis-backend:latest
 
-    - name: Push docker image
-      run: docker push alenddy/fis-backend:latest
+    # imagen Frontend
+    - name: Build and push frontend
+      run: |
+        docker build -t alenddy/fis-frontend:latest ./frontend
+        docker push alenddy/fis-frontend:latest
 
-    - name: Push Database image
-      run: docker push alenddy/fis-database:latest
+    # imagen Base de datos, no se necesita de build ya que usa la imagen oficial de postgres, solo se etiqueta y se sube a docker hub
+    - name: Push database image
+      run: |
+        docker pull postgres:16-alpine
+        docker tag postgres:16-alpine alenddy/fis-database:latest
+        docker push alenddy/fis-database:latest

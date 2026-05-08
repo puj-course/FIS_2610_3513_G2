@@ -128,7 +128,7 @@ async function saveDraft() {
   const key = getDraftKey();
 
   try {
-    const response = await fetch("http://localhost:3000/recetas/borrador", {
+    const response = await fetch("http://localhost:8080/recetas/borrador", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
@@ -177,7 +177,7 @@ document.getElementById("draftDiscard")?.addEventListener("click", async () => {
 
   if (id) {
     try {
-      await fetch(`http://localhost:3000/recetas/${id}`, { method: "DELETE" });
+      await fetch(`http://localhost:8080/recetas/${id}`, { method: "DELETE" });
     } catch(e) {
       console.warn("No se pudo eliminar el borrador de la BD:", e);
     }
@@ -259,7 +259,7 @@ document.getElementById("recetaForm").addEventListener("submit", async e => {
     const data = collectForm();
     data.estado = "pendiente";
 
-    const response = await fetch("http://localhost:3000/recetas/crear", {
+    const response = await fetch("http://localhost:8080/recetas/crear", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
@@ -328,7 +328,7 @@ async function checkAndLoadDraft() {
   }
 
   try {
-    const res = await fetch(`http://localhost:3000/recetas/borrador/${userId}`);
+    const res = await fetch(`http://localhost:8080/recetas/borrador/${userId}`);
     if (res.ok) {
       const borrador = await res.json();
       if (borrador) {
@@ -380,7 +380,7 @@ videoFile.addEventListener('change', async () => {
     const formData = new FormData();
     formData.append('video', file);
 
-    const res = await fetch('http://localhost:3000/recetas/upload-video', {
+    const res = await fetch('http://localhost:8080/recetas/upload-video', {
       method: 'POST',
       body: formData, 
     });
