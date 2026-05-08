@@ -586,7 +586,7 @@ function renderNav() {
   if (user) {
     nav.innerHTML =
       '<span class="nav-user">👤 ' + (user.nickname || user.email) + '</span>' +
-      '<a href="../CrearReceta/create.html" class="nav-btn filled">+ Crear receta</a>' +
+      '<a href="/CrearReceta/create.html" class="nav-btn filled">+ Crear receta</a>' +
       '<button class="nav-btn outline" id="btnLogout">Cerrar sesión</button>';
     document.getElementById("btnLogout").addEventListener("click", function() {
       sessionStorage.removeItem("recetaya_user");
@@ -594,9 +594,9 @@ function renderNav() {
     });
   } else {
     nav.innerHTML =
-      '<a href="../login-register/loginRecetaYa.html" class="nav-btn outline">Iniciar sesión</a>' +
-      '<a href="../login-register/registerRecetaYa.html" class="nav-btn outline">Registrarse</a>' +
-      '<a href="../CrearReceta/create.html" class="nav-btn filled">+ Crear receta</a>';
+      '<a href="/login-register/loginRecetaYa.html" class="nav-btn outline">Iniciar sesión</a>' +
+      '<a href="/login-register/registerRecetaYa.html" class="nav-btn outline">Registrarse</a>' +
+      '<a href="/CrearReceta/create.html" class="nav-btn filled">+ Crear receta</a>';
   }
 }
 renderNav();
