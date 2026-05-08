@@ -36,8 +36,21 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
-    - name: Build docker image
-      run: docker build -t alenddy/fis-backend:latest .
+    # imagen Backend
+    - name: Build and push backend
+      run: |
+        docker build -t alenddy/fis-backend:latest .
+        docker push alenddy/fis-backend:latest
 
-    - name: Push docker image
-      run: docker push alenddy/fis-backend:latest
+    # imagen Frontend
+    - name: Build and push frontend
+      run: |
+        docker build -t alenddy/fis-frontend:latest ./frontend
+        docker push alenddy/fis-frontend:latest
+
+    # imagen Base de datos, no se necesita de build ya que usa la imagen oficial de postgres, solo se etiqueta y se sube a docker hub
+    - name: Push database image
+      run: |
+        docker pull postgres:16-alpine
+        docker tag postgres:16-alpine alenddy/fis-database:latest
+        docker push alenddy/fis-database:latest
