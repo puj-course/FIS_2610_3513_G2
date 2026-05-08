@@ -12,7 +12,7 @@
 <body>
   <header>
     <a class="logo" href="../IndexMain/index.html">
-      <img class="logo-img" src="../../assets/logo.png" alt="RecetaYa" onerror="this.style.display='none'" />
+      <img class="logo-img" src="https://res.cloudinary.com/dkvds2u3r/image/upload/v1778275838/logo_x1qa7e.png" alt="RecetaYa" onerror="this.style.display='none'" />
       <span class="tx">Receta<span>Ya</span></span>
     </a>
     <span class="header-tag">— Panel de administración</span>
@@ -24,6 +24,7 @@
   <aside class="sidebar">
     <ul class="sidebar__list">
       <li class="sidebar__element">
+        <a class="sidebar__item" data-page="perfil" onclick="showPage('perfil')">
         <svg  xmlns="http://www.w3.org/2000/svg" width="24" height="24"  
         fill="currentColor" viewBox="0 0 24 24" >
         <!--Boxicons v3.0.8 https://boxicons.com | License  https://docs.boxicons.com/free-->
@@ -32,9 +33,11 @@
         <div class="sidebar_hide">
           <p class="sidebar__text">Perfil</p>
         </div>
+        </a>
       </li>
 
       <li class="sidebar__element">
+        <a class="sidebar__item" data-page="recetas" onclick="showPage('recetas')">
         <svg  xmlns="http://www.w3.org/2000/svg" width="24" height="24"  
         fill="currentColor" viewBox="0 0 24 24" >
         <!--Boxicons v3.0.8 https://boxicons.com | License  https://docs.boxicons.com/free-->
@@ -43,8 +46,10 @@
         <div class="sidebar_hide">
           <p class="sidebar__text">Recetas</p>
         </div>
+       </a>
       </li>
       <li class="sidebar__element">
+        <a class="sidebar__item" data-page="usuarios" onclick="showPage('usuarios')">
         <svg  xmlns="http://www.w3.org/2000/svg" width="24" height="24"  
         fill="currentColor" viewBox="0 0 24 24" >
         <!--Boxicons v3.0.8 https://boxicons.com | License  https://docs.boxicons.com/free-->
@@ -53,8 +58,10 @@
         <div class="sidebar_hide">
           <p class="sidebar__text">Usuarios</p>
         </div>
+        </a>
       </li>
       <li class="sidebar__element">
+        <a class="sidebar__item" data-page="insights" onclick="showPage('insights')">
         <svg  xmlns="http://www.w3.org/2000/svg" width="24" height="24"  
         fill="currentColor" viewBox="0 0 24 24" >
         <!--Boxicons v3.0.8 https://boxicons.com | License  https://docs.boxicons.com/free-->
@@ -63,8 +70,10 @@
         <div class="sidebar_hide">
           <p class="sidebar__text">Insights</p>
         </div>
+        </a>
       </li>
       <li class="sidebar__element">
+        <a class="sidebar__item" data-page="revision" onclick="showPage('revision')">
         <svg  xmlns="http://www.w3.org/2000/svg" width="24" height="24"  
         fill="currentColor" viewBox="0 0 24 24" >
         <!--Boxicons v3.0.8 https://boxicons.com | License  https://docs.boxicons.com/free-->
@@ -73,10 +82,11 @@
         <div class="sidebar_hide">
           <p class="sidebar__text">Revisión</p>
         </div>
+        </a>
       </li>
     </ul>
   </aside>
-  <div class="page">
+  <div class="page" id="page-revision">
     <div class="page-heading">
       <h1>Recetas <span>pendientes</span></h1>
       <p>Revisa cada receta antes de publicarla. Puedes aprobarla, rechazarla o eliminarla.</p>
@@ -94,6 +104,42 @@
       <p>No hay recetas pendientes por revisar.</p>
     </div>
   </div>
+  <div class="page" id="page-usuarios">
+    <div class="page-heading">
+      <h1>Usuarios</h1>
+      <p>Aquí puedes administrar los usuario de la página</p>
+    </div>
+      <div class="topnav">
+        <div class="search-wrap">
+          <input type="text" id="searchInput" class="search-input" placeholder="Buscar Usuarios..." autocomplete="off"/>
+          <span class="search-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          </span>
+        </div>
+      <div class="suggestions" id="suggestions"></div>
+      <select name="roles" id="filter-roles">
+      </select>
+      <select name="estado" id="filter-estado">
+      </select>
+    </div>
+    <button class="tab" id="btn-ausers">Todos los usuarios</button>
+    <button class="tab" id="btn-rusers">Usuarios reportados</button>
+    <table class="table_usuarios">
+      <thead>
+        <tr>
+          <th class="table_heading">Usuario</th>
+          <th class="table_heading">Rol</th>
+          <th class="table_heading">Registro</th>
+          <th class="table_heading">Estado</th>
+          <th class="table_heading"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="row_usuarios">
+        </tr>
+      </tbody>
+    </table>
+    </div>
   </main>
   <div class="toast" id="toast"></div>
   <script src="admin.js"></script>

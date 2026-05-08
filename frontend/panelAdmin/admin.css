@@ -50,12 +50,18 @@ header {
 
 /* —— Page —— */
 .page {
-  flex: 1;
-  max-width: 860px; 
+  flex: 1 1 auto;
+  min-width: 0; 
+  display:none;
   margin: 0;
   padding: 48px 32px 80px;
   animation: fadeUp 0.4s ease both;
 }
+
+.page.active {
+  display:block;
+}
+
 @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
 
 .page-heading { margin-bottom: 32px; }
@@ -234,13 +240,17 @@ header {
 .sidebar {
   position:sticky;
   top:68px;
-  height: calc(100vh-68px);
+  height: calc(100vh - 68px);
   background-color: #faf8f6;
-  width: 220px;
+  width: 75px;
   border-right: 1px solid var(--border);
-  padding: 2rem 1rem;
+  padding: 1rem 0.5rem;
   flex-shrink: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  transition: width 0.3s ease;
 }
+
 .sidebar__list {
   list-style: none;
   padding: 0;
@@ -249,25 +259,44 @@ header {
   flex-direction: column;
   gap: .4rem;
 }
-.sidebar:hover .sidebar__element{
+.sidebar:hover .sidebar__item{
   grid-template-columns: 40px 1fr;
 }
 
 .sidebar__element{
+  padding: 0;
+}
+
+.sidebar__item {
   padding: .8rem 1.3rem;
-  border-radius: 12px; 
-  display: grid; 
+  border-radius: 12px;
+  display: grid;
   align-items: center;
   grid-template-columns: 40px 0fr;
   color: var(--muted);
   transition: grid-template-columns .4s;
+  text-decoration: none;
 }
 
-.sidebar__element:hover{
+.sidebar__item:hover{
   background-color: #fce7e9;
   color: var(--rose);
   cursor: pointer;
 }
-.sidebar__hide {
+
+.sidebar__item.active {
+  color: var(--rose);
+  background-color: var(--rose-pale);
+}
+
+.sidebar:hover {
+  width:220px;
+}
+
+.sidebar_hide {
   overflow: hidden;
+}
+
+#page-revision {
+  width: 100%;
 }

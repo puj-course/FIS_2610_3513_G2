@@ -1,4 +1,4 @@
-const API_BASE = 'http://localhost:8080';
+const API_BASE = 'http://localhost:3001';
 
 // document.body.style.display = 'none';
 
@@ -164,3 +164,13 @@ function quitarTarjeta(btn) {
     }
   }, 320);
 }
+
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+    
+  document.querySelectorAll('.sidebar__item').forEach(n => n.classList.remove('active'));
+  document.querySelector(`.sidebar__item[data-page="${name}"]`).classList.add('active');
+}
+
+showPage('usuarios');

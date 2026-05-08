@@ -1,5 +1,5 @@
 var INGREDIENTES = [];
-var API_BASE = "http://localhost:8080";
+var API_BASE = "http://localhost:3001";
 
 var selected   = new Set();
 var ALL_RECETAS = [];
@@ -23,7 +23,7 @@ var lightboxClose = document.getElementById("lightboxClose");
 var lightboxPrev  = document.getElementById("lightboxPrev");
 var lightboxNext  = document.getElementById("lightboxNext");
 var lbImages = [];
-var lbIndex  = 0;
+var lbIndex  = -1;
 
 // ── Recipe Detail Modal refs ──
 var rmdOverlay       = document.getElementById("rmdOverlay");
