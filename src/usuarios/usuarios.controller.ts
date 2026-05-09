@@ -1,4 +1,4 @@
-import { Controller, Post, Body, HttpCode } from '@nestjs/common';
+import { Get, Controller, Post, Body, HttpCode } from '@nestjs/common';
 import { UsuariosService } from './usuarios.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
@@ -43,5 +43,19 @@ editarPerfil(
   @Body() dto: EditarPerfilDto,
 ) {
   return this.usuariosService.editarPerfil(id, dto);
-}
+  }
+
+  @Get()
+    getAll(){
+      return this.usuariosService.getAll();
+    }
+// agregar endpoint para cambiar rol de usuario en el panel de crear-admin
+
+  @Patch(':id/rol')
+  actualizarRol(
+    @Param('id', ParseIntPipe) id:number,
+    @Body('rol') rol: string,
+  ) {
+    return this.usuariosService.actualizarRol(id, rol);
+  }
 }
