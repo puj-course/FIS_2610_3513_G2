@@ -3,10 +3,10 @@ const API_BASE = 'http://localhost:8080';
 // document.body.style.display = 'none';
 
 (function checkAdminAccess() {
-  // const raw = sessionStorage.getItem('recetaya_user');
-  // if (!raw) { redirect(); return; }
-  // const user = JSON.parse(raw);
-  // if (!user || user.rol !== 'admin') { redirect(); return; }
+   const raw = sessionStorage.getItem('recetaya_user');
+   if (!raw) { redirect(); return; }
+   const user = JSON.parse(raw);
+   if (!user || user.rol !== 'admin') { redirect(); return; }
   document.body.style.display = 'block';
   cargarRecetasPendientes(1);
 })();
@@ -346,17 +346,19 @@ function irPagina(n) {
 }
 
 async function actualizarRol(id, nuevoRol) {
-  try {
-    const res = await fetch(`${API_BASE}/usuarios/${id}/rol`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ rol: nuevoRol }),
-    });
-    if (!res.ok) throw new Error();
-    showToast('Rol actualizado');
-  } catch {
-    showToast('Error al cambiar el rol', 'error');
-  }
+  const user = JSON.parse(localStorage.getItem('user'));
+
+  const res = await fetch(`${API_BASE}/usuarios/${id}/rol`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      rol: nuevoRol,
+      solicitanteId: user.idusuario,
+    }),
+  });
+
+  if (!res.ok) throw new Error();
+  showToast('Rol actualizado');
 }
 
 
