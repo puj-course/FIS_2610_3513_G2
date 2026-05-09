@@ -1,4 +1,4 @@
-import { Get, Controller, Post, Body, HttpCode , ForbiddenException} from '@nestjs/common';
+import { Get, Controller, Post, Body, HttpCode , ForbiddenException, Headers} from '@nestjs/common';
 import { UsuariosService } from './usuarios.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
@@ -46,7 +46,7 @@ crearModerador(@Body() dto: RegisterDto, @Body('rolCreador') rolCreador: string)
     }
 
   @Get()
-  getAll(@Body('solicitanteRol') solicitanteRol: string) {
+  getAll(@Headers('solicitanteRol') solicitanteRol: string) {
     if (solicitanteRol !== 'admin') {
       throw new ForbiddenException('Solo un administrador puede acceder a este recurso');
     }
@@ -57,9 +57,9 @@ crearModerador(@Body() dto: RegisterDto, @Body('rolCreador') rolCreador: string)
   actualizarRol(
     @Param('id', ParseIntPipe) id: number,
     @Body('rol') rol: string,
-    @Body('solicitanteRol') solicitanteRol: string,  // ← agrega esto
+    @Headers('solicitanteRol') solicitanteRol: string,
   ) {
-    if (solicitanteRol !== 'admin') {                // ← agrega esto
+    if (solicitanteRol !== 'admin') {     
       throw new ForbiddenException('Solo un administrador puede acceder a este recurso');
     }
     return this.usuariosService.actualizarRol(id, rol);
