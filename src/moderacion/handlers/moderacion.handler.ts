@@ -8,7 +8,7 @@ export abstract class ModeraciónHandler {
     return handler;   // permite encadenar: a.setNext(b).setNext(c)
   }
 
-  protected async pasarAlSiguiente(request: ModeracionRequestDto): void {
+  protected async pasarAlSiguiente(request: ModeracionRequestDto): Promise<void> {
     if (this.next) {
       await this.next.handle(request);
     }

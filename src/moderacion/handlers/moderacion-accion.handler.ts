@@ -24,6 +24,10 @@ export class ModeraciónAccionHandler extends ModeraciónHandler {
       return;
     }
 
+    if (accion !== 'aprobar' && accion !== 'rechazar') {
+      throw new BadRequestException(`Acción no reconocida: ${accion}`);
+    }
+
     const nuevoEstado = accion === 'aprobar' ? 'publicado' : 'rechazado';
 
     const receta = await this.prisma.receta.update({

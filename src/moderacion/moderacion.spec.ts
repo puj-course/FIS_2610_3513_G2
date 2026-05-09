@@ -1,5 +1,5 @@
 import { Test } from '@nestjs/testing';
-import { UnauthorizedException, ForbiddenException } from '@nestjs/common';
+import { UnauthorizedException, ForbiddenException, BadRequestException} from '@nestjs/common';
 import { AutenticacionHandler } from './handlers/autenticacion.handler';
 import { RolHandler } from './handlers/rol.handler';
 import { ModeraciónAccionHandler } from './handlers/moderacion-accion.handler';
@@ -7,6 +7,7 @@ import { NotificacionesFacade } from './facades/notificaciones.facade';
 import { UsuariosService } from '../usuarios/usuarios.service';
 import { PrismaService } from '../../prisma/prisma.service';
 import { ModeracionRequestDto } from './dto/moderacion-request.dto';
+import { RecetasService } from '../recetas/recetas.service';
 process.on('unhandledRejection', () => {});
 
 describe('Moderación - Chain of Responsibility', () => {
@@ -18,8 +19,12 @@ describe('Moderación - Chain of Responsibility', () => {
   let prisma: { receta: { update: jest.Mock; delete: jest.Mock } };
   let notificaciones: { notificarCambioEstado: jest.Mock };
   let nextHandler: { handle: jest.Mock };
+  let recetasService: {eliminarReceta: jest.Mock };
 
   beforeEach(async () => {
+
+    recetasService = {eliminarReceta: jest.fn()};
+
     jest.clearAllMocks();
 
     usuariosService = { getById: jest.fn() };
@@ -40,6 +45,7 @@ describe('Moderación - Chain of Responsibility', () => {
         { provide: UsuariosService, useValue: usuariosService },
         { provide: PrismaService, useValue: prisma },
         { provide: NotificacionesFacade, useValue: notificaciones },
+        { provide: RecetasService, useValue: recetasService},
       ],
     }).compile();
 
@@ -100,15 +106,11 @@ describe('Moderación - Chain of Responsibility', () => {
       rol: 'moderador',
     });
 
-    prisma.receta.delete.mockResolvedValue(null);
-
+    recetasService.eliminarReceta.mockResolvedValue(null);
     // Act
     await autenticacionHandler.handle(requestBase('eliminar', 9999));
-
     // Assert 
-    expect(prisma.receta.delete).toHaveBeenCalledWith({
-      where: { idreceta: 9999 },
-    });
+    expect(recetasService.eliminarReceta).toHaveBeenCalledWith(9999);
     expect(notificaciones.notificarCambioEstado).toHaveBeenCalled();
   });
   it('CP04 - al aprobar una receta se notifica por Telegram', async () => {
@@ -169,7 +171,7 @@ describe('Moderación - Chain of Responsibility', () => {
         recetaId: 3,
         accion: 'publicar' as any, 
       }),
-    ).rejects.toThrow();
+    ).rejects.toThrow(BadRequestException);
 
     expect(prisma.receta.update).not.toHaveBeenCalled();
     expect(prisma.receta.delete).not.toHaveBeenCalled();

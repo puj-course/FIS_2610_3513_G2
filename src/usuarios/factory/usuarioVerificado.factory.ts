@@ -7,7 +7,7 @@ import { UsuarioFactory } from '../usuarioFactory.factory';
 export class UsuarioVerificadoFactory extends UsuarioFactory {
 
   getRol(): string {
-    return 'chef_verificado';
+    return 'chef';
   }
 
   crearDatos(dto: RegisterDto, hashedPassword: string): DatosCreacion {
