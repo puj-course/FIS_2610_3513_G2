@@ -104,42 +104,70 @@
       <p>No hay recetas pendientes por revisar.</p>
     </div>
   </div>
-  <div class="page" id="page-usuarios">
-    <div class="page-heading">
-      <h1>Usuarios</h1>
-      <p>Aquí puedes administrar los usuario de la página</p>
+  <!--Page usuarios-->
+  <div class="page" id="page-usuarios"> 
+    <div class="page-heading"> 
+      <h1>Usuarios</h1> <p>Administra los usuarios de la plataforma.</p> </div> <div class="usuarios-topbar">
+      <div class="search-wrap">
+        <input type="text" id="searchInput" class="search-input"
+               placeholder="Buscar usuarios..." autocomplete="off"
+               oninput="buscarUsuario(this.value)"/>
+        <span class="search-icon">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2.5">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+        </span>
+        <div class="search-dropdown" id="searchDropdown"></div>
+      </div>
+      <select id="filter-roles" class="filter-select" onchange="aplicarFiltros()">
+        <option value="">Rol</option>
+        <option value="usuario">Usuario</option>
+        <option value="moderador">Moderador</option>
+        <option value="verificado">Verificado</option>
+        <option value="admin">Admin</option>
+      </select>
+      <select id="filter-estado" class="filter-select" onchange="aplicarFiltros()">
+        <option value="">Estado</option>
+        <option value="activo">Activo</option>
+        <option value="inactivo">Inactivo</option>
+      </select>
     </div>
-      <div class="topnav">
-        <div class="search-wrap">
-          <input type="text" id="searchInput" class="search-input" placeholder="Buscar Usuarios..." autocomplete="off"/>
-          <span class="search-icon">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-          </span>
+
+    <div class="tabs-row">
+      <button class="tab-link active" id="btn-ausers" onclick="filtrarTab('todos', this)">Todos los usuarios</button>
+      <button class="tab-link" id="btn-rusers" onclick="filtrarTab('reportados', this)">Usuarios reportados</button>
+    </div>
+
+    <div class="tabla-wrap">
+      <table class="table_usuarios">
+        <colgroup>
+          <col style="width:38%"/>
+          <col style="width:16%"/>
+          <col style="width:18%"/>
+          <col style="width:18%"/>
+          <col style="width:10%"/>
+        </colgroup>
+        <thead>
+          <tr>
+            <th class="table_heading">Usuario</th>
+            <th class="table_heading">Rol</th>
+            <th class="table_heading">Registro</th>
+            <th class="table_heading">Estado</th>
+            <th class="table_heading"></th>
+          </tr>
+        </thead>
+        <tbody id="usuarios-tbody"></tbody>
+      </table>
+      <div class="tabla-footer">
+        <span class="pag-info" id="pag-info">Página 1 de 1</span>
+        <div class="pag-controls">
+          <button class="pag-btn" id="btn-prev" onclick="irPagina(paginaActual - 1)">&#8249;</button>
+          <button class="pag-btn" id="btn-next" onclick="irPagina(paginaActual + 1)">&#8250;</button>
         </div>
-      <div class="suggestions" id="suggestions"></div>
-      <select name="roles" id="filter-roles">
-      </select>
-      <select name="estado" id="filter-estado">
-      </select>
+      </div>
     </div>
-    <button class="tab" id="btn-ausers">Todos los usuarios</button>
-    <button class="tab" id="btn-rusers">Usuarios reportados</button>
-    <table class="table_usuarios">
-      <thead>
-        <tr>
-          <th class="table_heading">Usuario</th>
-          <th class="table_heading">Rol</th>
-          <th class="table_heading">Registro</th>
-          <th class="table_heading">Estado</th>
-          <th class="table_heading"></th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr class="row_usuarios">
-        </tr>
-      </tbody>
-    </table>
-    </div>
+  </div>
   </main>
   <div class="toast" id="toast"></div>
   <script src="admin.js"></script>

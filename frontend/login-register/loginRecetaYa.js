@@ -39,9 +39,9 @@ const eyeOpen = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" str
   showMsg(data.message, 'ok');
   setTimeout(() => {
     if (data.user.rol === "admin") {
-      window.location.href = '../panelAdmin/admin.html';
+      window.location.href = '/panelAdmin/admin.html';
     } else {
-      window.location.href = '../indexMain/index.html';
+      window.location.href = '/IndexMain/index.html';
     }
   }, 1200);
   } catch (err) {                                               // ← y esto

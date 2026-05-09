@@ -1,5 +1,5 @@
 var INGREDIENTES = [];
-var API_BASE = "http://localhost:3001";
+var API_BASE = "http://localhost:8080";
 
 var selected   = new Set();
 var ALL_RECETAS = [];
@@ -595,8 +595,8 @@ function renderNav() {
     });
   } else {
     nav.innerHTML =
-      '<a href="/login-register/loginRecetaYa.html" class="nav-btn outline">Iniciar sesión</a>' +
-      '<a href="/login-register/registerRecetaYa.html" class="nav-btn outline">Registrarse</a>' +
+      '<a href="../login-register/loginRecetaYa.html" class="nav-btn outline">Iniciar sesión</a>' +
+      '<a href="../login-register/registerRecetaYa.html" class="nav-btn outline">Registrarse</a>' +
       '<a href="/CrearReceta/create.html" class="nav-btn filled">+ Crear receta</a>';
   }
 }
