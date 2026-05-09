@@ -187,7 +187,11 @@ let tabActual = 'todos';
 
 async function cargarUsuarios() {
   try {
-    const res = await fetch(`${API_BASE}/usuarios`);
+    const raw = sessionStorage.getItem('recetaya_user'); // ← agrega esta línea
+    const user = JSON.parse(raw);
+    const res = await fetch(`${API_BASE}/usuarios`, {
+      headers: { 'solicitanteRol': user.rol }
+    });
     if (!res.ok) throw new Error();
     usuariosCached = await res.json();
     aplicarFiltros();
@@ -346,14 +350,15 @@ function irPagina(n) {
 }
 
 async function actualizarRol(id, nuevoRol) {
-  const user = JSON.parse(localStorage.getItem('user'));
-
+  const user = JSON.parse(sessionStorage.getItem('recetaya_user'));
   const res = await fetch(`${API_BASE}/usuarios/${id}/rol`, {
     method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 
+      'Content-Type': 'application/json',
+      'solicitanteRol': user.rol
+    },
     body: JSON.stringify({
       rol: nuevoRol,
-      solicitanteId: user.idusuario,
     }),
   });
 
