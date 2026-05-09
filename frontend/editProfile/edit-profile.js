@@ -165,7 +165,7 @@ document.getElementById('btnSave').addEventListener('click', async () => {
   }
 
   try {
-    const res = await fetch(`http://localhost:3000/usuarios/${user.idusuario}/perfil`, {
+    const res = await fetch(`http://localhost:8080/usuarios/${user.idusuario}/perfil`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),

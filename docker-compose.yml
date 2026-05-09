@@ -20,10 +20,17 @@ services:
     ports:
       - "8080:8080"
     env_file:
-      - .env
+      - .env.docker
     depends_on:
       - database
     restart: unless-stopped
-
+  
+  frontend:
+    build: ./frontend
+    container_name: frontend
+    ports:
+      - "3000:80"
+    restart: unless-stopped
+    
 volumes:
   postgres_data:
