@@ -32,6 +32,7 @@ model receta {
   nombre            String              @db.VarChar(100)
   descripcion       String?             @db.VarChar(500)
   tiempopreparacion String              @db.VarChar(30)
+  slugUrl           String?             @unique   @db.VarChar(100)
   calorias          String              @db.VarChar(10)
   imagenreceta      Bytes?
   image_url         String?             
