@@ -230,7 +230,6 @@ private resolverIngredientes(r: any): number[] {
     });
   }
 
-
   async getCalificacionPromedio(recetaId: number){
     const result = await this.prisma.calificacion.aggregate({
       where: {receta_idreceta: recetaId},
@@ -264,3 +263,4 @@ private resolverIngredientes(r: any): number[] {
     });
   }
 }
+
