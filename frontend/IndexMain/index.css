@@ -315,6 +315,75 @@
 .status-dot.publicado { background: #10b981; }
 .status-label { font-size: 13px; font-weight: 600; color: var(--text); }
 
+.tags-toggle {
+  display: block;
+  background: none;
+  border: none;
+  color: #e8435a;
+  font-size: 0.85rem;
+  cursor: pointer;
+  padding: 6px 0;
+  margin-top: 6px;
+  font-weight: 500;
+}
+
+.tags-toggle:hover {
+  text-decoration: underline;
+}
+/*compartir enlace*/
+
+.rmd-btn-share {
+  width: 46px; height: 46px; border-radius: 20%;
+  background: transparent; 
+  border: none;
+  color: var(--rose); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .2s, color .2s; flex-shrink: 0;
+}
+.rmd-btn-share:hover { background: var(--rose-pale); color: white; }
+
+.share-toast {
+  position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(12px);
+  background: #1c1010; color: white;
+  padding: 10px 22px; border-radius: 50px;
+  font-size: 13px; font-weight: 500;
+  opacity: 0; pointer-events: none;
+  transition: opacity .22s, transform .22s;
+  z-index: 9999;
+}
+.share-toast.show {
+  opacity: 1; transform: translateX(-50%) translateY(0);
+}
+.btn-share {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px; height: 32px;
+  border-radius: 20%;
+  border: 1px solid transparent;
+  background: white;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.18s;
+  margin-top: 0px;
+  flex-shrink: 0;
+  align-self: flex-end;
+}
+.btn-share:hover {
+  background-color: var(--bg);
+}
+.card-actions {
+  display: flex;
+  flex-direction: row;
+  gap: 6px;
+  margin-top: 15px;
+}
+
+.btn-share svg,
+.rmd-btn-share svg {
+  transition: opacity .15s ease, transform .15s ease;
+}
+
 /* ── Star Rating ─────────────────────────────── */
 .rmd-rating {
   display: flex;
@@ -369,56 +438,25 @@
 }
 /* ────────────────────────────────────────────── */
 
-/* ── Star Rating ─────────────────────────────── */
-.rmd-rating {
+/* ── Rating de la receta en las tarjetas de la pagina princ ───────────────────────── */
+.card-actions {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin: 14px 0 6px;
-  padding: 0 2px;
 }
 
-.rating-label {
+.card-rating {
   font-size: 13px;
-  color: #666;
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-.stars-row {
-  display: flex;
-  gap: 3px;
-  cursor: pointer;
-  user-select: none;
-}
-
-.star-wrap {
+  color: #e8a020;
+  font-weight: 700;
   display: flex;
   align-items: center;
-  position: relative;
+  gap: 3px;
+  margin-right: auto; /* empuja los botones a la derecha */
 }
 
-.star-wrap svg {
-  width: 30px;
-  height: 30px;
-  transition: transform 0.12s ease;
-  filter: drop-shadow(0 1px 1px rgba(0,0,0,0.12));
-}
-
-.star-wrap:hover svg {
-  transform: scale(1.18);
-}
-
-.rating-text {
-  font-size: 12px;
+.card-rating-count {
   color: #aaa;
-  min-width: 80px;
-  font-style: italic;
-}
-
-.rating-text.rated {
-  color: #e8a020;
-  font-style: normal;
-  font-weight: 600;
+  font-weight: 400;
+  font-size: 12px;
 }
 /* ────────────────────────────────────────────── */

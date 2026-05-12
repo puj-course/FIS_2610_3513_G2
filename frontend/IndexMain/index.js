@@ -88,6 +88,18 @@ async function buildAllRecetas() {
   };
 });
 
+  // Carga los ratings de cada receta 
+  await Promise.all(ALL_RECETAS.map(async function(receta) {
+  try {
+    var res = await fetch(API_BASE + '/recetas/' + receta.id + '/promedio');
+    if (res.ok) {
+      var data = await res.json();
+      receta.rating   = data.promedio; // null si no hay votos
+      receta.numVotos = data.total;    // 0 si no hay votos
+    }
+  } catch(e) { receta.rating = null; receta.numVotos = 0; }
+}));
+
     await cargarRecetasGuardadas();
     renderAllTags();
     renderRecipes();
@@ -268,9 +280,23 @@ function renderRecipes() {
         }
         toggleGuardar(receta.id, btnGuardar, user.idusuario);
       });
+    
+            // Rating display (esto en la esquina izq, muestra estrellas y numero de votos, solo si la receta tiene rating)
+            // Siempre crea el badge, con o sin votos
+            var ratingBadge = document.createElement("span");
+            ratingBadge.className = "card-rating";
+            ratingBadge.dataset.id = receta.id;
 
-      actionsRow.appendChild(btnGuardar);
-    }
+            if (receta.rating != null) {
+              ratingBadge.innerHTML =
+                '★ ' + receta.rating.toFixed(1) +
+                ' <span class="card-rating-count">(' + receta.numVotos + ')</span>';
+            }
+            // si es null simplemente queda vacío hasta que alguien vote
+
+            actionsRow.appendChild(ratingBadge);
+          }
+          
 
    if (receta.estado === "publicado") {
       var btnShare = document.createElement("button");
@@ -425,7 +451,8 @@ function checkNewRecipes() {
 
 // ── Recipe Detail Modal ──────────────────────────────────────────────────
 function openRecipeModal(receta) {
-
+  // Resetea el rating a 0 para evitar mostrar el rating de la anterior receta
+if (starRating) starRating.reset(receta.id);
   if (!receta || !receta.id) {
     showRecipeError("Esta receta no está disponible.");
     return;
@@ -620,87 +647,134 @@ async function toggleGuardar(recetaId, btn, usuarioId) {
   }
 }
 
-// Rating system
-(function initStarRating() {
-  const TOTAL = 5;
-  const COLOR_FILL  = '#F5A623';
-  const COLOR_EMPTY = '#D9D9D9';
-  const STAR_PATH   = 'M12 2.5l2.6 5.3 5.9.86-4.25 4.14 1 5.87L12 15.77l-5.25 2.9 1-5.87L3.5 8.66l5.9-.86z';
+// -- Star Rating in detail
+var starRating = (function initStarRating() {
+  var TOTAL       = 5;
+  var COLOR_FILL  = '#F5A623';
+  var COLOR_EMPTY = '#D9D9D9';
+  var STAR_PATH   = 'M12 2.5l2.6 5.3 5.9.86-4.25 4.14 1 5.87L12 15.77l-5.25 2.9 1-5.87L3.5 8.66l5.9-.86z';
 
-  let currentRating = 0; // 0 = sin calificar, acepta .5
+  var currentRating  = 0;
+  var currentRecetaId = null;
 
-  const container = document.getElementById('starsRow');
-  const ratingText = document.getElementById('ratingText');
-  if (!container) return;
+  var container  = document.getElementById('starsRow');
+  var ratingText = document.getElementById('ratingText');
+  if (!container) return { reset: function(){} };
 
-  // Crear 5 estrellas con SVG + gradiente individual
-  for (let i = 1; i <= TOTAL; i++) {
-    const wrap = document.createElement('span');
-    wrap.className = 'star-wrap';
-    wrap.dataset.index = i;
+  for (var i = 1; i <= TOTAL; i++) {
+    (function(idx) {
+      var wrap = document.createElement('span');
+      wrap.className = 'star-wrap';
 
-    wrap.innerHTML = `
-      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <linearGradient id="sg-${i}" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop id="sg-${i}-a" offset="0%"   stop-color="${COLOR_EMPTY}"/>
-            <stop id="sg-${i}-b" offset="100%" stop-color="${COLOR_EMPTY}"/>
-          </linearGradient>
-        </defs>
-        <path d="${STAR_PATH}" fill="url(#sg-${i})" stroke="none"/>
-      </svg>`;
+      wrap.innerHTML =
+        '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">' +
+          '<defs><linearGradient id="sg-' + idx + '" x1="0%" y1="0%" x2="100%" y2="0%">' +
+            '<stop id="sg-' + idx + '-a" offset="0%"   stop-color="' + COLOR_EMPTY + '"/>' +
+            '<stop id="sg-' + idx + '-b" offset="100%" stop-color="' + COLOR_EMPTY + '"/>' +
+          '</linearGradient></defs>' +
+          '<path d="' + STAR_PATH + '" fill="url(#sg-' + idx + ')" stroke="none"/>' +
+        '</svg>';
 
-    // Hover: detectar mitad izq/der del elemento
-    wrap.addEventListener('mousemove', (e) => {
-      const rect = wrap.getBoundingClientRect();
-      const isLeft = (e.clientX - rect.left) < rect.width / 2;
-      const hoverVal = isLeft ? i - 0.5 : i;
-      renderStars(hoverVal, false);
-    });
+      wrap.addEventListener('mousemove', function(e) {
+        var rect  = wrap.getBoundingClientRect();
+        var hover = (e.clientX - rect.left) < rect.width / 2 ? idx - 0.5 : idx;
+        renderStars(hover, false);
+      });
+      wrap.addEventListener('mouseleave', function() {
+        renderStars(currentRating, false);
+      });
+      wrap.addEventListener('click', function(e) {
+        var user = null;
+        try { user = JSON.parse(sessionStorage.getItem('recetaya_user') || 'null'); } catch(ex) {}
+        if (!user) {
+          window.location.href = '../login-register/loginRecetaYa.html';
+          return;
+        }
+        var rect   = wrap.getBoundingClientRect();
+        var picked = (e.clientX - rect.left) < rect.width / 2 ? idx - 0.5 : idx;
+        enviarCalificacion(user, picked);
+      });
 
-    wrap.addEventListener('mouseleave', () => {
-      renderStars(currentRating, false);
-    });
+      container.appendChild(wrap);
+    })(i);
+  }
 
-    wrap.addEventListener('click', (e) => {
-      const rect = wrap.getBoundingClientRect();
-      const isLeft = (e.clientX - rect.left) < rect.width / 2;
-      currentRating = isLeft ? i - 0.5 : i;
+  async function enviarCalificacion(user, picked) {
+    // El backend acepta Int (1-5), redondeamos la media estrella
+    var puntaje = Math.round(picked); // 0.5 → 1, 4.5 → 5, etc.
+    try {
+      var res = await fetch(API_BASE + '/recetas/' + currentRecetaId + '/calificar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ usuarioId: user.idusuario, puntaje: puntaje }),
+      });
+      if (!res.ok) return;
+
+      // Fijar visualmente lo que el usuario eligió
+      currentRating = picked;
       renderStars(currentRating, true);
-    });
 
-    container.appendChild(wrap);
+      // Refrescar promedio real del backend
+      var resP = await fetch(API_BASE + '/recetas/' + currentRecetaId + '/promedio');
+      if (resP.ok) {
+        var data = await resP.json();
+        // Actualizar objeto en memoria
+        var receta = ALL_RECETAS.find(function(r){ return r.id === currentRecetaId; });
+        if (receta) {
+          receta.rating   = data.promedio;
+          receta.numVotos = data.total;
+        }
+        // Actualizar badge en la tarjeta del grid (si está visible)
+        var badge = document.querySelector('.recipe-card .card-rating[data-id="' + currentRecetaId + '"]');
+        if (badge && data.promedio != null) {
+            badge.innerHTML =
+              '★ ' + data.promedio.toFixed(1) +
+              ' <span class="card-rating-count">(' + data.total + ')</span>';
+          }
+        // Actualizar texto del modal
+        if (ratingText) {
+          ratingText.textContent = data.promedio
+            ? 'Tu voto: ' + picked + ' · Promedio: ' + data.promedio.toFixed(1) + ' (' + data.total + ')'
+            : 'Sin calificar';
+          ratingText.classList.toggle('rated', !!data.promedio);
+        }
+      }
+    } catch(err) {
+      console.warn('Error al calificar:', err);
+    }
   }
 
   function renderStars(rating, updateText) {
-    for (let i = 1; i <= TOTAL; i++) {
-      const stopA = document.getElementById(`sg-${i}-a`);
-      const stopB = document.getElementById(`sg-${i}-b`);
+    for (var i = 1; i <= TOTAL; i++) {
+      var stopA = document.getElementById('sg-' + i + '-a');
+      var stopB = document.getElementById('sg-' + i + '-b');
       if (!stopA || !stopB) continue;
-
-      let fillPct;
-      if (rating >= i)          fillPct = 100;      // llena
-      else if (rating >= i - 0.5) fillPct = 50;     // medio llena
-      else                        fillPct = 0;       // vacía
-
-      stopA.setAttribute('offset', `${fillPct}%`);
-      stopA.setAttribute('stop-color', fillPct > 0 ? COLOR_FILL : COLOR_EMPTY);
-      stopB.setAttribute('offset', `${fillPct}%`);
+      var pct = rating >= i ? 100 : rating >= i - 0.5 ? 50 : 0;
+      stopA.setAttribute('offset', pct + '%');
+      stopA.setAttribute('stop-color', pct > 0 ? COLOR_FILL : COLOR_EMPTY);
+      stopB.setAttribute('offset', pct + '%');
       stopB.setAttribute('stop-color', COLOR_EMPTY);
     }
-
     if (updateText && ratingText) {
       if (rating === 0) {
         ratingText.textContent = 'Sin calificar';
         ratingText.classList.remove('rated');
       } else {
-        ratingText.textContent = `${rating} / ${TOTAL}`;
+        ratingText.textContent = rating + ' / ' + TOTAL;
         ratingText.classList.add('rated');
       }
     }
   }
 
-  renderStars(0, true); // estado inicial vacío
+  renderStars(0, true);
+
+  return {
+    reset: function(recetaId) {
+      currentRecetaId = recetaId;
+      currentRating   = 0;
+      renderStars(0, true);
+    }
+  };
 })();
 // ─────────────────────────────────────────────
 
