@@ -10,4 +10,7 @@ module.exports = {
       openReport: false,
     }],
   ],
+  moduleNameMapper: {
+    '^~/(.*)$': '<rootDir>/src/$1',
+  }
 };

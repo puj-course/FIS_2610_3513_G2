@@ -66,7 +66,7 @@ export class UsuariosService {
 //---------------------------------------------------------------------------------------------------------------------
   async getById(id: number) {
   return this.prisma.usuario.findUnique({ where: { idusuario: id } });
-}
+  }
 // login
 async login(dto: LoginDto) {
   const user = await this.prisma.usuario.findFirst({ where: { email: dto.email } });
@@ -86,7 +86,13 @@ async login(dto: LoginDto) {
   };
 }
 
-
+async actualizarRol(id:number, rol:string) {
+  return this.prisma.usuario.update({
+    where: {idusuario: id},
+    data: {rol},
+    select: {idusuario: true, nickname: true, rol:true},
+  });
+}
 // editar perfil (nickname y foto de perfil)
 async editarPerfil(id: number, dto: EditarPerfilDto) {
   if (dto.solicitanteId !== id) {
@@ -155,4 +161,18 @@ async editarPerfil(id: number, dto: EditarPerfilDto) {
 
   return { message: 'Perfil actualizado correctamente', usuario };
 }
+
+async getAll() {
+    return this.prisma.usuario.findMany({
+      select: {
+        idusuario: true,
+        nickname: true,
+        username:true,
+        fecha_registro: true,
+        email: true,
+        rol: true,
+        profile_picture_url: true,
+      }
+    });
+  }
 }

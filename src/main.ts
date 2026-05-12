@@ -7,7 +7,7 @@ async function bootstrap() {
     app.enableCors({
     origin: '*', // puse esto para que acepte cualquier origen
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],  // Agregué patch para hacer cambios en la bd...
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'solicitanteRol'],
   });
   app.use(require('express').json({ limit: '10mb' }));
   app.use(require('express').urlencoded({ limit: '10mb', extended: true }));
