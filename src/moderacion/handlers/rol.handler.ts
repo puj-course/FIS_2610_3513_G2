@@ -13,6 +13,6 @@ export class RolHandler extends ModeraciónHandler {
       throw new ForbiddenException('No tienes permisos para moderar recetas');
     }
 
-    this.pasarAlSiguiente(request);
+    await this.pasarAlSiguiente(request);
   }
 }

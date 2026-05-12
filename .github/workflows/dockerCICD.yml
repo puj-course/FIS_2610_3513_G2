@@ -6,6 +6,11 @@ name: Docker CI/CD
 on:
   push:
     branches: [ "features-salome", "features-alejandro", "develop", "docker-deploy" ]
+name: CI pipeline
+
+on:
+  push:
+    branches: [ "features-salome", "features-alejandro", "develop" ]
   pull_request:
     branches: [ "develop" ]
 
@@ -54,3 +59,14 @@ jobs:
         docker pull postgres:16-alpine
         docker tag postgres:16-alpine alenddy/fis-database:latest
         docker push alenddy/fis-database:latest
+    - name: Build docker image
+      run: docker build -t alenddy/fis-backend:latest
+      
+    - name: Build Database image
+      run: docker build -t alenddy/fis-database:latest ./prisma
+
+    - name: Push docker image
+      run: docker push alenddy/fis-backend:latest
+
+    - name: Push Database image
+      run: docker push alenddy/fis-database:latest

@@ -23,7 +23,7 @@ var lightboxClose = document.getElementById("lightboxClose");
 var lightboxPrev  = document.getElementById("lightboxPrev");
 var lightboxNext  = document.getElementById("lightboxNext");
 var lbImages = [];
-var lbIndex  = 0;
+var lbIndex  = -1;
 
 // ── Recipe Detail Modal refs ──
 var rmdOverlay       = document.getElementById("rmdOverlay");
@@ -42,6 +42,7 @@ var rmdBtnFlag       = document.getElementById("rmdBtnFlag");
 function getUserRecetas() {
   try { return JSON.parse(localStorage.getItem("recetaya_recetas") || "[]"); } catch(e) { return []; }
 }
+
 
 function normalizeUserReceta(r) {
   var ingIds = (r.ingredientes || []).map(function(ing) {
@@ -248,6 +249,9 @@ function renderRecipes() {
   var user = null;
   try { user = JSON.parse(sessionStorage.getItem("recetaya_user") || "null"); } catch(e) {}
 
+  var actionsRow = document.createElement("div");
+    actionsRow.className = "card-actions";
+
   if (receta.estado !== "borrador") {
       var btnGuardar = document.createElement("button");
       btnGuardar.className = "btn-guardar " + (isSaved ? "saved" : "");
@@ -265,9 +269,42 @@ function renderRecipes() {
         toggleGuardar(receta.id, btnGuardar, user.idusuario);
       });
 
-      body.appendChild(btnGuardar);
+      actionsRow.appendChild(btnGuardar);
     }
 
+   if (receta.estado === "publicado") {
+      var btnShare = document.createElement("button");
+      btnShare.className = "btn-share";
+      btnShare.style = "display:inline;"
+      btnShare.title = "Copiar link";
+      btnShare.innerHTML = `
+          <svg height="18px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M15.197 3.35462C16.8703 1.67483 19.4476 1.53865 20.9536 3.05046C22.4596 4.56228 22.3239 7.14956 20.6506 8.82935L18.2268 11.2626M10.0464 14C8.54044 12.4882 8.67609 9.90087 10.3494 8.22108L12.5 6.06212" stroke="#9a8080" stroke-width="1.5" stroke-linecap="round"></path> <path d="M13.9536 10C15.4596 11.5118 15.3239 14.0991 13.6506 15.7789L11.2268 18.2121L8.80299 20.6454C7.12969 22.3252 4.55237 22.4613 3.0464 20.9495C1.54043 19.4377 1.67609 16.8504 3.34939 15.1706L5.77323 12.7373" stroke="#9a8080" stroke-width="1.5" stroke-linecap="round"></path> </g></svg>`;
+      btnShare.addEventListener("click", function(e) {
+        e.stopPropagation();
+        var url = window.location.origin + window.location.pathname + "?receta=" + receta.id;
+        navigator.clipboard.writeText(url).then(function() {
+
+          var checkSvg = `<svg height="18px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 13l4 4L19 7" stroke="#e8435a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+          var originalSvg = `<svg height="18px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15.197 3.35462C16.8703 1.67483 19.4476 1.53865 20.9536 3.05046C22.4596 4.56228 22.3239 7.14956 20.6506 8.82935L18.2268 11.2626M10.0464 14C8.54044 12.4882 8.67609 9.90087 10.3494 8.22108L12.5 6.06212" stroke="#9a8080" stroke-width="1.5" stroke-linecap="round"></path><path d="M13.9536 10C15.4596 11.5118 15.3239 14.0991 13.6506 15.7789L11.2268 18.2121L8.80299 20.6454C7.12969 22.3252 4.55237 22.4613 3.0464 20.9495C1.54043 19.4377 1.67609 16.8504 3.34939 15.1706L5.77323 12.7373" stroke="#9a8080" stroke-width="1.5" stroke-linecap="round"></path></svg>`;
+
+          btnShare.innerHTML = checkSvg;
+
+          var toast = document.getElementById("shareToast");
+          toast.classList.add("show");
+
+
+          setTimeout(function() {
+            btnShare.innerHTML = originalSvg;
+          }, 1000);
+          setTimeout(function() {toast.classList.remove("show"); }, 2500);
+        });
+      });
+
+      actionsRow.appendChild(btnShare);
+    }
+
+    body.appendChild(actionsRow);
     card.appendChild(body);
 
   card.addEventListener("click", function(e) {
@@ -454,7 +491,36 @@ function openRecipeModal(receta) {
     if (e.key === "Escape" && rmdOverlay.classList.contains("open")) closeRecipeModal();
   });
 
+  var newBtnShare = document.getElementById("rmdBtnShare").cloneNode(true);
+  document.getElementById("rmdBtnShare").parentNode.replaceChild(newBtnShare, document.getElementById("rmdBtnShare"));
 
+  if (receta.estado === "publicado") {
+    newBtnShare.style.display = "flex";
+    newBtnShare.addEventListener("click", function() {
+      var url = window.location.origin + window.location.pathname + "?receta=" + receta.id;
+      navigator.clipboard.writeText(url).then(function() {
+        var checkSvg = `<svg height="18px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M5 13l4 4L19 7" stroke="#e8435a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>`;
+        var originalSvg = `<svg height="18px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M15.197 3.35462C16.8703 1.67483 19.4476 1.53865 20.9536 3.05046C22.4596 4.56228 22.3239 7.14956 20.6506 8.82935L18.2268 11.2626M10.0464 14C8.54044 12.4882 8.67609 9.90087 10.3494 8.22108L12.5 6.06212" stroke="#e8435a" stroke-width="1.5" stroke-linecap="round"></path> <path d="M13.9536 10C15.4596 11.5118 15.3239 14.0991 13.6506 15.7789L11.2268 18.2121L8.80299 20.6454C7.12969 22.3252 4.55237 22.4613 3.0464 20.9495C1.54043 19.4377 1.67609 16.8504 3.34939 15.1706L5.77323 12.7373" stroke="#e8435a" stroke-width="1.5" stroke-linecap="round"></path> </g></svg>`;
+
+        newBtnShare.innerHTML = checkSvg;
+
+        var toast = document.getElementById("shareToast");
+        toast.classList.add("show");
+
+        setTimeout(function() {
+          newBtnShare.innerHTML = originalSvg;
+        }, 1000);
+
+        setTimeout(function() {
+          toast.classList.remove("show");
+        }, 2500);
+      });
+    });
+  } else {
+    newBtnShare.style.display = "none";
+  }
   rmdBtnSave.addEventListener("click", function() {
     var user = null;
     try { user = JSON.parse(sessionStorage.getItem("recetaya_user") || "null"); } catch(e) {}
@@ -667,21 +733,30 @@ function renderNav() {
   var user = null;
   try { user = JSON.parse(sessionStorage.getItem("recetaya_user") || "null"); } catch(e) {}
 
-    if (user) {
-      nav.innerHTML =
-        '<span class="nav-user">👤 ' + (user.nickname || user.email) + '</span>' +
-        '<a href="../CrearReceta/create.html" class="nav-btn filled">+ Crear receta</a>' +
-        '<button class="nav-btn outline" id="btnLogout">Cerrar sesión</button>';
-      document.getElementById("btnLogout").addEventListener("click", function() {
-        sessionStorage.removeItem("recetaya_user");
-        window.location.reload();
-      });
-    } else {
-      nav.innerHTML =
-        '<a href="../login-register/loginRecetaYa.html" class="nav-btn outline">Iniciar sesión</a>' +
-        '<a href="../login-register/registerRecetaYa.html" class="nav-btn outline">Registrarse</a>' +
-        '<a href="../CrearReceta/create.html" class="nav-btn filled">+ Crear receta</a>';
-    }
+  if (user) {
+    nav.innerHTML =
+      '<span class="nav-user">👤 ' + (user.nickname || user.email) + '</span>' +
+      '<a href="/CrearReceta/create.html" class="nav-btn filled">+ Crear receta</a>' +
+      '<button class="nav-btn outline" id="btnLogout">Cerrar sesión</button>';
+    document.getElementById("btnLogout").addEventListener("click", function() {
+      sessionStorage.removeItem("recetaya_user");
+      window.location.reload();
+    });
+  } else {
+    nav.innerHTML =
+      '<a href="../login-register/loginRecetaYa.html" class="nav-btn outline">Iniciar sesión</a>' +
+      '<a href="../login-register/registerRecetaYa.html" class="nav-btn outline">Registrarse</a>' +
+      '<a href="/CrearReceta/create.html" class="nav-btn filled">+ Crear receta</a>';
   }
+}
+
+var tagsToggle = document.getElementById("tagsToggle");
+if (tagsToggle) {
+  tagsToggle.addEventListener("click", function() {
+    var expanded = tagsWrap.classList.toggle("expanded");
+    tagsToggle.textContent = expanded ? "Ver menos ▴" : "Ver más ▾";
+  });
+}
+
 renderNav();
 buildAllRecetas();

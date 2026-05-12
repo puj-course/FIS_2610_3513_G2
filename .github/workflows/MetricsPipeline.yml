@@ -41,3 +41,45 @@ jobs:
           path: test-report/report.html
         # El reporte se sube siempre, incluso si las pruebas fallaron
         if: always() # esto para que siempre se suba
+
+on:
+  push:
+    branches: [ "features-salome", "features-alejandro", "develop" ]
+  pull_request:
+    branches: [ "develop" ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [25.x] # Esta es la version que soporta nuestro proyecto en otras versiones falla
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Prisma Client
+        run: npx prisma generate
+
+        # PRUEBAS UNITARIAS - CORRE EL JEST Y HACE EL REPORTE EN HTLM
+      - name: Run unit tests
+        # continue-on-error sirve para q el pipeline siga aunque fallen pruebas, y genera el reporte como tal
+        # npm test -- --verbose es como tal el comando que usamos para cuando lo probamos en nuestro compilador
+        run: npm test -- --verbose --forceExit
+        continue-on-error: true
+
+      - name: Upload test report
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-report
+          path: test-report/report.html
+        # El reporte se sube siempre, incluso si las pruebas fallaron
+        if: always() # esto para que siempre se suba

@@ -19,6 +19,6 @@ export class AutenticacionHandler extends ModeraciónHandler {
     // guarda el usuario en el request para que los siguientes handlers lo usen
     (request as any).usuario = usuario;
 
-    this.pasarAlSiguiente(request);
+    await this.pasarAlSiguiente(request);
   }
 }
