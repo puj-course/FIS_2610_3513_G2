@@ -89,6 +89,23 @@ model usuario {
   recetas                   receta[]
   rol                       String   @default("usuario")  
   calificacion calificacion[]
+<<<<<<< HEAD
+=======
+}
+
+model calificacion {
+  idcalificacion  Int   @id @default(autoincrement()) @map("calificacion_pk")
+  puntaje         Int 
+  fecha           DateTime @default(now()) @db.Date
+  usuario_idusuario   Int 
+  receta_idreceta     Int
+
+  usuario usuario @relation(fields: [usuario_idusuario], references: [idusuario], onDelete: NoAction, onUpdate: NoAction, map: "calificacion_usuario_fk")
+
+  receta receta @relation(fields: [receta_idreceta], references: [idreceta], onDelete: NoAction, onUpdate: NoAction, map: "calificacion_receta_fk")
+
+  @@unique([usuario_idusuario, receta_idreceta], map: "calificacion_unique_usuario_receta")
+>>>>>>> 80f251b (feat: adding rating to the db. Closes #237.)
 }
 
 model calificacion {
