@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>RecetaYa</title>
-<link rel="stylesheet" href="/IndexMain/index.css">
+<link rel="stylesheet" href="./index.css">
 </head>
 <body>
 
@@ -82,7 +82,7 @@
       </div>
     </div>
 
-    <div class="rmd-body">
+    <div class="rmd-body">  
       <div id="rmdEstado">
         <div class="status-dot borrador" id="statusDot"></div>
         <span class="status-label" id="statusLabel">Borrador</span>   
@@ -95,6 +95,13 @@
       </div>
       <p class="rmd-desc" id="rmdDesc"></p>
       <div class="rmd-steps-wrap" id="rmdStepsWrap"></div>
+            <!-- Rating -->
+      <div class="rmd-rating" id="rmdRating">
+        <span class="rating-label">Calificar receta:</span>
+        <div class="stars-row" id="starsRow"></div>
+        <span class="rating-text" id="ratingText">Sin calificar</span>
+      </div>
+      <!-- End Rating -->
       <div class="rmd-footer">
         <button class="rmd-btn-save" id="rmdBtnSave">Guardar Receta</button>
         <button class="rmd-btn-flag" id="rmdBtnFlag" title="Reportar">
@@ -110,6 +117,6 @@
 <!-- End of related to the recipe card to save and report recipes -->
 
 
-<script src="/IndexMain/index.js"></script>
+<script src="./index.js"></script>
 </body>
 </html>

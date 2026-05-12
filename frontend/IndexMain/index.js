@@ -554,6 +554,90 @@ async function toggleGuardar(recetaId, btn, usuarioId) {
   }
 }
 
+// Rating system
+(function initStarRating() {
+  const TOTAL = 5;
+  const COLOR_FILL  = '#F5A623';
+  const COLOR_EMPTY = '#D9D9D9';
+  const STAR_PATH   = 'M12 2.5l2.6 5.3 5.9.86-4.25 4.14 1 5.87L12 15.77l-5.25 2.9 1-5.87L3.5 8.66l5.9-.86z';
+
+  let currentRating = 0; // 0 = sin calificar, acepta .5
+
+  const container = document.getElementById('starsRow');
+  const ratingText = document.getElementById('ratingText');
+  if (!container) return;
+
+  // Crear 5 estrellas con SVG + gradiente individual
+  for (let i = 1; i <= TOTAL; i++) {
+    const wrap = document.createElement('span');
+    wrap.className = 'star-wrap';
+    wrap.dataset.index = i;
+
+    wrap.innerHTML = `
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="sg-${i}" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop id="sg-${i}-a" offset="0%"   stop-color="${COLOR_EMPTY}"/>
+            <stop id="sg-${i}-b" offset="100%" stop-color="${COLOR_EMPTY}"/>
+          </linearGradient>
+        </defs>
+        <path d="${STAR_PATH}" fill="url(#sg-${i})" stroke="none"/>
+      </svg>`;
+
+    // Hover: detectar mitad izq/der del elemento
+    wrap.addEventListener('mousemove', (e) => {
+      const rect = wrap.getBoundingClientRect();
+      const isLeft = (e.clientX - rect.left) < rect.width / 2;
+      const hoverVal = isLeft ? i - 0.5 : i;
+      renderStars(hoverVal, false);
+    });
+
+    wrap.addEventListener('mouseleave', () => {
+      renderStars(currentRating, false);
+    });
+
+    wrap.addEventListener('click', (e) => {
+      const rect = wrap.getBoundingClientRect();
+      const isLeft = (e.clientX - rect.left) < rect.width / 2;
+      currentRating = isLeft ? i - 0.5 : i;
+      renderStars(currentRating, true);
+    });
+
+    container.appendChild(wrap);
+  }
+
+  function renderStars(rating, updateText) {
+    for (let i = 1; i <= TOTAL; i++) {
+      const stopA = document.getElementById(`sg-${i}-a`);
+      const stopB = document.getElementById(`sg-${i}-b`);
+      if (!stopA || !stopB) continue;
+
+      let fillPct;
+      if (rating >= i)          fillPct = 100;      // llena
+      else if (rating >= i - 0.5) fillPct = 50;     // medio llena
+      else                        fillPct = 0;       // vacía
+
+      stopA.setAttribute('offset', `${fillPct}%`);
+      stopA.setAttribute('stop-color', fillPct > 0 ? COLOR_FILL : COLOR_EMPTY);
+      stopB.setAttribute('offset', `${fillPct}%`);
+      stopB.setAttribute('stop-color', COLOR_EMPTY);
+    }
+
+    if (updateText && ratingText) {
+      if (rating === 0) {
+        ratingText.textContent = 'Sin calificar';
+        ratingText.classList.remove('rated');
+      } else {
+        ratingText.textContent = `${rating} / ${TOTAL}`;
+        ratingText.classList.add('rated');
+      }
+    }
+  }
+
+  renderStars(0, true); // estado inicial vacío
+})();
+// ─────────────────────────────────────────────
+
 // ver recetas guardadas solo
 //
 var vistaActual = "todas"; // "todas" o "guardadas"
@@ -583,21 +667,21 @@ function renderNav() {
   var user = null;
   try { user = JSON.parse(sessionStorage.getItem("recetaya_user") || "null"); } catch(e) {}
 
-  if (user) {
-    nav.innerHTML =
-      '<span class="nav-user">👤 ' + (user.nickname || user.email) + '</span>' +
-      '<a href="/CrearReceta/create.html" class="nav-btn filled">+ Crear receta</a>' +
-      '<button class="nav-btn outline" id="btnLogout">Cerrar sesión</button>';
-    document.getElementById("btnLogout").addEventListener("click", function() {
-      sessionStorage.removeItem("recetaya_user");
-      window.location.reload();
-    });
-  } else {
-    nav.innerHTML =
-      '<a href="/login-register/loginRecetaYa.html" class="nav-btn outline">Iniciar sesión</a>' +
-      '<a href="/login-register/registerRecetaYa.html" class="nav-btn outline">Registrarse</a>' +
-      '<a href="/CrearReceta/create.html" class="nav-btn filled">+ Crear receta</a>';
+    if (user) {
+      nav.innerHTML =
+        '<span class="nav-user">👤 ' + (user.nickname || user.email) + '</span>' +
+        '<a href="../CrearReceta/create.html" class="nav-btn filled">+ Crear receta</a>' +
+        '<button class="nav-btn outline" id="btnLogout">Cerrar sesión</button>';
+      document.getElementById("btnLogout").addEventListener("click", function() {
+        sessionStorage.removeItem("recetaya_user");
+        window.location.reload();
+      });
+    } else {
+      nav.innerHTML =
+        '<a href="../login-register/loginRecetaYa.html" class="nav-btn outline">Iniciar sesión</a>' +
+        '<a href="../login-register/registerRecetaYa.html" class="nav-btn outline">Registrarse</a>' +
+        '<a href="../CrearReceta/create.html" class="nav-btn filled">+ Crear receta</a>';
+    }
   }
-}
 renderNav();
 buildAllRecetas();
