@@ -281,21 +281,21 @@ function renderRecipes() {
         toggleGuardar(receta.id, btnGuardar, user.idusuario);
       });
     
-            // Rating display (esto en la esquina izq, muestra estrellas y numero de votos, solo si la receta tiene rating)
-            // Siempre crea el badge, con o sin votos
-            var ratingBadge = document.createElement("span");
-            ratingBadge.className = "card-rating";
-            ratingBadge.dataset.id = receta.id;
+          // Rating display (esto en la esquina izq, muestra estrellas y numero de votos, solo si la receta tiene rating)
+          // Siempre crea el badge, con o sin votos
+          var ratingBadge = document.createElement("span");
+          ratingBadge.className = "card-rating";
+           ratingBadge.dataset.id = receta.id;
 
-            if (receta.rating != null) {
-              ratingBadge.innerHTML =
-                '★ ' + receta.rating.toFixed(1) +
-                ' <span class="card-rating-count">(' + receta.numVotos + ')</span>';
-            }
-            // si es null simplemente queda vacío hasta que alguien vote
-
-            actionsRow.appendChild(ratingBadge);
+          if (receta.rating != null) {
+             ratingBadge.innerHTML =
+              '★ ' + receta.rating.toFixed(1) +
+              ' <span class="card-rating-count">(' + receta.numVotos + ')</span>';
           }
+          // si es null simplemente queda vacío hasta que alguien vote
+
+          actionsRow.appendChild(ratingBadge);
+        }
           
 
    if (receta.estado === "publicado") {
