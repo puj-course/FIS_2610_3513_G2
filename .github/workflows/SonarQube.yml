@@ -1,4 +1,4 @@
-name: Metrics Tests Pipeline
+name: Metrics Tests pipeline
 
 on:
   push:
@@ -10,7 +10,7 @@ on:
       - main
 
 jobs:
-  test-and-sonar:
+  test:
     runs-on: ubuntu-latest
 
     strategy:
@@ -18,36 +18,27 @@ jobs:
         node-version: [25.x]
 
     steps:
-      # Checkout
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      # Node
-      - name: Setup Node.js
+      - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: npm
 
-      # Dependencias
       - name: Install dependencies
         run: npm ci
 
-      # Prisma
       - name: Generate Prisma Client
         run: npx prisma generate
 
-      # Tests + coverage
       - name: Run unit tests with coverage
         run: npm test -- --coverage --verbose --forceExit
         continue-on-error: true
 
-      # Verificar coverage generado
-      - name: Verify coverage files
-        run: ls -R coverage
-        if: always()
-
-      # Upload reporte HTML
       - name: Upload test report
         uses: actions/upload-artifact@v4
         with:
@@ -55,7 +46,6 @@ jobs:
           path: test-report/report.html
         if: always()
 
-      # Upload coverage
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
         with:
@@ -63,8 +53,42 @@ jobs:
           path: coverage
         if: always()
 
-      # SonarCloud
-      - name: SonarCloud Scan
+  sonarqube:
+    name: SonarQube
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Use Node.js 25.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 25.x
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Prisma Client
+        run: npx prisma generate
+
+      - name: Run tests and generate LCOV
+        run: npm test -- --coverage --coverageReporters=lcov --forceExit
+        continue-on-error: true
+
+      - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v6
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.projectKey=puj-course_FIS_2610_3513_G1
+            -Dsonar.organization=puj-course
+            -Dsonar.sources=src
+            -Dsonar.tests=src
+            -Dsonar.test.inclusions=**/*.spec.ts,**/*.test.ts
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
