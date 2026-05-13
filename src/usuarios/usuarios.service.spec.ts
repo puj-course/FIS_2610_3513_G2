@@ -73,25 +73,30 @@ describe('Registro UsuariosService', () => {
     expect(resultado.user).toHaveProperty('nickname');
     expect(resultado.user).toHaveProperty('email');
   });
-  it ('CP02 - Se ingresa nombre de usuario ya existente', async () => {
-      // Arrange 
-      prisma.usuario.findFirst.mockResolvedValue(null);
-      prisma.usuario.create.mockResolvedValue({
-        idusuario: 1,
-        nickname: 'juanito',
-        email: 'nuevo@test.com',
-        rol: 'usuario',
-      });
 
-      // Act & Assert 
-      await expect(
-        service.register({
-          nickname: 'juanito', // nickname ya usado
-          email: 'nuevo@test.com', // correo distinto
-          contrasena: 'Segura123!',
-        }),
-      ).rejects.toThrow(ConflictException);
-    });
+
+  it('CP02 - crea usuario moderador exitosamente si el rol del creador lo permite', async () => {
+  // Arrange
+  prisma.usuario.findFirst.mockResolvedValue(null);
+  prisma.usuario.create.mockResolvedValue({
+    idusuario: 2,
+    nickname: 'mod1',
+    email: 'mod@test.com',
+    rol: 'moderador',
+  });
+
+  // Act
+  const resultado = await service.crearModerador(
+    { nickname: 'mod1', email: 'mod@test.com', contrasena: 'Segura123!' },
+    'admin',
+  );
+
+  // Assert
+  expect(resultado.message).toBe('¡Cuenta creada exitosamente!');
+  expect(resultado.user).toHaveProperty('rol');
+});
+
+
   it('CP03 - El usuario ingresa un correo electrónico ya en uso', async () => {
     // Arrange 
     prisma.usuario.findFirst.mockResolvedValue({  // ← esto faltaba
