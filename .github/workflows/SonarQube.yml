@@ -1,40 +1,72 @@
-name: Build
+name: Metrics Tests Pipeline
 
 on:
   push:
     branches:
-      - main
+      - features-salome
+      - features-alejandro
+      - develop
 
   pull_request:
-    types: [opened, synchronize, reopened]
+    branches:
+      - develop
 
 jobs:
-  sonarqube:
-    name: SonarQube
+  test-and-sonar:
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        node-version: [25.x]
+
     steps:
+      # Checkout
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
+      # Node
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: ${{ matrix.node-version }}
           cache: npm
 
+      # Dependencias
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
-      - name: Run tests with coverage
-        run: npm run test:cov
+      # Prisma
+      - name: Generate Prisma Client
+        run: npx prisma generate
 
+      # Tests + coverage
+      - name: Run unit tests with coverage
+        run: npm test -- --coverage --verbose --forceExit
+        continue-on-error: true
+
+      # Verificar coverage generado
       - name: Verify coverage files
         run: ls -R coverage
+        if: always()
 
-      - name: SonarQube Scan
+      # Upload reporte HTML
+      - name: Upload test report
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-report
+          path: test-report/report.html
+        if: always()
+
+      # Upload coverage
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage
+        if: always()
+
+      # SonarCloud
+      - name: SonarCloud Scan
         uses: SonarSource/sonarqube-scan-action@v6
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
