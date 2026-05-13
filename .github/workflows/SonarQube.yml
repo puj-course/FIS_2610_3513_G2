@@ -1,3 +1,4 @@
+# Corre tests, genera coverage y lo manda a SonarQube
 name: SonarQube
 on:
   push:
@@ -14,76 +15,47 @@ jobs:
       matrix:
         node-version: [22]
     steps:
-      # =====================================================
-      # CHECKOUT
-      # =====================================================
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
 
-      # =====================================================
-      # NODE
-      # =====================================================
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: npm
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: npm
 
-      # =====================================================
-      # INSTALL
-      # =====================================================
-      - name: Install dependencies
-        run: npm ci
+    - name: Install dependencies
+      run: npm ci
 
-      # =====================================================
-      # PRISMA
-      # =====================================================
-      - name: Generate Prisma Client
-        run: npx prisma generate
+    - name: Generate Prisma Client
+      run: npx prisma generate
 
-      # =====================================================
-      # TESTS + COVERAGE
-      # =====================================================
-      - name: Run tests with coverage
-        continue-on-error: true
-        run: |
-          npm test -- \
-            --config=jest.config.js \
-            --coverage \
-            --coverageReporters=lcov \
-            --coverageReporters=text \
-            --verbose \
-            --passWithNoTests
+    # continue-on-error para que aunque fallen tests igual se mande el coverage
+    - name: Run tests with coverage
+      continue-on-error: true
+      run: |
+        npm test -- \
+          --config=jest.config.js \
+          --coverage \
+          --coverageReporters=lcov \
+          --coverageReporters=text \
+          --verbose \
+          --passWithNoTests
 
-      # =====================================================
-      # FALLBACK: si no se generó coverage, crear uno vacío
-      # =====================================================
-      - name: Ensure coverage file exists
-        run: |
-          if [ ! -f coverage/lcov.info ]; then
-            echo "⚠️ lcov.info not found, creating empty fallback"
-            mkdir -p coverage
-            touch coverage/lcov.info
-          else
-            echo "✅ lcov.info found ($(wc -l < coverage/lcov.info) lines)"
-          fi
+    - name: Ensure coverage file exists
+      run: |
+        if [ ! -f coverage/lcov.info ]; then
+          mkdir -p coverage
+          touch coverage/lcov.info
+        fi
 
-      # =====================================================
-      # FIX LCOV PATHS (rutas absolutas → relativas)
-      # =====================================================
-      - name: Fix lcov absolute paths
-        run: |
-          sed -i 's|/home/runner/work/FIS_2610_3513_G2/FIS_2610_3513_G2/||g' coverage/lcov.info
-          echo "✅ Paths fixed. Sample:"
-          head -5 coverage/lcov.info
+    # El runner genera rutas absolutas, sonar necesita relativas
+    - name: Fix lcov paths
+      run: |
+        sed -i 's|/home/runner/work/FIS_2610_3513_G2/FIS_2610_3513_G2/||g' coverage/lcov.info
 
-      # =====================================================
-      # SONARQUBE
-      # ✅ Sin args — toda la config está en sonar-project.properties
-      # =====================================================
-      - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@v6
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+    - name: SonarQube Scan
+      uses: SonarSource/sonarqube-scan-action@v6
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
