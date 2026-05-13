@@ -121,58 +121,6 @@ describe('Registro UsuariosService', () => {
       }),
     ).rejects.toThrow(ConflictException);
   });
-  /*
-  it('CP04 - lanza excepción si la contraseña es poco segura', async () => {
-    // Arrange
-    prisma.usuario.findFirst.mockResolvedValue(null);
-
-    // Act & Assert
-    await expect(
-      service.register({
-        nickname: 'juanito',
-        email: 'juan@test.com',
-        contrasena: '123456',
-      }),
-    ).rejects.toThrow();
-  });
-  
-  it('CP05 - elimina espacios al inicio y al final del nickname', async () => {
-    // Arrange
-    prisma.usuario.findFirst.mockResolvedValue(null);
-    prisma.usuario.create.mockResolvedValue({
-      idusuario: 1,
-      nickname: 'juanito',
-      email: 'juan@test.com',
-      rol: 'usuario',
-    });
-
-    // Act
-    await service.register({
-      nickname: '  juanito  ',
-      email: 'juan@test.com',
-      contrasena: 'Segura123!',
-    });
-
-    // Assert
-    expect(normalFactoryMock.crearDatos).toHaveBeenCalledWith(
-      expect.objectContaining({ nickname: 'juanito' }),
-      expect.any(String),
-    );
-  });
-  it('CP06 - lanza excepción si el nickname contiene caracteres especiales', async () => {
-    // Arrange
-    prisma.usuario.findFirst.mockResolvedValue(null);
-
-    // Act & Assert
-    await expect(
-      service.register({
-        nickname: 'juan@#$',
-        email: 'juan@test.com',
-        contrasena: 'Segura123!',
-      }),
-    ).rejects.toThrow();
-  });
-  */
   it('CP07 - convierte el correo a minúsculas antes de guardar', async () => {
     // Arrange
     prisma.usuario.findFirst.mockResolvedValue(null);
