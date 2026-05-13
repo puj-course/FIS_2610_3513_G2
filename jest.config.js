@@ -5,13 +5,6 @@ module.exports = {
   collectCoverage: true,
   coverageDirectory: 'coverage',
   coverageReporters: ['lcov', 'text', 'text-summary'],
-  collectCoverageFrom: [
-    'src/**/*.ts',
-    '!src/**/*.module.ts',
-    '!src/**/*.dto.ts',
-    '!src/main.ts',
-    '!src/**/__mocks__/**',
-  ],
   reporters: [
     'default',
     ['jest-html-reporters', {
