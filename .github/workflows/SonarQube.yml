@@ -1,8 +1,5 @@
 name: SonarQube
 
-# =========================================================
-# EVENTOS QUE DISPARAN EL PIPELINE
-# =========================================================
 on:
   push:
     branches:
@@ -12,14 +9,10 @@ on:
     branches:
       - main
 
-
 jobs:
 
-  # =========================================================
-  # JOB 1: TESTS + COVERAGE
-  # =========================================================
-  test:
-    name: Unit Tests & Coverage
+  sonarqube:
+    name: Tests + SonarQube
     runs-on: ubuntu-latest
 
     strategy:
@@ -28,42 +21,38 @@ jobs:
 
     steps:
 
-      # -----------------------------------------------------
-      # Clona el repositorio
-      # fetch-depth: 0 mejora el análisis de Sonar
-      # -----------------------------------------------------
+      # =====================================================
+      # CHECKOUT
+      # =====================================================
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      # -----------------------------------------------------
-      # Configura Node.js
-      # -----------------------------------------------------
+      # =====================================================
+      # NODE
+      # =====================================================
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: npm
 
-      # -----------------------------------------------------
-      # Instala dependencias
-      # -----------------------------------------------------
+      # =====================================================
+      # INSTALL
+      # =====================================================
       - name: Install dependencies
         run: npm ci
 
-      # -----------------------------------------------------
-      # Genera Prisma Client
-      # -----------------------------------------------------
+      # =====================================================
+      # PRISMA
+      # =====================================================
       - name: Generate Prisma Client
         run: npx prisma generate
 
-      # -----------------------------------------------------
-      # Ejecuta tests y genera coverage
-      #
-      # || true evita que el job falle aunque
-      # existan tests fallando
-      # -----------------------------------------------------
+      # =====================================================
+      # TESTS + COVERAGE
+      # =====================================================
       - name: Run tests with coverage
         run: |
           npm test -- \
@@ -73,10 +62,9 @@ jobs:
             --verbose \
             --forceExit || true
 
-      # -----------------------------------------------------
-      # Debug:
-      # Verifica si coverage realmente existe
-      # -----------------------------------------------------
+      # =====================================================
+      # DEBUG COVERAGE
+      # =====================================================
       - name: Verify coverage files
         run: |
           echo "===== ROOT ====="
@@ -85,62 +73,9 @@ jobs:
           echo "===== COVERAGE ====="
           ls -R coverage || true
 
-      # -----------------------------------------------------
-      # Sube artifact SOLO si existe lcov.info
-      # -----------------------------------------------------
-      - name: Upload coverage artifact
-        if: always() && hashFiles('coverage/lcov.info') != ''
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-report
-          path: coverage
-
-
-  # =========================================================
-  # JOB 2: SONARQUBE / SONARCLOUD
-  # =========================================================
-  sonarqube:
-    name: SonarQube Analysis
-    runs-on: ubuntu-latest
-
-    # Espera a que termine el job de tests
-    needs: test
-
-    steps:
-
-      # -----------------------------------------------------
-      # Clona nuevamente el repositorio
-      # -----------------------------------------------------
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      # -----------------------------------------------------
-      # Descarga coverage
-      #
-      # continue-on-error evita que falle si
-      # el artifact no existe
-      # -----------------------------------------------------
-      - name: Download coverage artifact
-        uses: actions/download-artifact@v4
-        continue-on-error: true
-        with:
-          name: coverage-report
-          path: coverage
-
-      # -----------------------------------------------------
-      # Debug:
-      # Verifica archivos descargados
-      # -----------------------------------------------------
-      - name: Verify downloaded coverage
-        run: |
-          echo "===== DOWNLOADED COVERAGE ====="
-          ls -R coverage || true
-
-      # -----------------------------------------------------
-      # Ejecuta SonarCloud
-      # -----------------------------------------------------
+      # =====================================================
+      # SONARQUBE
+      # =====================================================
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v6
         env:
