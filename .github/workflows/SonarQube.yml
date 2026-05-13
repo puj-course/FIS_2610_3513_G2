@@ -80,6 +80,16 @@ jobs:
           head -5 coverage/lcov.info
 
       # =====================================================
+      # DEBUG LCOV
+      # =====================================================
+      - name: Debug lcov content
+        run: |
+          echo "=== First 20 lines ==="
+          head -20 coverage/lcov.info
+          echo "=== SF lines (source files) ==="
+          grep "^SF:" coverage/lcov.info | head -20
+
+      # =====================================================
       # DEBUG COVERAGE
       # =====================================================
       - name: Verify coverage files
@@ -100,8 +110,9 @@ jobs:
           args: >
             -Dsonar.projectKey=puj-course_FIS_2610_3513_G1
             -Dsonar.organization=puj-course
-            -Dsonar.sources=src
+            -Dsonar.sources=src,prisma
             -Dsonar.tests=src
             -Dsonar.test.inclusions=**/*.spec.ts,**/*.test.ts
             -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+            -Dsonar.typescript.lcov.reportPaths=coverage/lcov.info
             -Dsonar.sourceEncoding=UTF-8
