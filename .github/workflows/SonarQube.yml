@@ -15,7 +15,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [25.x]
+        node-version: [22]
 
     steps:
       - name: Checkout repository
@@ -36,21 +36,21 @@ jobs:
         run: npx prisma generate
 
       - name: Run unit tests with coverage
-        run: npm test -- --coverage --verbose --forceExit
+        run: npm test -- --coverage --coverageReporters=lcov --verbose --forceExit
         continue-on-error: true
-
-      - name: Upload test report
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-report
-          path: test-report/report.html
-        if: always()
 
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
           path: coverage
+        if: always()
+
+      - name: Upload test report
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-report
+          path: test-report/report.html
         if: always()
 
   sonarqube:
@@ -64,21 +64,11 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Use Node.js 25.x
-        uses: actions/setup-node@v4
+      - name: Download coverage artifact
+        uses: actions/download-artifact@v4
         with:
-          node-version: 25.x
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Generate Prisma Client
-        run: npx prisma generate
-
-      - name: Run tests and generate LCOV
-        run: npm test -- --coverage --coverageReporters=lcov --forceExit
-        continue-on-error: true
+          name: coverage-report
+          path: coverage
 
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v6
