@@ -1,8 +1,5 @@
 name: Metrics Tests Pipeline
 
-# =========================================================
-# EVENTOS QUE DISPARAN EL PIPELINE
-# =========================================================
 on:
   push:
     branches:
@@ -12,12 +9,11 @@ on:
     branches:
       - main
 
-
 jobs:
 
-  # =========================================================
-  # JOB 1: EJECUCIÓN DE TESTS Y GENERACIÓN DE COVERAGE
-  # =========================================================
+  # =====================================================
+  # TESTS + COVERAGE
+  # =====================================================
   test:
     name: Unit Tests & Coverage
     runs-on: ubuntu-latest
@@ -28,134 +24,104 @@ jobs:
 
     steps:
 
-      # -----------------------------------------------------
-      # Clona el repositorio
-      # fetch-depth: 0 mejora el análisis de Sonar
-      # -----------------------------------------------------
+      # -------------------------------------------------
+      # Checkout
+      # -------------------------------------------------
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      # -----------------------------------------------------
-      # Configura Node.js
-      # cache: npm acelera instalaciones futuras
-      # -----------------------------------------------------
+      # -------------------------------------------------
+      # Node
+      # -------------------------------------------------
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: npm
 
-      # -----------------------------------------------------
-      # Instala dependencias exactas desde package-lock.json
-      # -----------------------------------------------------
+      # -------------------------------------------------
+      # Dependencies
+      # -------------------------------------------------
       - name: Install dependencies
         run: npm ci
 
-      # -----------------------------------------------------
-      # Genera Prisma Client
-      # Necesario para compilar/testing
-      # -----------------------------------------------------
+      # -------------------------------------------------
+      # Prisma
+      # -------------------------------------------------
       - name: Generate Prisma Client
         run: npx prisma generate
 
-      # -----------------------------------------------------
-      # Ejecuta Jest con coverage
-      #
-      # --coverage:
-      #   genera carpeta coverage/
-      #
-      # --coverageReporters=lcov:
-      #   genera lcov.info requerido por Sonar
-      #
-      # --forceExit:
-      #   fuerza cierre de procesos abiertos
-      #
-      # continue-on-error: true
-      #   permite que el pipeline continúe aunque fallen tests
-      #   para no perder el reporte de coverage
-      # -----------------------------------------------------
-      - name: Run unit tests with coverage
+      # -------------------------------------------------
+      # Tests + Coverage
+      # -------------------------------------------------
+      - name: Run tests with coverage
         run: |
           npm test -- \
             --coverage \
             --coverageReporters=lcov \
+            --coverageReporters=text \
             --verbose \
-            --forceExit
-        continue-on-error: true
+            --forceExit || true
 
-      # -----------------------------------------------------
-      # Verifica que coverage/lcov.info exista
-      # útil para debugging
-      # -----------------------------------------------------
+      # -------------------------------------------------
+      # Debug coverage
+      # -------------------------------------------------
       - name: Verify coverage files
         run: |
-          ls -la coverage
-          cat coverage/lcov.info | head -20
+          echo "===== COVERAGE FOLDER ====="
+          ls -R coverage || true
 
-      # -----------------------------------------------------
-      # Sube artifact del coverage
-      # luego Sonar lo reutiliza
-      # -----------------------------------------------------
+      # -------------------------------------------------
+      # Upload coverage
+      # Solo se ejecuta si lcov.info existe
+      # -------------------------------------------------
       - name: Upload coverage artifact
+        if: always() && hashFiles('coverage/lcov.info') != ''
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
           path: coverage
-        if: always()
 
-      # -----------------------------------------------------
-      # Sube reporte HTML de Jest
-      # -----------------------------------------------------
-      - name: Upload test report
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-report
-          path: test-report/report.html
-        if: always()
-
-
-  # =========================================================
-  # JOB 2: ANÁLISIS SONARQUBE / SONARCLOUD
-  # =========================================================
+  # =====================================================
+  # SONAR
+  # =====================================================
   sonarqube:
     name: SonarQube Analysis
     runs-on: ubuntu-latest
-
-    # Espera a que termine el job de tests
     needs: test
 
     steps:
 
-      # -----------------------------------------------------
-      # Clona nuevamente el repositorio
-      # -----------------------------------------------------
+      # -------------------------------------------------
+      # Checkout
+      # -------------------------------------------------
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      # -----------------------------------------------------
-      # Descarga artifact del coverage generado antes
-      # -----------------------------------------------------
+      # -------------------------------------------------
+      # Download coverage
+      # -------------------------------------------------
       - name: Download coverage artifact
         uses: actions/download-artifact@v4
         with:
           name: coverage-report
           path: coverage
 
-      # -----------------------------------------------------
-      # Verifica que lcov.info exista realmente
-      # -----------------------------------------------------
+      # -------------------------------------------------
+      # Verify files
+      # -------------------------------------------------
       - name: Verify downloaded coverage
         run: |
-          ls -la coverage
-          test -f coverage/lcov.info
+          echo "===== DOWNLOADED COVERAGE ====="
+          ls -R coverage
 
-      # -----------------------------------------------------
-      # Ejecuta análisis SonarCloud
-      # -----------------------------------------------------
+      # -------------------------------------------------
+      # SonarCloud
+      # -------------------------------------------------
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v6
         env:
@@ -168,4 +134,3 @@ jobs:
             -Dsonar.tests=src
             -Dsonar.test.inclusions=**/*.spec.ts,**/*.test.ts
             -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
-            -Dsonar.sourceEncoding=UTF-8
