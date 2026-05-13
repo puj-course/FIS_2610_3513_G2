@@ -6,7 +6,6 @@ name: Docker CI/CD
 on:
   push:
     branches: [ "features-salome", "features-alejandro", "develop", "docker-deploy" ]
-name: CI pipeline
 
 jobs:
   build:
