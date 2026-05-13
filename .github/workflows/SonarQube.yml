@@ -67,9 +67,17 @@ jobs:
             mkdir -p coverage
             touch coverage/lcov.info
           else
-            echo "✅ lcov.info found"
-            wc -l coverage/lcov.info
+            echo "✅ lcov.info found ($(wc -l < coverage/lcov.info) lines)"
           fi
+
+      # =====================================================
+      # FIX LCOV PATHS (rutas absolutas → relativas)
+      # =====================================================
+      - name: Fix lcov absolute paths
+        run: |
+          sed -i 's|/home/runner/work/FIS_2610_3513_G2/FIS_2610_3513_G2/||g' coverage/lcov.info
+          echo "✅ Paths fixed. Sample:"
+          head -5 coverage/lcov.info
 
       # =====================================================
       # DEBUG COVERAGE
