@@ -47,16 +47,14 @@ jobs:
       # TESTS + COVERAGE
       # =====================================================
       - name: Run tests with coverage
-        # ✅ FIX 1: continue-on-error a nivel de step, no || true
         continue-on-error: true
         run: |
-          npm test -- \
-            --coverage \
-            --coverageReporters=lcov \
-            --coverageReporters=text \
-            --verbose
-            # ✅ FIX 2: Se elimina --forceExit para que Jest
-            #           termine limpiamente y escriba lcov.info
+            npm test -- \
+              --config=jest.config.js \   # 👈 fuerza cuál usar
+              --coverage \
+              --coverageReporters=lcov \
+              --coverageReporters=text \
+              --verbose
 
       # =====================================================
       # FALLBACK: si no se generó coverage, crear uno vacío
