@@ -3,13 +3,11 @@ name: Metrics Tests Pipeline
 on:
   push:
     branches:
-      - features-salome
-      - features-alejandro
-      - develop
+      - main
 
   pull_request:
     branches:
-      - develop
+      - main
 
 jobs:
   test-and-sonar:
