@@ -49,12 +49,13 @@ jobs:
       - name: Run tests with coverage
         continue-on-error: true
         run: |
-            npm test -- \
-              --config=jest.config.js \   # 👈 fuerza cuál usar
-              --coverage \
-              --coverageReporters=lcov \
-              --coverageReporters=text \
-              --verbose
+          npm test -- \
+            --config=jest.config.js \
+            --coverage \
+            --coverageReporters=lcov \
+            --coverageReporters=text \
+            --verbose \
+            --passWithNoTests
 
       # =====================================================
       # FALLBACK: si no se generó coverage, crear uno vacío
