@@ -1,4 +1,4 @@
-name: Metrics Tests Pipeline
+name: SonarQube
 
 on:
   push:
