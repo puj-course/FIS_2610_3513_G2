@@ -18,9 +18,27 @@ export class RecetaImagelessBuilder implements IRecetaBuilder {
     this.recetaFinal.estado            = dto.estado            || 'pendiente';
     this.recetaFinal.fechacreacion     = new Date();
     if (dto.id_usuariocreador) {
-    this.recetaFinal.id_usuariocreador = dto.id_usuariocreador;
-    }
+  this.recetaFinal.usuario = {
+    connect: { idusuario: dto.id_usuariocreador }
+  };
+}
     return this;
+  }
+
+  setSlug(dto: CrearRecetaDto): this {
+    // Agarra el nombre y lo transforma en un slug
+    const slugBase = dto.titulo.toLowerCase().trim();
+    // Reemplaza espacios y caracteres especiales por guiones
+    const slug = slugBase
+    .normalize('NFD')                     // descompone tildes
+    .replace(/[\u0300-\u036f]/g, '')      // elimina diacríticos
+    .replace(/ñ/g, 'n')                   // maneja la ñ antes de normalizar
+    .replace(/[\s\W-]+/g, '-')            // espacios y especiales a guión
+    .replace(/^-+|-+$/g, '');
+
+    this.recetaFinal.slugUrl = slug;
+    return this;
+
   }
 
     // Este es el builder de la receta sin imagen, entonces no se asigna ni URL ni buffer

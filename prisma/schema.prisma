@@ -32,6 +32,7 @@ model receta {
   nombre            String              @db.VarChar(100)
   descripcion       String?             @db.VarChar(500)
   tiempopreparacion String              @db.VarChar(30)
+  slugUrl           String?             @unique   @db.VarChar(100)
   calorias          String              @db.VarChar(10)
   imagenreceta      Bytes?
   image_url         String?             
@@ -43,7 +44,8 @@ model receta {
   recetaguardada    recetaguardada[]
   recetaingrediente recetaingrediente[]
   id_usuariocreador  Int?
-  usuario           usuario? @relation(fields: [id_usuariocreador], references: [idusuario])               
+  usuario           usuario? @relation(fields: [id_usuariocreador], references: [idusuario])
+  calificacion calificacion[]             
 }
 
 model recetacategoria {
@@ -86,4 +88,19 @@ model usuario {
   recetaguardada            recetaguardada[]
   recetas                   receta[]
   rol                       String   @default("usuario")  
+  calificacion calificacion[]
+}
+
+model calificacion {
+  idcalificacion  Int   @id @default(autoincrement()) @map("calificacion_pk")
+  puntaje         Int 
+  fecha           DateTime @default(now()) @db.Date
+  usuario_idusuario   Int 
+  receta_idreceta     Int
+
+  usuario usuario @relation(fields: [usuario_idusuario], references: [idusuario], onDelete: NoAction, onUpdate: NoAction, map: "calificacion_usuario_fk")
+
+  receta receta @relation(fields: [receta_idreceta], references: [idreceta], onDelete: NoAction, onUpdate: NoAction, map: "calificacion_receta_fk")
+
+  @@unique([usuario_idusuario, receta_idreceta], map: "calificacion_unique_usuario_receta")
 }

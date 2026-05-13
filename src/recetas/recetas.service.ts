@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable , BadRequestException} from "@nestjs/common";
 import { NotificacionesFacade } from "./../telegram/NotificacionesFacade";
 import { PrismaService } from "../../prisma/prisma.service";
 import { CrearRecetaDto } from "./dto/crear-receta.dto";
@@ -227,6 +227,40 @@ private resolverIngredientes(r: any): number[] {
     return this.prisma.recetaguardada.findMany({
       where: { usuario_idusuario: usuarioId },
       select: { receta_idreceta: true },
+    });
+  }
+
+
+  async getCalificacionPromedio(recetaId: number){
+    const result = await this.prisma.calificacion.aggregate({
+      where: {receta_idreceta: recetaId},
+      _avg: { puntaje: true },
+      _count: {puntaje: true},
+    });
+
+    return {
+      promedio: result._avg.puntaje ? Math.round(result._avg.puntaje * 10) / 10 : null,
+      total: result._count.puntaje,
+    };
+  }
+
+  async calificar(recetaId:number, usuarioId: number, puntaje: number){
+    if (puntaje < 1 || puntaje > 5) {
+      throw new BadRequestException('El puntaje debe estar entre 1 y 5');
+    }
+    return this.prisma.calificacion.upsert({
+      where: {
+        usuario_idusuario_receta_idreceta : {
+          usuario_idusuario: usuarioId,
+          receta_idreceta: recetaId,
+        },
+      },
+      update: {puntaje},
+      create: {
+        usuario_idusuario: usuarioId,
+        receta_idreceta: recetaId,
+        puntaje,
+      },
     });
   }
 }

@@ -21,5 +21,5 @@ ENV PORT=8080
 EXPOSE 8080
 
 
-CMD npx prisma db push && npx ts-node Scripts/insert-recipes.ts && node dist/src/main.js
+CMD npx prisma db push && node dist/src/main.js
 
