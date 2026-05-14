@@ -12,6 +12,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    environment: .env
     strategy:
       matrix:
         node-version: [25.x] # Esta es la version que soporta nuestro proyecto en otras versiones falla
