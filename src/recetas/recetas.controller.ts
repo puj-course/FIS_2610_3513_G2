@@ -1,4 +1,5 @@
-import { Controller, Get, Delete, Post, Patch, UploadedFile, UseInterceptors, Body, Query, Param, HttpCode, UnauthorizedException} from '@nestjs/common';import { FileInterceptor } from '@nestjs/platform-express';
+import { Controller, Get, Post, Patch, Delete, Body, Query, Param, HttpCode, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
 import { RecetasService } from './recetas.service';
 import { BuscarRecetasDto } from './dto/buscar-recetas.dto';
@@ -95,5 +96,13 @@ async getBorradorByUsuario(@Param('userId') userId: string) {
   @Get(':id/promedio')
   async getPromedio(@Param('id') id:string) { 
     return this.recetasService.getCalificacionPromedio(Number(id));
+  }
+  @Get('share/:slug')
+  async getRecetaPorSlug(@Param('slug') slug: string) {
+    const receta = await this.recetasService.getRecetaPorSlug(slug);
+    if (!receta) {
+      throw new NotFoundException('Receta no encontrada o no disponible');
+    }
+    return receta;
   }
 }

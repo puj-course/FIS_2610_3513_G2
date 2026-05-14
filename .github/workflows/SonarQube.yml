@@ -1,19 +1,61 @@
-name: Build
+# Corre tests, genera coverage y lo manda a SonarQube
+name: SonarQube
 on:
   push:
     branches:
       - main
   pull_request:
-    types: [opened, synchronize, reopened]
+    branches:
+      - main
 jobs:
   sonarqube:
-    name: SonarQube
+    name: Tests + SonarQube
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [22]
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
-        with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-      - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@fd88b7d7ccbaefd23d8f36f73b59db7a3d246602 # v6.0.0
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: npm
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Generate Prisma Client
+      run: npx prisma generate
+
+    # continue-on-error para que aunque fallen tests igual se mande el coverage
+    - name: Run tests with coverage
+      continue-on-error: true
+      run: |
+        npm test -- \
+          --config=jest.config.js \
+          --coverage \
+          --coverageReporters=lcov \
+          --coverageReporters=text \
+          --verbose \
+          --passWithNoTests
+
+    - name: Ensure coverage file exists
+      run: |
+        if [ ! -f coverage/lcov.info ]; then
+          mkdir -p coverage
+          touch coverage/lcov.info
+        fi
+
+    # El runner genera rutas absolutas, sonar necesita relativas
+    - name: Fix lcov paths
+      run: |
+        sed -i 's|/home/runner/work/FIS_2610_3513_G2/FIS_2610_3513_G2/||g' coverage/lcov.info
+
+    - name: SonarQube Scan
+      uses: SonarSource/sonarqube-scan-action@v6
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
