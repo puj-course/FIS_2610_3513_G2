@@ -12,12 +12,13 @@ export class RecetaBuilder implements IRecetaBuilder {
     // Datos base que recibe del dto, con valores por defecto
     setDatosBase(dto: CrearRecetaDto): this {
     this.recetaFinal.nombre            = dto.titulo;
-    this.recetaFinal.descripcion       = dto.descripcion;
+    this.recetaFinal.descripcion = dto.descripcion ?? 'N/A'; 
     this.recetaFinal.tiempopreparacion = dto.tiempopreparacion || 'N/A';
     this.recetaFinal.calorias          = dto.calorias          || 'N/A';
     this.recetaFinal.estado            = dto.estado            || 'pendiente';
     this.recetaFinal.fechacreacion     = new Date();
     if (dto.id_usuariocreador) {
+  this.recetaFinal.id_usuariocreador = dto.id_usuariocreador;
   this.recetaFinal.usuario = {
     connect: { idusuario: dto.id_usuariocreador }
   };
