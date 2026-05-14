@@ -1,4 +1,4 @@
-import { Injectable, ConflictException, UnauthorizedException } from '@nestjs/common';
+import { Injectable, ConflictException, UnauthorizedException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
@@ -9,6 +9,7 @@ import { UsuarioAdminFactory } from './factory/usuarioAdmin.factory';
 import { UsuarioVerificadoFactory } from './factory/usuarioVerificado.factory';
 import { EditarPerfilDto } from './dto/editar-perfil.dto';
 import { v2 as cloudinary } from 'cloudinary'; // para lo de la imagen de perfil
+
 import * as bcrypt from 'bcrypt';
 
 const SALT = 10;
@@ -23,28 +24,41 @@ export class UsuariosService {
     private verificadoFactory: UsuarioVerificadoFactory,
   ) {}
   //---------------------------------------------------------------------------------------------------------------------
-    // ─── método privado compartido ───────────────────────────────────────────────
-  private async crearConFactory(
-    dto: RegisterDto,
-    factory: UsuarioFactory,
-    rolCreador?: string,
-  ) {
-    const existing = await this.prisma.usuario.findFirst({ where: { email: dto.email } });
-    if (existing) throw new ConflictException('Hay una cuenta registrada con este correo...');
+    // ---- método privado compartido ------------------------
+  private async crearConFactory(dto: RegisterDto, factory: UsuarioFactory, rolCreador?: string) {
 
-    // validación específica del factory (solo AdminFactory hace algo aquí)
-    factory.validarCreador(rolCreador ?? 'usuario');
+  // ---- FIX CP07: normalizar email --------------------------------
+  dto.email = dto.email.trim().toLowerCase();
 
-    const hashedPassword = await bcrypt.hash(dto.contrasena, SALT);
-    const datos = factory.crearDatos(dto, hashedPassword);
+  // ---- FIX CP06: validar nickname sin caracteres especiales --------------------------------
+  const nicknameValido = /^[a-zA-Z0-9_]+$/.test(dto.nickname.trim());
+  if (!nicknameValido) throw new BadRequestException('El nickname solo puede contener letras, números y guiones bajos');
 
-    const user = await this.prisma.usuario.create({
-      data: datos,
-      select: { idusuario: true, nickname: true, email: true, rol: true },
-    });
+  // ---- FIX CP04: validar contraseña segura --------------------------------
+  const contrasenaSegura = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}$/.test(dto.contrasena);
+  if (!contrasenaSegura) throw new BadRequestException('La contraseña debe tener al menos 8 caracteres, una mayúscula, un número y un símbolo');
 
-    return { message: '¡Cuenta creada exitosamente!', user };
-  }
+  // trim del nickname antes de continuar
+  dto.nickname = dto.nickname.trim();
+
+  const existing = await this.prisma.usuario.findFirst({ where: { email: dto.email } });
+  if (existing) throw new ConflictException('Hay una cuenta registrada con este correo...');
+
+  const existingNickname = await this.prisma.usuario.findFirst({ where: { nickname: dto.nickname } });
+  if (existingNickname) throw new ConflictException('Este nombre de usuario ya está en uso');
+
+  // ----------------------
+  factory.validarCreador(rolCreador ?? 'usuario');
+  const hashedPassword = await bcrypt.hash(dto.contrasena, SALT);
+  const datos = factory.crearDatos(dto, hashedPassword);
+
+  const user = await this.prisma.usuario.create({
+    data: datos,
+    select: { idusuario: true, nickname: true, email: true, rol: true },
+  });
+
+  return { message: '¡Cuenta creada exitosamente!', user };
+}
 
 
   // ─── endpoints ───────────────────────────────────────────────────────────────
