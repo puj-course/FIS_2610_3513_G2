@@ -124,8 +124,8 @@ async uploadImageCloudinary(idreceta: number) {
         })
         .end(receta.imagenreceta); 
     });
-    return imageUrl;
   }
+  return imageUrl;
 }
 
 getAll() {
