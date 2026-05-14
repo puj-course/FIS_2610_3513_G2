@@ -27,21 +27,19 @@ export class RecetaBuilder implements IRecetaBuilder {
     return this;
   }
 
-  setSlug(dto: CrearRecetaDto): this {
-    // Agarra el nombre y lo transforma en un slug
-    const slugBase = dto.titulo.toLowerCase().trim();
-    // Reemplaza espacios y caracteres especiales por guiones
-    const slug = slugBase
-    .normalize('NFD')                     // descompone tildes
-    .replace(/[\u0300-\u036f]/g, '')      // elimina diacríticos
-    .replace(/ñ/g, 'n')                   // maneja la ñ antes de normalizar
-    .replace(/[\s\W-]+/g, '-')            // espacios y especiales a guión
-    .replace(/^-+|-+$/g, '');
+setSlug(dto: CrearRecetaDto): this {
+  const slugBase = dto.titulo.toLowerCase().trim();
+  const slug = slugBase
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/ñ/g, 'n')
+    .replace(/[\s\W-]+/g, '-')
+    .replace(/^-+/, '')    // 
+    .replace(/-+$/, '');   // FIX SONAR: separado para evitar posible backracking ( Ataque DoS regex )
 
-    this.recetaFinal.slugUrl = slug;
-    return this;
-
-  }
+  this.recetaFinal.slugUrl = slug;
+  return this;
+}
 
 
   // ( Recordar que este es el builder de la receta completa, contiene imagen )
