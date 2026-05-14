@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Reporte de Calidad — RecetasYA</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600&display=swap');
+
+    :root {
+      --bg:      #0f1117;
+      --surface: #181c27;
+      --border:  #252a3a;
+      --text:    #e2e8f0;
+      --muted:   #64748b;
+      --ok:      #22d3a5;
+      --warn:    #f59e0b;
+      --bad:     #f43f5e;
+      --accent:  #6366f1;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'IBM Plex Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 0 0 60px;
+    }
+
+    header {
+      background: linear-gradient(135deg, #1a1f35 0%, #0f1117 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 40px 48px 32px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::before {
+      content: '';
+      position: absolute;
+      top: -80px; right: -80px;
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(99,102,241,0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .header-tag {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      color: var(--accent);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    header h1 {
+      font-size: 32px;
+      font-weight: 600;
+      letter-spacing: -0.5px;
+    }
+
+    header h1 span { color: var(--accent); }
+
+    .header-meta {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 8px;
+      font-family: 'IBM Plex Mono', monospace;
+    }
+
+    .summary-bar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .summary-item {
+      background: var(--surface);
+      padding: 24px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .summary-item .s-label {
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-family: 'IBM Plex Mono', monospace;
+    }
+
+    .summary-item .s-value {
+      font-size: 28px;
+      font-weight: 600;
+      font-family: 'IBM Plex Mono', monospace;
+    }
+
+    .s-value.ok   { color: var(--ok); }
+    .s-value.warn { color: var(--warn); }
+    .s-value.bad  { color: var(--bad); }
+
+    main { padding: 40px 48px; max-width: 1200px; margin: 0 auto; }
+
+    .section { margin-bottom: 56px; }
+
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-header h2 {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .section-header .section-tag {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+
+    .card-header {
+      padding: 12px 20px;
+      background: #1e2334;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 13px;
+      color: var(--accent);
+      border-bottom: 1px solid var(--border);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    th {
+      text-align: left;
+      padding: 10px 20px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--muted);
+      background: #161a28;
+      font-family: 'IBM Plex Mono', monospace;
+      border-bottom: 1px solid var(--border);
+    }
+
+    td {
+      padding: 10px 20px;
+      border-bottom: 1px solid var(--border);
+      font-family: 'IBM Plex Mono', monospace;
+    }
+
+    tr:last-child td { border-bottom: none; }
+
+    .row-bad  td { background: rgba(244,63,94,0.06); }
+    .row-warn td { background: rgba(245,158,11,0.06); }
+
+    .muted { color: var(--muted); font-style: italic; }
+
+    .stat-row {
+      display: flex;
+      gap: 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .stat {
+      flex: 1;
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      border-right: 1px solid var(--border);
+    }
+
+    .stat:last-child { border-right: none; }
+
+    .stat-num {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 22px;
+      font-weight: 600;
+    }
+
+    .stat-num.ok  { color: var(--ok); }
+    .stat-num.bad { color: var(--bad); }
+
+    .stat-label {
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+    }
+
+    .progress-bar {
+      height: 3px;
+      background: var(--border);
+    }
+
+    .progress-fill {
+      height: 100%;
+      transition: width 0.3s ease;
+    }
+
+    .badge {
+      display: inline-block;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+
+    .badge-ok   { background: rgba(34,211,165,0.15); color: var(--ok); }
+    .badge-warn { background: rgba(245,158,11,0.15);  color: var(--warn); }
+    .badge-bad  { background: rgba(244,63,94,0.15);   color: var(--bad); }
+
+    footer {
+      text-align: center;
+      font-size: 12px;
+      color: var(--muted);
+      font-family: 'IBM Plex Mono', monospace;
+      padding-top: 40px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-tag">Reporte de Calidad de Software</div>
+  <h1>RecetasYA <span>/ Métricas</span></h1>
+  <div class="header-meta">Generado el miércoles, 13 de mayo de 2026, 11:18 p. m.</div>
+</header>
+
+<div class="summary-bar">
+  <div class="summary-item">
+    <span class="s-label">Archivos analizados</span>
+    <span class="s-value">4</span>
+  </div>
+  <div class="summary-item">
+    <span class="s-label">Densidad de seguridad</span>
+    <span class="s-value bad">12%</span>
+  </div>
+  <div class="summary-item">
+    <span class="s-label">Endpoints sin rate limit</span>
+    <span class="s-value bad">26/26</span>
+  </div>
+  <div class="summary-item">
+    <span class="s-label">Exposición DDoS</span>
+    <span class="s-value bad">100.0%</span>
+  </div>
+</div>
+
+<main>
+
+  <!-- MÉTRICA 1 -->
+  <div class="section">
+    <div class="section-header">
+      <h2>Complejidad Ciclomática</h2>
+      <span class="section-tag">Métrica 1 · Umbral ≤ 10 por función</span>
+    </div>
+    
+    <div class="card">
+      <div class="card-header">📄 recetas.service.ts</div>
+      <table>
+        <thead><tr><th>Función</th><th>CC</th><th>Nivel</th></tr></thead>
+        <tbody><tr class=""><td>crearReceta</td><td>1</td><td>✅ BAJA</td></tr><tr class=""><td>guardarBorrador</td><td>1</td><td>✅ BAJA</td></tr><tr class=""><td>getBorradorByUsuario</td><td>1</td><td>✅ BAJA</td></tr><tr class=""><td>buscarPorIngredientes</td><td>1</td><td>✅ BAJA</td></tr><tr class=""><td>arrow</td><td>1</td><td>✅ BAJA</td></tr><tr class=""><td>actualizarEstado</td><td>2</td><td>✅ BAJA</td></tr><tr class=""><td>uploadImageCloudinary</td><td>5</td><td>✅ BAJA</td></tr><tr class=""><td>arrow</td><td>2</td><td>✅ BAJA</td></tr><tr class=""><td>arrow</td><td>2</td><td>✅ BAJA</td></tr><tr class=""><td>getAll</td><td>1</td><td>✅ BAJA</td></tr><tr class=""><td>arrow</td><td>1</td><td>✅ BAJA</td></tr><tr class=""><td>arrow</td><td>1</td><td>✅ BAJA</td></tr><tr class=""><td>mapearReceta</td><td>2</td><td>✅ BAJA</td></tr><tr class=""><td>arrow</td><td>1</td><td>✅ BAJA</td></tr><tr class=""><td>resolverImagen</td><td>3</td><td>✅ BAJA</td></tr><tr class=""><td>resolverIngredientes</td><td>2</td><td>✅ BAJA</td></tr><tr class=""><td>arrow</td><td>2</td><td>✅ BAJA</td></tr><tr class=""><td>eliminarReceta</td><td>1</td><td>✅ BAJA</td></tr><tr class=""><td>subirVideoCloudinary</td><td>2</td><td>✅ BAJA</td></tr><tr class=""><td>arrow</td><td>2</td><td>✅ BAJA</td></tr><tr class=""><td>arrow</td><td>2</td><td>✅ BAJA</td></tr><tr class=""><td>guardarReceta</td><td>1</td><td>✅ BAJA</td></tr><tr class=""><td>quitarRecetaGuardada</td><td>1</td><td>✅ BAJA</td></tr><tr class=""><td>getRecetasGuardadas</td><td>1</td><td>✅ BAJA</td></tr><tr class=""><td>getCalificacionPromedio</td><td>2</td><td>✅ BAJA</td></tr><tr class=""><td>calificar</td><td>3</td><td>✅ BAJA</td></tr><tr class=""><td>getRecetaPorSlug</td><td>1</td><td>✅ BAJA</td></tr></tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-header">📄 receta-creacion-base.service.ts</div>
+      <table>
+        <thead><tr><th>Función</th><th>CC</th><th>Nivel</th></tr></thead>
+        <tbody><tr class=""><td>ejecutar</td><td>1</td><td>✅ BAJA</td></tr><tr class=""><td>resolverCategoria</td><td>1</td><td>✅ BAJA</td></tr><tr class=""><td>resolverIngredientes</td><td>3</td><td>✅ BAJA</td></tr><tr class="row-bad"><td>construirReceta</td><td>11</td><td>⚠️ ALTA</td></tr><tr class=""><td>arrow</td><td>2</td><td>✅ BAJA</td></tr><tr class=""><td>arrow</td><td>2</td><td>✅ BAJA</td></tr><tr class=""><td>arrow</td><td>2</td><td>✅ BAJA</td></tr><tr class=""><td>arrow</td><td>2</td><td>✅ BAJA</td></tr><tr class=""><td>guardarEnBD</td><td>1</td><td>✅ BAJA</td></tr><tr class=""><td>notificar</td><td>1</td><td>✅ BAJA</td></tr></tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-header">📄 moderacion.service.ts</div>
+      <table>
+        <thead><tr><th>Función</th><th>CC</th><th>Nivel</th></tr></thead>
+        <tbody><tr class=""><td>moderar</td><td>1</td><td>✅ BAJA</td></tr></tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-header">📄 usuarios.service.ts</div>
+      <table>
+        <thead><tr><th>Función</th><th>CC</th><th>Nivel</th></tr></thead>
+        <tbody><tr class=""><td>crearConFactory</td><td>3</td><td>✅ BAJA</td></tr><tr class=""><td>register</td><td>1</td><td>✅ BAJA</td></tr><tr class=""><td>crearModerador</td><td>1</td><td>✅ BAJA</td></tr><tr class=""><td>crearAdmin</td><td>1</td><td>✅ BAJA</td></tr><tr class=""><td>crearVerificado</td><td>1</td><td>✅ BAJA</td></tr><tr class=""><td>getById</td><td>1</td><td>✅ BAJA</td></tr><tr class=""><td>login</td><td>3</td><td>✅ BAJA</td></tr><tr class=""><td>actualizarRol</td><td>1</td><td>✅ BAJA</td></tr><tr class="row-warn"><td>editarPerfil</td><td>8</td><td>🟡 MEDIA</td></tr><tr class=""><td>arrow</td><td>2</td><td>✅ BAJA</td></tr><tr class=""><td>arrow</td><td>2</td><td>✅ BAJA</td></tr><tr class=""><td>getAll</td><td>1</td><td>✅ BAJA</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- MÉTRICA 2 -->
+  <div class="section">
+    <div class="section-header">
+      <h2>Densidad de Seguridad</h2>
+      <span class="section-tag">Métrica 2 · Umbral ≥ 80% de endpoints protegidos</span>
+    </div>
+    
+    <div class="card">
+      <div class="card-header">📄 ingredientes.controller.ts</div>
+      <div class="stat-row">
+        <div class="stat"><span class="stat-num">2</span><span class="stat-label">Endpoints</span></div>
+        <div class="stat"><span class="stat-num ok">0</span><span class="stat-label">Protegidos</span></div>
+        <div class="stat"><span class="stat-num bad">2</span><span class="stat-label">Desprotegidos</span></div>
+        <div class="stat">
+          <span class="stat-num" style="color:var(--bad)">0%</span>
+          <span class="stat-label">Densidad</span>
+        </div>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:0%;background:var(--bad)"></div></div>
+    </div>
+    <div class="card">
+      <div class="card-header">📄 moderacion.controller.ts</div>
+      <div class="stat-row">
+        <div class="stat"><span class="stat-num">3</span><span class="stat-label">Endpoints</span></div>
+        <div class="stat"><span class="stat-num ok">0</span><span class="stat-label">Protegidos</span></div>
+        <div class="stat"><span class="stat-num bad">3</span><span class="stat-label">Desprotegidos</span></div>
+        <div class="stat">
+          <span class="stat-num" style="color:var(--bad)">0%</span>
+          <span class="stat-label">Densidad</span>
+        </div>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:0%;background:var(--bad)"></div></div>
+    </div>
+    <div class="card">
+      <div class="card-header">📄 recetas.controller.ts</div>
+      <div class="stat-row">
+        <div class="stat"><span class="stat-num">13</span><span class="stat-label">Endpoints</span></div>
+        <div class="stat"><span class="stat-num ok">0</span><span class="stat-label">Protegidos</span></div>
+        <div class="stat"><span class="stat-num bad">13</span><span class="stat-label">Desprotegidos</span></div>
+        <div class="stat">
+          <span class="stat-num" style="color:var(--bad)">0%</span>
+          <span class="stat-label">Densidad</span>
+        </div>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:0%;background:var(--bad)"></div></div>
+    </div>
+    <div class="card">
+      <div class="card-header">📄 usuarios.controller.ts</div>
+      <div class="stat-row">
+        <div class="stat"><span class="stat-num">8</span><span class="stat-label">Endpoints</span></div>
+        <div class="stat"><span class="stat-num ok">3</span><span class="stat-label">Protegidos</span></div>
+        <div class="stat"><span class="stat-num bad">5</span><span class="stat-label">Desprotegidos</span></div>
+        <div class="stat">
+          <span class="stat-num" style="color:var(--bad)">38%</span>
+          <span class="stat-label">Densidad</span>
+        </div>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:38%;background:var(--bad)"></div></div>
+    </div>
+    <div class="card" style="margin-top:4px">
+      <div class="stat-row">
+        <div class="stat">
+          <span class="stat-num">26</span>
+          <span class="stat-label">Total endpoints</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num ok">3</span>
+          <span class="stat-label">Protegidos</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num bad">23</span>
+          <span class="stat-label">Desprotegidos</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num bad">12%</span>
+          <span class="stat-label">Densidad global</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MÉTRICA 3 -->
+  <div class="section">
+    <div class="section-header">
+      <h2>Riesgo DDoS — Rate Limiting</h2>
+      <span class="section-tag">Métrica 3 · Umbral: 0% de exposición</span>
+    </div>
+    
+    <div class="card">
+      <div class="card-header">📄 ingredientes.controller.ts</div>
+      <table>
+        <thead><tr><th>Endpoint</th><th>Estado</th></tr></thead>
+        <tbody><tr class="row-bad">
+      <td>@Get()</td>
+      <td>⚠️ Sin rate limit</td>
+    </tr><tr class="row-bad">
+      <td>@Get('autocomplete')</td>
+      <td>⚠️ Sin rate limit</td>
+    </tr></tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-header">📄 moderacion.controller.ts</div>
+      <table>
+        <thead><tr><th>Endpoint</th><th>Estado</th></tr></thead>
+        <tbody><tr class="row-bad">
+      <td>@Post()</td>
+      <td>⚠️ Sin rate limit</td>
+    </tr><tr class="row-bad">
+      <td>@Get('admin/metricas')</td>
+      <td>⚠️ Sin rate limit</td>
+    </tr><tr class="row-bad">
+      <td>@Get('admin/metricas/rendimiento')</td>
+      <td>⚠️ Sin rate limit</td>
+    </tr></tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-header">📄 recetas.controller.ts</div>
+      <table>
+        <thead><tr><th>Endpoint</th><th>Estado</th></tr></thead>
+        <tbody><tr class="row-bad">
+      <td>@Get('buscar')</td>
+      <td>⚠️ Sin rate limit</td>
+    </tr><tr class="row-bad">
+      <td>@Get()</td>
+      <td>⚠️ Sin rate limit</td>
+    </tr><tr class="row-bad">
+      <td>@Post('crear')</td>
+      <td>⚠️ Sin rate limit</td>
+    </tr><tr class="row-bad">
+      <td>@Post('borrador')</td>
+      <td>⚠️ Sin rate limit</td>
+    </tr><tr class="row-bad">
+      <td>@Get('borrador/:userId')</td>
+      <td>⚠️ Sin rate limit</td>
+    </tr><tr class="row-bad">
+      <td>@Patch(':id/estado')</td>
+      <td>⚠️ Sin rate limit</td>
+    </tr><tr class="row-bad">
+      <td>@Delete(':id')</td>
+      <td>⚠️ Sin rate limit</td>
+    </tr><tr class="row-bad">
+      <td>@Get('guardadas/:userId')</td>
+      <td>⚠️ Sin rate limit</td>
+    </tr><tr class="row-bad">
+      <td>@Post(':id/guardar')</td>
+      <td>⚠️ Sin rate limit</td>
+    </tr><tr class="row-bad">
+      <td>@Delete(':id/guardar')</td>
+      <td>⚠️ Sin rate limit</td>
+    </tr><tr class="row-bad">
+      <td>@Post(':id/calificar')</td>
+      <td>⚠️ Sin rate limit</td>
+    </tr><tr class="row-bad">
+      <td>@Get(':id/promedio')</td>
+      <td>⚠️ Sin rate limit</td>
+    </tr><tr class="row-bad">
+      <td>@Get('share/:slug')</td>
+      <td>⚠️ Sin rate limit</td>
+    </tr></tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-header">📄 usuarios.controller.ts</div>
+      <table>
+        <thead><tr><th>Endpoint</th><th>Estado</th></tr></thead>
+        <tbody><tr class="row-bad">
+      <td>@Post('register')</td>
+      <td>⚠️ Sin rate limit</td>
+    </tr><tr class="row-bad">
+      <td>@Post('login')</td>
+      <td>⚠️ Sin rate limit</td>
+    </tr><tr class="row-bad">
+      <td>@Post('crear-moderador')</td>
+      <td>⚠️ Sin rate limit</td>
+    </tr><tr class="row-bad">
+      <td>@Post('crear-admin')</td>
+      <td>⚠️ Sin rate limit</td>
+    </tr><tr class="row-bad">
+      <td>@Post('crear-verificado')</td>
+      <td>⚠️ Sin rate limit</td>
+    </tr><tr class="row-bad">
+      <td>@Patch(':id/perfil')</td>
+      <td>⚠️ Sin rate limit</td>
+    </tr><tr class="row-bad">
+      <td>@Get()</td>
+      <td>⚠️ Sin rate limit</td>
+    </tr><tr class="row-bad">
+      <td>@Patch(':id/rol')</td>
+      <td>⚠️ Sin rate limit</td>
+    </tr></tbody>
+      </table>
+    </div>
+    <div class="card" style="margin-top:4px">
+      <div class="stat-row">
+        <div class="stat">
+          <span class="stat-num">26</span>
+          <span class="stat-label">Total endpoints</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num ok">0</span>
+          <span class="stat-label">Con rate limit</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num bad">26</span>
+          <span class="stat-label">Sin rate limit</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num bad">100.0%</span>
+          <span class="stat-label">Exposición DDoS</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  reporte generado automáticamente · node scripts/reporte.js
+</footer>
+
+</body>
+</html>
