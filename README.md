@@ -53,8 +53,6 @@ Check out the [Wiki](https://github.com/puj-course/FIS_2610_3513_G2/wiki#present
 |------|------|---------|
 | Salomé Ávila | Back-end Developer, DevOps Engineer, Configuration Manager | [Salome's Profile](https://github.com/blurryavi) |
 | Ale Corredor | Back-end Developer, QA Lead | [Alejandro's Profile](https://github.com/Alendy-24) |
-| Juan Sánchez | Front-end Developer, Sprint Planner | [Juan's Profile](https://github.com/jsanchez312) |
-| German Rodríguez | Graphic Designer, Product Owner | [German's Profile](https://github.com/germandrzmr) |
 
 ---
 
@@ -245,11 +243,6 @@ I'll be happy to get in touch.
 Computer science student at Pontificia Universidad Javeriana.
 Dm me anytime you need it!
 📧 daniel-corredor@javeriana.edu.co
-
-**Juan Pablo Sánchez Panqueva**
-Computer science student at Pontificia Universidad Javeriana.
-¡Here to solve any doubts you got!
-📧 sanchez.jp@javeriana.edu.co
 
 # License
 
