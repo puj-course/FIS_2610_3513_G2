@@ -34,13 +34,15 @@ jobs:
         run: npm test -- --verbose --forceExit
         continue-on-error: true
 
-        # Generar el reporte de las pruebas en HTML y subirlo al repo 
-      - name: Commit test report to repo
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add test-report/report.html
-          git diff --staged --quiet || git commit -m "ci: actualizar reporte de pruebas [skip ci]"
-          git push
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        # Alternativa para la generación del reporte
+        # NOTA: Recordar preguntar permisos para q actions pueda escribir archivos
+      - name: Publish report to Job Summary
+        if: always()
+        run: cat test-report/report.html >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload test report
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-report
+          path: test-report/report.html
+        if: always()
