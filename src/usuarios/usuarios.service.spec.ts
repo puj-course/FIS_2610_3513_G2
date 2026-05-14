@@ -77,21 +77,21 @@ describe('Registro UsuariosService', () => {
     expect(resultado.user).toHaveProperty('nickname');
     expect(resultado.user).toHaveProperty('email');
   });
-  it ('CP02 - Se ingresa nombre de usuario ya existente', async () => {
-      // Arrange
-    prisma.usuario.findFirst
-      .mockResolvedValueOnce(null) // para el email, no existe
-      .mockResolvedValueOnce({ idusuario: 1, nickname: 'juanito' });
+  
+it('CP02 - Se ingresa nombre de usuario ya existente', async () => {
+  // Arrange
+  prisma.usuario.findFirst
+    .mockResolvedValueOnce(null)                                   // email libre
+    .mockResolvedValueOnce({ idusuario: 1, nickname: 'juanito' }); // nickname ocupado
 
-  // Act
-  const resultado = await service.crearModerador(
-    { nickname: 'mod1', email: 'mod@test.com', contrasena: 'Segura123!' },
-    'admin',
-  );
-
-  // Assert
-  expect(resultado.message).toBe('¡Cuenta creada exitosamente!');
-  expect(resultado.user).toHaveProperty('rol');
+  // Act & Assert — register debe ir DENTRO del expect
+  await expect(
+    service.register({
+      nickname: 'juanito',
+      email: 'nuevo@test.com',
+      contrasena: 'Segura123!',
+    }),
+  ).rejects.toThrow(ConflictException);
 });
 
 
