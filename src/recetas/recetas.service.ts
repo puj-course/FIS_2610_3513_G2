@@ -262,5 +262,37 @@ private resolverIngredientes(r: any): number[] {
       },
     });
   }
+
+  async getRecetaPorSlug(slug: string) {
+  return this.prisma.receta.findFirst({
+    where: {
+      slugUrl: slug,
+      estado: 'publicado',
+    },
+    select: {
+      idreceta:          true,
+      nombre:            true,
+      descripcion:       true,
+      tiempopreparacion: true,
+      calorias:          true,
+      image_url:         true,
+      slugUrl:           true,
+      fechacreacion:     true,
+      recetaingrediente: {
+        select: {
+          cantidadingrediente: true,
+          ingrediente: { select: { nombre: true } },
+        },
+      },
+      paso: {
+        orderBy: { numeropaso: 'asc' },
+        select: { numeropaso: true, descripcion: true },
+      },
+      recetacategoria: {
+        select: { categoria: { select: { nombre: true } } },
+      },
+    },
+    });
+  }
 }
 
