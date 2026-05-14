@@ -34,8 +34,8 @@ setSlug(dto: CrearRecetaDto): this {
     .replace(/[\u0300-\u036f]/g, '')
     .replace(/ñ/g, 'n')
     .replace(/[\s\W-]+/g, '-')
-    .replace(/^-+/, '')    // 
-    .replace(/-+$/, '');   // FIX SONAR: separado para evitar posible backracking ( Ataque DoS regex )
+    .replace(/^-/, '')  
+    .replace(/-$/, '');   // FIX SONAR: separado para evitar posible backracking ( Ataque DoS regex )
 
   this.recetaFinal.slugUrl = slug;
   return this;
