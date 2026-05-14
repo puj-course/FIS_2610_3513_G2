@@ -6,7 +6,7 @@ const API_BASE = 'http://localhost:8080';
    const raw = sessionStorage.getItem('recetaya_user');
    if (!raw) { redirect(); return; }
    const user = JSON.parse(raw);
-   if (!user || user.rol !== 'admin') { redirect(); return; }
+   //if (!user || user.rol !== 'usuario') { redirect(); return; }
   document.body.style.display = 'block';
   cargarRecetasPendientes(1);
 })();
