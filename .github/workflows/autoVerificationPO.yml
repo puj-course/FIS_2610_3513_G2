@@ -1,0 +1,102 @@
+name: Kanban - Cerrar issue por comentario del PO
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  close_card:
+    runs-on: ubuntu-latest
+    environment: .env
+    # alguien que me recuerde poner a blurry cuando termine de testear
+    if: |
+      github.event.comment.user.login == 'blurryavi' && 
+      contains(github.event.comment.body, 'cerrar')
+
+    steps:
+      - name: Obtener node ID del issue
+        id: issue_node
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+        run: |
+          NODE_ID=$(gh api graphql -f query='
+            query($owner: String!, $repo: String!, $num: Int!) {
+              repository(owner: $owner, name: $repo) {
+                issue(number: $num) { id }
+              }
+            }' \
+            -f owner="puj-course" \
+            -f repo="FIS_2610_3513_G2" \
+            -F num=${{ github.event.issue.number }} \
+            --jq '.data.repository.issue.id')
+          echo "node_id=$NODE_ID" >> $GITHUB_OUTPUT
+
+      - name: Mover tarjeta a Done en el Kanban
+        if: steps.issue_node.outputs.node_id != ''
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+          ISSUE_NODE: ${{ steps.issue_node.outputs.node_id }}
+          PRJ_ID: ${{ secrets.PROJECT_NODE_ID }}
+          FLD_ID: ${{ secrets.STATUS_FIELD_ID }}
+          OPT_DONE: ${{ secrets.STATUS_DONE_ID }}
+        run: |
+          CURSOR=""
+          ITEM_ID=""
+
+          while true; do
+            RESULT=$(gh api graphql -f query='
+              query($org: String!, $num: Int!, $cursor: String) {
+                organization(login: $org) {
+                  projectV2(number: $num) {
+                    items(first: 100, after: $cursor) {
+                      pageInfo { hasNextPage endCursor }
+                      nodes {
+                        id
+                        content { ... on Issue { id } }
+                      }
+                    }
+                  }
+                }
+              }' \
+              -f org="puj-course" \
+              -F num=56 \
+              -f cursor="$CURSOR")
+
+            ITEM_ID=$(echo "$RESULT" | jq -r ".data.organization.projectV2.items.nodes[] | select(.content.id == \"$ISSUE_NODE\") | .id")
+            HAS_NEXT=$(echo "$RESULT" | jq -r '.data.organization.projectV2.items.pageInfo.hasNextPage')
+            CURSOR=$(echo "$RESULT" | jq -r '.data.organization.projectV2.items.pageInfo.endCursor')
+
+            if [ -n "$ITEM_ID" ] || [ "$HAS_NEXT" != "true" ]; then
+              break
+            fi
+          done
+
+          if [ -z "$ITEM_ID" ]; then
+            echo "No se encontró el issue en el proyecto."
+            exit 0
+          fi
+
+          echo "✅ ITEM_ID encontrado: $ITEM_ID"
+
+          gh api graphql -f query='
+            mutation($prj: ID!, $item: ID!, $field: ID!, $opt: String!) {
+              updateProjectV2ItemFieldValue(input: {
+                projectId: $prj, itemId: $item, fieldId: $field, value: { singleSelectOptionId: $opt }
+              }) { projectV2Item { id } }
+            }' \
+            -f prj="$PRJ_ID" \
+            -f item="$ITEM_ID" \
+            -f field="$FLD_ID" \
+            -f opt="$OPT_DONE"
+
+      - name: Cerrar el issue en GitHub
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+        run: |
+          gh issue close ${{ github.event.issue.number }} \
+            --repo puj-course/FIS_2610_3513_G2 \
+            --comment "✅ Issue cerrado automáticamente por indicación del Product Owner."
