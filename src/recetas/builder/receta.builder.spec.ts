@@ -10,7 +10,7 @@ describe('RecetaBuilder - setDatosBase', () => {
     builder = new RecetaBuilder();
   });
 
-  // ─── CP01: Normal - todos los campos bien ────────────────────
+  // ----- CP01: Normal - todos los campos bien --------------------------------------------------
   it('CP01 - debería asignar todos los campos del DTO exactamente sin aplicar defaults', () => {
     // Arrange
     const dto: CrearRecetaDto = {
@@ -39,7 +39,7 @@ describe('RecetaBuilder - setDatosBase', () => {
     expect(resultado.video_url).toBe('https://video.com/pasta');
   });
 
-  // ─── CP02: Negativo - título vacío ──────────────────────────────────────────
+  // ----- CP02: Negativo - título vacío ---------------------------------------------
   // Nota: el método no valida si el título es vacío, lo asigna directamente.
   // Esto revela que falta validación en setDatosBase para campos obligatorios.
   it('CP02 - debería asignar nombre vacío sin lanzar error si el título es string vacío', () => {
@@ -59,7 +59,7 @@ describe('RecetaBuilder - setDatosBase', () => {
     expect(resultado.nombre).toBe('');
   });
 
-  // ─── CP03: Negativo - id_usuariocreador null ────────────────────────────────
+  // ----- CP03: Negativo - id_usuariocreador null ---------------------------------------------
   it('CP03 - no debería asignar id_usuariocreador si viene null, dejando la receta sin creador', () => {
     // Arrange
     const dto: CrearRecetaDto = {
@@ -78,7 +78,7 @@ describe('RecetaBuilder - setDatosBase', () => {
     expect(resultado.id_usuariocreador).toBeUndefined();
   });
 
-  // ─── CP04: Borde - título con caracteres especiales ─────────────────────────
+  // ----- CP04: Borde - título con caracteres especiales -------------------------
   it('CP04 - debería guardar caracteres especiales en el nombre sin modificarlos', () => {
     // Arrange
     const dto: CrearRecetaDto = {
@@ -96,7 +96,7 @@ describe('RecetaBuilder - setDatosBase', () => {
     expect(resultado.nombre).toBe('Ñoquis & Crème brûlée');
   });
 
-  // ─── CP05: Borde - imagen vacía/nula ────────────────────────────────────────
+  // ----- CP05: Borde - imagen vacía/nula -----------------------------------
   it('CP05 - debería asignar todos los campos correctamente aunque no haya imagen en el DTO', () => {
     // Arrange
     const dto: CrearRecetaDto = {
@@ -118,7 +118,7 @@ describe('RecetaBuilder - setDatosBase', () => {
     expect((resultado as any).imagen).toBeUndefined();
   });
 
-  // ─── CP06: Lógica de negocio - descripción vacía ────────────────────────────
+  // ----- CP06: Lógica de negocio - descripción vacía -----------------------------------
   it('CP06 - debería enviar los datos sin problema aunque la descripción esté vacía', () => {
     // Arrange
     const dto: CrearRecetaDto = {
