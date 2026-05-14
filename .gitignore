@@ -6,4 +6,3 @@ prisma/migrations/
 /generated/prisma
 .env.docker
 test-report
-coverage/
