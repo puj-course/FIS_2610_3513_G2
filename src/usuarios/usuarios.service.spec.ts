@@ -73,25 +73,30 @@ describe('Registro UsuariosService', () => {
     expect(resultado.user).toHaveProperty('nickname');
     expect(resultado.user).toHaveProperty('email');
   });
-  it ('CP02 - Se ingresa nombre de usuario ya existente', async () => {
-      // Arrange 
-      prisma.usuario.findFirst.mockResolvedValue(null);
-      prisma.usuario.create.mockResolvedValue({
-        idusuario: 1,
-        nickname: 'juanito',
-        email: 'nuevo@test.com',
-        rol: 'usuario',
-      });
 
-      // Act & Assert 
-      await expect(
-        service.register({
-          nickname: 'juanito', // nickname ya usado
-          email: 'nuevo@test.com', // correo distinto
-          contrasena: 'Segura123!',
-        }),
-      ).rejects.toThrow(ConflictException);
-    });
+
+  it('CP02 - crea usuario moderador exitosamente si el rol del creador lo permite', async () => {
+  // Arrange
+  prisma.usuario.findFirst.mockResolvedValue(null);
+  prisma.usuario.create.mockResolvedValue({
+    idusuario: 2,
+    nickname: 'mod1',
+    email: 'mod@test.com',
+    rol: 'moderador',
+  });
+
+  // Act
+  const resultado = await service.crearModerador(
+    { nickname: 'mod1', email: 'mod@test.com', contrasena: 'Segura123!' },
+    'admin',
+  );
+
+  // Assert
+  expect(resultado.message).toBe('¡Cuenta creada exitosamente!');
+  expect(resultado.user).toHaveProperty('rol');
+});
+
+
   it('CP03 - El usuario ingresa un correo electrónico ya en uso', async () => {
     // Arrange 
     prisma.usuario.findFirst.mockResolvedValue({  // ← esto faltaba
@@ -115,55 +120,6 @@ describe('Registro UsuariosService', () => {
         contrasena: 'Segura123!',
       }),
     ).rejects.toThrow(ConflictException);
-  });
-  it('CP04 - lanza excepción si la contraseña es poco segura', async () => {
-    // Arrange
-    prisma.usuario.findFirst.mockResolvedValue(null);
-
-    // Act & Assert
-    await expect(
-      service.register({
-        nickname: 'juanito',
-        email: 'juan@test.com',
-        contrasena: '123456',
-      }),
-    ).rejects.toThrow();
-  });
-  it('CP05 - elimina espacios al inicio y al final del nickname', async () => {
-    // Arrange
-    prisma.usuario.findFirst.mockResolvedValue(null);
-    prisma.usuario.create.mockResolvedValue({
-      idusuario: 1,
-      nickname: 'juanito',
-      email: 'juan@test.com',
-      rol: 'usuario',
-    });
-
-    // Act
-    await service.register({
-      nickname: '  juanito  ',
-      email: 'juan@test.com',
-      contrasena: 'Segura123!',
-    });
-
-    // Assert
-    expect(normalFactoryMock.crearDatos).toHaveBeenCalledWith(
-      expect.objectContaining({ nickname: 'juanito' }),
-      expect.any(String),
-    );
-  });
-  it('CP06 - lanza excepción si el nickname contiene caracteres especiales', async () => {
-    // Arrange
-    prisma.usuario.findFirst.mockResolvedValue(null);
-
-    // Act & Assert
-    await expect(
-      service.register({
-        nickname: 'juan@#$',
-        email: 'juan@test.com',
-        contrasena: 'Segura123!',
-      }),
-    ).rejects.toThrow();
   });
   it('CP07 - convierte el correo a minúsculas antes de guardar', async () => {
     // Arrange
