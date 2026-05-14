@@ -61,7 +61,7 @@ export abstract class RecetaCreacionBase {
       : new RecetaImagelessBuilder();
 
     builder.setDatosBase(dto);
-
+    builder.setSlug(dto);
     // VALIDACIÓN PARA IMAGEN
     if (dto.imagen && dto.imagen.includes(',')) {
       const buffer = Buffer.from(dto.imagen.split(",")[1], "base64");

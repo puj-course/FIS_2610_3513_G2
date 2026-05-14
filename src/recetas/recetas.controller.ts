@@ -1,5 +1,4 @@
-import { Controller, Get, Delete, Post, Patch, UploadedFile, UseInterceptors, Body, Query, Param, HttpCode } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { Controller, Get, Delete, Post, Patch, UploadedFile, UseInterceptors, Body, Query, Param, HttpCode, UnauthorizedException} from '@nestjs/common';import { FileInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
 import { RecetasService } from './recetas.service';
 import { BuscarRecetasDto } from './dto/buscar-recetas.dto';
@@ -77,5 +76,24 @@ async getBorradorByUsuario(@Param('userId') userId: string) {
     @Body('usuarioId') usuarioId: number,
   ) {
     return this.recetasService.quitarRecetaGuardada(usuarioId, Number(id));
+  }
+
+  // endpoints para calificacion de recetas
+  
+  @Post(':id/calificar')
+  async calificar(
+    @Param('id') id:string,
+    @Body('usuarioId') usuarioId:number,
+    @Body('puntaje') puntaje: number,
+  ) {
+    if (!usuarioId){
+      throw new UnauthorizedException('Debes iniciar sesion para calificar');
+    }
+    return this.recetasService.calificar(Number(id), Number(usuarioId), Number(puntaje));
+  }
+
+  @Get(':id/promedio')
+  async getPromedio(@Param('id') id:string) { 
+    return this.recetasService.getCalificacionPromedio(Number(id));
   }
 }

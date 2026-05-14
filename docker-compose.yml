@@ -19,6 +19,7 @@ services:
     container_name: backend
     ports:
       - "8080:8080"
+      - "5555:5555" # Para ejecutar npx prisma studio
     env_file:
       - .env.docker
     depends_on:
