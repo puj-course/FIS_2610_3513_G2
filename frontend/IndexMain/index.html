@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/IndexMain/index.css">
+<link rel="stylesheet" href="./index.css">
 </head>
 <body>
 
@@ -52,10 +52,19 @@
     </svg>
     Mis guardadas
   </button>
+    <button class="tab create" id="tabCrear">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6Z"/><line x1="6" y1="17" x2="18" y2="17"/></svg>
+      Recetas Creadas
+    </button>
+    <select name="Filtrar" id="btnFilter">
+      <option value="todas">Ordenar por...</option>
+      <option value="populares">Populares</option>
+    </select>
   </div>
   <div class="results-info" id="resultsInfo"></div>
   <div class="cards-grid" id="cardsGrid"></div>
 </section>
+
 
 <div class="lightbox" id="lightbox">
   <div class="lightbox-inner">
@@ -124,7 +133,7 @@
 <!-- End of related to the recipe card to save and report recipes -->
 
 
-<script src="/IndexMain/index.js"></script>
+<script src="./index.js"></script>
 <div class="share-toast" id="shareToast">¡Link copiado!</div>
 </body>
 </html>

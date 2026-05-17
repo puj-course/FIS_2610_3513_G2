@@ -83,6 +83,7 @@ async function buildAllRecetas() {
     estado:      r.estado || "publicado",
     tipo:        "bd",
     slugUrl:     r.slugUrl || null,
+    usuarioId:   r.id_usuariocreador || null,
     ingredientes: (r.ingredienteIds || []).map(function(ri) {
       return ri.idingrediente ?? ri;
     }),
@@ -205,6 +206,23 @@ function renderRecipes() {
   if (vistaActual === "guardadas") {
     results = results.filter(function(r) {
       return recetasGuardadas.has(r.id);
+    });
+  }
+
+  if (vistaActual === "creadas") {
+    var user = null;
+    try { user = JSON.parse(sessionStorage.getItem("recetaya_user") || "null"); } catch(e) {}
+    if (!user) { vistaActual = "todas"; return; }
+    results = results.filter(function(r) {
+      return r.usuarioId === user.idusuario;
+    });
+  }
+
+  if (vistaActual === "populares") {
+    results = results.sort(function(a, b) {
+      var ratingA = a.rating != null ? a.rating : -1;
+      var ratingB = b.rating != null ? b.rating : -1;
+      return ratingB - ratingA;
     });
   }
 
@@ -787,6 +805,7 @@ document.getElementById("tabTodas").addEventListener("click", function() {
   vistaActual = "todas";
   document.getElementById("tabTodas").classList.add("active");
   document.getElementById("tabGuardadas").classList.remove("active");
+  document.getElementById("tabCrear").classList.remove("active");
   renderRecipes();
 });
 
@@ -800,6 +819,23 @@ document.getElementById("tabGuardadas").addEventListener("click", function() {
   vistaActual = "guardadas";
   document.getElementById("tabGuardadas").classList.add("active");
   document.getElementById("tabTodas").classList.remove("active");
+  document.getElementById("btnFilter").value = "todas";
+  document.getElementById("tabCrear").classList.remove("active");
+  renderRecipes();
+});
+
+document.getElementById("tabCrear").addEventListener("click", function() {
+  var user = null;
+  try { user = JSON.parse(sessionStorage.getItem("recetaya_user") || "null"); } catch(e) {}
+  if (!user) {
+    window.location.href = "../login-register/loginRecetaYa.html";
+    return;
+  }
+  vistaActual = "creadas";
+  document.getElementById("tabCrear").classList.add("active");
+  document.getElementById("tabTodas").classList.remove("active");
+  document.getElementById("tabGuardadas").classList.remove("active");
+  document.getElementById("btnFilter").value = "todas";
   renderRecipes();
 });
 
@@ -832,6 +868,22 @@ if (tagsToggle) {
     tagsToggle.textContent = expanded ? "Ver menos ▴" : "Ver más ▾";
   });
 }
+
+function filtrarPopularidad(params) {
+  
+}
+
+document.getElementById("btnFilter").addEventListener("change", function() {
+  var valor = this.value;
+  if (valor === "populares") {
+    vistaActual = "populares";
+  } else {
+    vistaActual = "todas";
+  }
+  document.getElementById("tabTodas").classList.toggle("active", vistaActual === "todas");
+  document.getElementById("tabGuardadas").classList.remove("active");
+  renderRecipes();
+});
 
 renderNav();
 buildAllRecetas();
