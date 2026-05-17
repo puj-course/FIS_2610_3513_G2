@@ -459,3 +459,30 @@
   font-weight: 400;
   font-size: 12px;
 }
+
+#btnFilter {
+  font-family: "Outfit", sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 8px 36px 8px 14px;
+  border-radius: 10px;
+  border: 1.5px solid var(--border);
+  background: white url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239a8080' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 12px center;
+  color: var(--muted);
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  outline: none;
+  transition: all 0.18s;
+  margin-left: auto;
+}
+
+#btnFilter:hover {
+  border-color: var(--rose);
+  color: var(--rose);
+}
+
+#btnFilter:focus {
+  border-color: var(--rose);
+  box-shadow: 0 0 0 3px rgba(232,67,90,.10);
+}

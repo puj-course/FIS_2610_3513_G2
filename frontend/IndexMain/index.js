@@ -208,6 +208,14 @@ function renderRecipes() {
     });
   }
 
+  if (vistaActual === "populares") {
+    results = results.sort(function(a, b) {
+      var ratingA = a.rating != null ? a.rating : -1;
+      var ratingB = b.rating != null ? b.rating : -1;
+      return ratingB - ratingA;
+    });
+  }
+
   if (q) {
     results = results.filter(function(r) {
       if (r.nombre.toLowerCase().indexOf(q) >= 0) return true;
@@ -800,6 +808,7 @@ document.getElementById("tabGuardadas").addEventListener("click", function() {
   vistaActual = "guardadas";
   document.getElementById("tabGuardadas").classList.add("active");
   document.getElementById("tabTodas").classList.remove("active");
+  document.getElementById("btnFilter").value = "todas";
   renderRecipes();
 });
 
@@ -832,6 +841,22 @@ if (tagsToggle) {
     tagsToggle.textContent = expanded ? "Ver menos ▴" : "Ver más ▾";
   });
 }
+
+function filtrarPopularidad(params) {
+  
+}
+
+document.getElementById("btnFilter").addEventListener("change", function() {
+  var valor = this.value;
+  if (valor === "populares") {
+    vistaActual = "populares";
+  } else {
+    vistaActual = "todas";
+  }
+  document.getElementById("tabTodas").classList.toggle("active", vistaActual === "todas");
+  document.getElementById("tabGuardadas").classList.remove("active");
+  renderRecipes();
+});
 
 renderNav();
 buildAllRecetas();

@@ -19,10 +19,9 @@ export class RecetasController {
   }
 
   @Get()
-  getAll() {
-    return this.recetasService.getAll();
+  getAll(@Query('ordenar') ordenar?: string) {
+    return this.recetasService.getAll(ordenar);
   }
-
   // POST /recetas/crear → crea receta (estado por defecto: 'publicado')
   @Post('crear')
   @HttpCode(201)
