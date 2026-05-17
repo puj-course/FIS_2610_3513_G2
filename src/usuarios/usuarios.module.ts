@@ -7,10 +7,11 @@ import { UsuarioNormalFactory } from './factory/usuarioNormal.factory';
 import { UsuarioModeradorFactory } from './factory/usuarioModerador.factory';
 import { UsuarioAdminFactory } from './factory/usuarioAdmin.factory';
 import { UsuarioVerificadoFactory } from './factory/usuarioVerificado.factory';
+import { forwardRef } from '@nestjs/common';
 
 
 @Module({
-  imports: [TelegramModule],   
+  imports: [forwardRef(() => TelegramModule)],   
   controllers: [UsuariosController],
   providers: [
     UsuariosService,

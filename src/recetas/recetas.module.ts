@@ -6,9 +6,10 @@ import { CrearRecetaService } from './crear-receta.service';
 import { GuardarBorradorService } from './guardar-borrador.service';
 import { TelegramModule } from '../telegram/telegram.module';
 import { IngredientesModule } from '../ingredientes/ingredientes.module'
+import { forwardRef } from '@nestjs/common';
 
 @Module({
-  imports: [TelegramModule, IngredientesModule],
+  imports: [forwardRef(() => TelegramModule), IngredientesModule],
   controllers: [RecetasController],
   providers: [
     RecetasService,

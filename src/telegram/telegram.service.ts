@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class TelegramService {
+  private readonly logger = new Logger(TelegramService.name);
   private readonly token: string;
   private readonly chatId: string;
   private readonly apiUrl: string;
@@ -46,6 +47,40 @@ async enviarFoto(imagenBuffer: Buffer, caption: string): Promise<void> {
     });
   } catch (err) {
     console.error('Error enviando foto a Telegram:', err);
+  }
+}
+
+
+async enviarMensajeA(chatId: number | string, texto: string): Promise<void> {
+  try {
+    await fetch(this.apiUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chat_id: chatId, text: texto }),
+    });
+    this.logger.log(`[Telegram] ✓ Mensaje enviado a chatId=${chatId}`);
+  } catch (err) {
+    console.error(`[Telegram] ✗ Error enviando a chatId=${chatId}:`, err);
+  }
+}
+
+async enviarFotoA(chatId: number | string, imagenBuffer: Buffer, caption: string): Promise<void> {
+  try {
+    const uint8Array = new Uint8Array(imagenBuffer);
+    const blob = new Blob([uint8Array], { type: 'image/jpeg' });
+
+    const formData = new FormData();
+    formData.append('chat_id', String(chatId));
+    formData.append('caption', caption);
+    formData.append('photo', blob, 'receta.jpg');
+
+    await fetch(`https://api.telegram.org/bot${this.token}/sendPhoto`, {
+      method: 'POST',
+      body: formData,
+    });
+    this.logger.log(`[Telegram] ✓ Foto enviada a chatId=${chatId}`);
+  } catch (err) {
+    console.error(`[Telegram] ✗ Error enviando foto a chatId=${chatId}:`, err);
   }
 }
 }
