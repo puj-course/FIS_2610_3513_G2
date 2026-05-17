@@ -1,9 +1,11 @@
 // telegram/notificaciones.facade.ts
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { TelegramService } from './telegram.service';
 
 @Injectable()
 export class NotificacionesFacade {
+  private readonly logger = new Logger(NotificacionesFacade.name);
+
   constructor(private readonly telegram: TelegramService) {}
 
   async notificarTelegram(receta: any): Promise<void> {
@@ -26,4 +28,15 @@ export class NotificacionesFacade {
     `Estado: ${receta.estado}\n` +
     `Creador: ${receta.id_usuariocreador || 'Anónimo'}`;
   }
+
+  async notificarTelegramA(chatId: number | string, receta: any): Promise<void> {
+  const mensaje = this.formatearMensaje(receta);
+
+  if (receta.imagenreceta) {
+    await this.telegram.enviarFotoA(chatId, Buffer.from(receta.imagenreceta), mensaje);
+  } else {
+    await this.telegram.enviarMensajeA(chatId, mensaje);
+  }
+}
+
 }

@@ -18,7 +18,6 @@ export class RecetaBuilder implements IRecetaBuilder {
     this.recetaFinal.estado            = dto.estado            || 'pendiente';
     this.recetaFinal.fechacreacion     = new Date();
     if (dto.id_usuariocreador) {
-  this.recetaFinal.id_usuariocreador = dto.id_usuariocreador;
   this.recetaFinal.usuario = {
     connect: { idusuario: dto.id_usuariocreador }
   };

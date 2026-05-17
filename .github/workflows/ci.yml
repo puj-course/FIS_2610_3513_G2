@@ -12,6 +12,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    environment: .env
     strategy:
       matrix:
         node-version: [25.x] # Esta es la version que soporta nuestro proyecto en otras versiones falla
@@ -30,4 +31,17 @@ jobs:
       run: npx prisma generate
     - name: Build
       run: npm run build
-  
+    
+    - name: Notificar telegram cuando la prueba pasa
+      if: success()
+      run: |
+        curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendMessage" \
+          -d chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
+          -d text="✅ CI passed on branch ${{ github.ref_name }} — commit by ${{ github.actor }}"
+
+    - name: Notificar a telegram si la prueba falla
+      if: failure()
+      run: |
+        curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendMessage" \
+          -d chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
+          -d text="❌ CI failed on branch ${{ github.ref_name }} — commit by ${{ github.actor }}"
