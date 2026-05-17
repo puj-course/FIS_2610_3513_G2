@@ -17,7 +17,7 @@ console.log(process.env.DATABASE_URL)
 
 
   const parser = fs
-    .createReadStream('Scripts/recipes.csv')
+    .createReadStream('scripts/recipes.csv')
     .pipe(parse({
       columns: true,
       delimiter: ';',
