@@ -6,6 +6,7 @@ import { UsuariosModule } from './usuarios/usuarios.module';
 import { TelegramModule } from './telegram/telegram.module';
 import { v2 as cloudinary } from 'cloudinary';
 import { ModeracionModule } from './moderacion/moderacion.module';
+import { SmsModule } from './SMS/sms.module';
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -24,6 +25,7 @@ cloudinary.config({
     UsuariosModule,
     TelegramModule,
     ModeracionModule,
+    SmsModule,
   ],
 })
 export class AppModule {}
