@@ -21,5 +21,5 @@ ENV PORT=8080
 EXPOSE 8080
 
 
-CMD npx prisma generate && npx prisma db push && node dist/src/main.js
+CMD npx prisma generate && npx prisma db push --accept-data-loss && node dist/src/main.js
 
