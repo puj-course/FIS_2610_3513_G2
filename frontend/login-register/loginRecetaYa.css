@@ -53,3 +53,28 @@
   .link-row { text-align: center; margin-top: 18px; color: rgba(255,255,255,0.8); font-size: 14px; }
   .link-row a { color: white; font-weight: 600; text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.5); }
   .link-row a:hover { border-color: white; }
+
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.tab {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 22px;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.25) !important;
+  color: white !important;
+  transition: background 0.2s, color 0.2s;
+}
+
+.tab.active {
+  background: white !important;
+  color: #b5451b !important;
+}
