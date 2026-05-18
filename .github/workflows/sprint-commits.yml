@@ -10,7 +10,7 @@ on:
       days_back:
         description: "How many days back to analyze"
         required: false
-        default: "14"
+        default: "6"
  
 permissions:
   contents: write
