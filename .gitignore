@@ -5,4 +5,3 @@ node_modules/
 prisma/migrations/
 /generated/prisma
 .env.docker
-coverage/
