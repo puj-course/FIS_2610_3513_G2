@@ -12,6 +12,8 @@ services:
       - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - backend
     restart: unless-stopped
 
   backend:
@@ -24,6 +26,9 @@ services:
       - .env.docker
     depends_on:
       - database
+    networks:
+        - frontend
+        - backend
     restart: unless-stopped
   
   frontend:
@@ -31,7 +36,17 @@ services:
     container_name: frontend
     ports:
       - "3000:80"
+    networks:
+        - frontend
     restart: unless-stopped
     
 volumes:
   postgres_data:
+
+networks:
+  frontend:
+    driver: bridge
+    name: frontend_network
+  backend: 
+    driver: bridge 
+    name: backend_network
