@@ -1,21 +1,21 @@
 {
   "sprint": "Sprint-13",
-  "generated_at": "2026-05-18T21:56:46.708522+00:00",
+  "generated_at": "2026-05-18T22:01:04.775259+00:00",
   "window": {
-    "since": "2026-05-04T21:56:46Z",
-    "until": "2026-05-18T21:56:46Z",
-    "days": 14
+    "since": "2026-05-12T22:01:04Z",
+    "until": "2026-05-18T22:01:04Z",
+    "days": 6
   },
   "repo": "puj-course/FIS_2610_3513_G2",
   "summary": {
-    "total_commits": 182,
-    "average_commits_per_member": 91.0,
-    "total_prs": 30,
+    "total_commits": 121,
+    "average_commits_per_member": 60.5,
+    "total_prs": 25,
     "members_tracked": 2
   },
   "members": {
     "Alendy-24": {
-      "commits": 130,
+      "commits": 83,
       "commit_log": [
         {
           "sha": "8937e46",
@@ -597,335 +597,6 @@
           "message": "package",
           "date": "2026-05-13T00:35:30Z",
           "author": "Alendy-24"
-        },
-        {
-          "sha": "cd6dd15",
-          "full_sha": "cd6dd15b7e26bc39e7d58122d854dee15da1f53e",
-          "message": "feat: Add identificator for logged users when trying to rate. Closes (#239)",
-          "date": "2026-05-12T04:18:54Z",
-          "author": "Alendy-24"
-        },
-        {
-          "sha": "e400366",
-          "full_sha": "e400366bea62c56181413fb6f0f7f1d9d1ab2d2e",
-          "message": "fix: accidentally forgot to add prisma lol",
-          "date": "2026-05-12T04:12:59Z",
-          "author": "Alendy-24"
-        },
-        {
-          "sha": "a32b2fb",
-          "full_sha": "a32b2fb01470633a7abff891d06f614330e52c48",
-          "message": "feat: Add total rating detail in front cards & links to backpoints. Closes (#240",
-          "date": "2026-05-12T04:03:20Z",
-          "author": "Alendy-24"
-        },
-        {
-          "sha": "03f6063",
-          "full_sha": "03f6063409ec936b7291e31b29d0b49dc52e4fc4",
-          "message": "gitMerge branch 'features-alejandro' of https://github.com/puj-course/FIS_2610_3",
-          "date": "2026-05-12T02:10:17Z",
-          "author": "Alendy-24"
-        },
-        {
-          "sha": "fbbc9b0",
-          "full_sha": "fbbc9b0e1152ec80c0814c7d76445a9b649a056b",
-          "message": "Packages",
-          "date": "2026-05-12T02:03:46Z",
-          "author": "Alendy-24"
-        },
-        {
-          "sha": "ed66c67",
-          "full_sha": "ed66c6774b1654386a748fe77e1efa05385964f7",
-          "message": "feat: Add rating front module. View n interactivity. Closes (#240 & 239)",
-          "date": "2026-05-12T02:03:23Z",
-          "author": "Alendy-24"
-        },
-        {
-          "sha": "0227daf",
-          "full_sha": "0227dafd99d9c7c7a1edc2c171e75661b7fe194b",
-          "message": "Merge pull request #245 from puj-course/features-salome",
-          "date": "2026-05-12T00:12:54Z",
-          "author": "Alendy-24"
-        },
-        {
-          "sha": "35c9856",
-          "full_sha": "35c9856ecb1e0c1a21b726a72667939e97b722a2",
-          "message": "Add CI pipeline for Node.js with Docker support",
-          "date": "2026-05-09T18:14:52Z",
-          "author": "Alendy-24"
-        },
-        {
-          "sha": "ee13d52",
-          "full_sha": "ee13d522cdee72c6c24e10705e452628bc5bae36",
-          "message": "Add Metrics Tests pipeline workflow",
-          "date": "2026-05-09T18:13:36Z",
-          "author": "Alendy-24"
-        },
-        {
-          "sha": "8cd01bb",
-          "full_sha": "8cd01bb50100ffe5f46a084d42d7d1d1b0b9cede",
-          "message": "Fix: Some fixes with the link to external pages of MainIndex",
-          "date": "2026-05-09T18:13:36Z",
-          "author": "Alendy-24"
-        },
-        {
-          "sha": "72bc76d",
-          "full_sha": "72bc76d46795471aefe1c6a9135ba70029f06971",
-          "message": "feat: Add frontend image + some fixes of general stuff. Closes (#241)",
-          "date": "2026-05-09T18:13:36Z",
-          "author": "Alendy-24"
-        },
-        {
-          "sha": "90982e3",
-          "full_sha": "90982e3378b56d4539c13bfc537f88b8271d7dd7",
-          "message": "fix: might be final fix",
-          "date": "2026-05-09T18:13:36Z",
-          "author": "Alendy-24"
-        },
-        {
-          "sha": "08670e5",
-          "full_sha": "08670e53e82128d5372e33cdb4312857f6dc0d7a",
-          "message": "fix: branch",
-          "date": "2026-05-09T18:13:36Z",
-          "author": "Alendy-24"
-        },
-        {
-          "sha": "5105317",
-          "full_sha": "51053174b499dbb45818454ef7dff81321852cd0",
-          "message": "fix: changed name",
-          "date": "2026-05-09T18:13:36Z",
-          "author": "Alendy-24"
-        },
-        {
-          "sha": "68c2e34",
-          "full_sha": "68c2e342557f0853a294d45c03e4c93b48c9b79a",
-          "message": "fix: add that dot that I hate (fixes the pipeline)",
-          "date": "2026-05-09T18:13:36Z",
-          "author": "Alendy-24"
-        },
-        {
-          "sha": "9d98fa8",
-          "full_sha": "9d98fa82fd78f40b9bac515c2caabfca7a30ab75",
-          "message": "feat: Add pipeline for docker CICD. Refss (#12)",
-          "date": "2026-05-09T18:13:36Z",
-          "author": "Alendy-24"
-        },
-        {
-          "sha": "c5c0ddd",
-          "full_sha": "c5c0ddd5d714cfc3464ac41867f4045097273fd4",
-          "message": "feat: Add docker implementation. Closes (#12)",
-          "date": "2026-05-09T18:13:36Z",
-          "author": "Alendy-24"
-        },
-        {
-          "sha": "9889611",
-          "full_sha": "9889611e3bf19463a02fa61a0aca9bfa1c272d96",
-          "message": "feat: Add docker implementation. Closes (#129)",
-          "date": "2026-05-09T18:13:36Z",
-          "author": "Alendy-24"
-        },
-        {
-          "sha": "dcd410f",
-          "full_sha": "dcd410fb6383d3f915d82cdf5f0a2c4401534cb4",
-          "message": "feat: Add unique username validation on edit profile. Closes (#203)",
-          "date": "2026-05-09T18:13:36Z",
-          "author": "Alendy-24"
-        },
-        {
-          "sha": "8c0aa26",
-          "full_sha": "8c0aa26c650ef1ddbd2b461926cea8d1391f403a",
-          "message": "fix: Fixed the way the recipes are deleted on moderation. Closes/fixes (#226)",
-          "date": "2026-05-09T18:13:36Z",
-          "author": "Alendy-24"
-        },
-        {
-          "sha": "0e7b145",
-          "full_sha": "0e7b1457e8892c0c5e29c523a831f10fc71f9888",
-          "message": "fix: Fixed error when logging, duplicated main page. Closes (#215)",
-          "date": "2026-05-09T18:13:32Z",
-          "author": "Alendy-24"
-        },
-        {
-          "sha": "d5d13e3",
-          "full_sha": "d5d13e35bb36c4dfe68da5984a9abd09ff932be6",
-          "message": "feat: add Unit Test metrics for editarPefil & setDatosBase method. Closes (#218 ",
-          "date": "2026-05-09T18:12:50Z",
-          "author": "Alendy-24"
-        },
-        {
-          "sha": "2a17033",
-          "full_sha": "2a170338b1f45537015451e7ed53ae0afcef5b45",
-          "message": "feat: add pipeline to test metrics.",
-          "date": "2026-05-09T18:12:47Z",
-          "author": "Alendy-24"
-        },
-        {
-          "sha": "71c2615",
-          "full_sha": "71c26152fdefeeb156107cd0a3b0e7585ee91ed7",
-          "message": "fix: add jest.config",
-          "date": "2026-05-09T18:11:51Z",
-          "author": "Alendy-24"
-        },
-        {
-          "sha": "13a3a4a",
-          "full_sha": "13a3a4a3a43f758a24471fb3057564c1f864c1b9",
-          "message": "chore: sync package-lock with new test dependencies",
-          "date": "2026-05-09T18:11:48Z",
-          "author": "Alendy-24"
-        },
-        {
-          "sha": "35047b2",
-          "full_sha": "35047b200ac3d0a2b97656be4fdc181342c4152c",
-          "message": "feat: Add Unit Tests for crearDatosBase recetas builder. Closes (#219)",
-          "date": "2026-05-09T18:09:28Z",
-          "author": "Alendy-24"
-        },
-        {
-          "sha": "251400f",
-          "full_sha": "251400fff69f8dcb2713ee0797ee72d6ea78d2fa",
-          "message": "feat: Add slug function implementation for posterior url making. Closes (#233)",
-          "date": "2026-05-09T05:49:59Z",
-          "author": "Alendy-24"
-        },
-        {
-          "sha": "ab061fc",
-          "full_sha": "ab061fc9cf16567c7aa354fcdfb824bc3ed14ba2",
-          "message": "Merge branch 'develop' of https://github.com/puj-course/FIS_2610_3513_G2 into fe",
-          "date": "2026-05-09T05:07:28Z",
-          "author": "Alendy-24"
-        },
-        {
-          "sha": "30fb0cc",
-          "full_sha": "30fb0cc546428836ad6f2f5ea3b31132bf618228",
-          "message": "Add git ignore",
-          "date": "2026-05-09T05:07:09Z",
-          "author": "Alendy-24"
-        },
-        {
-          "sha": "b7de31d",
-          "full_sha": "b7de31d75e4d3cbed04f59899e695cec1cd2ca9e",
-          "message": "feat: Update database for urls to have custom slug. Closes (#231)",
-          "date": "2026-05-09T04:43:59Z",
-          "author": "Alendy-24"
-        },
-        {
-          "sha": "a535552",
-          "full_sha": "a5355525b9a447da83819ff49118c8d006d9d00f",
-          "message": "Merge pull request #242 from puj-course/docker-deploy",
-          "date": "2026-05-08T04:29:31Z",
-          "author": "Alendy-24"
-        },
-        {
-          "sha": "1e74652",
-          "full_sha": "1e74652b6dcc80df69431c2ecdd52419f5952517",
-          "message": "Merge branch 'develop' into docker-deploy",
-          "date": "2026-05-08T04:26:27Z",
-          "author": "Alendy-24"
-        },
-        {
-          "sha": "9a3df2e",
-          "full_sha": "9a3df2eafa93e95cda613f264c1f9c580d89e44a",
-          "message": "Fix: Some fixes with the link to external pages of MainIndex",
-          "date": "2026-05-08T01:15:40Z",
-          "author": "Alendy-24"
-        },
-        {
-          "sha": "0ab5480",
-          "full_sha": "0ab5480e58fe4d9ffad733af2596ca018b7342c7",
-          "message": "feat: Add frontend image + some fixes of general stuff. Closes (#241)",
-          "date": "2026-05-08T00:59:10Z",
-          "author": "Alendy-24"
-        },
-        {
-          "sha": "ad0985e",
-          "full_sha": "ad0985e5ca4ab93a6934bffcf4dbba522736ba1d",
-          "message": "changed name",
-          "date": "2026-05-08T00:51:45Z",
-          "author": "Alendy-24"
-        },
-        {
-          "sha": "3a5413d",
-          "full_sha": "3a5413d16f072b13225e9cc317d476167c314cf5",
-          "message": "fix: might be final fix",
-          "date": "2026-05-07T15:57:02Z",
-          "author": "Alendy-24"
-        },
-        {
-          "sha": "b61d722",
-          "full_sha": "b61d7221e4f03caadd315264d5271cc37e97afa0",
-          "message": "fix: branch",
-          "date": "2026-05-07T15:51:14Z",
-          "author": "Alendy-24"
-        },
-        {
-          "sha": "e636c4a",
-          "full_sha": "e636c4a660656b4947a003485831498872687c32",
-          "message": "fix: changed name",
-          "date": "2026-05-07T15:50:33Z",
-          "author": "Alendy-24"
-        },
-        {
-          "sha": "7d73761",
-          "full_sha": "7d7376123cb2fcaa7601170383bf52c968d8b8e0",
-          "message": "fix: add that dot that I hate (fixes the pipeline)",
-          "date": "2026-05-07T15:49:11Z",
-          "author": "Alendy-24"
-        },
-        {
-          "sha": "28bf6d7",
-          "full_sha": "28bf6d7e186a7287290537db0d34740f8266b86f",
-          "message": "Add CI pipeline for Node.js with Docker support",
-          "date": "2026-05-07T15:45:05Z",
-          "author": "Alendy-24"
-        },
-        {
-          "sha": "4b08944",
-          "full_sha": "4b0894417c2586236b946e22742e4aad4d64fd61",
-          "message": "feat: Add pipeline for docker CICD. Refss (#12)",
-          "date": "2026-05-07T15:43:36Z",
-          "author": "Alendy-24"
-        },
-        {
-          "sha": "a360b37",
-          "full_sha": "a360b37322223e8aa3f6bd8c5e864745c69e90bc",
-          "message": "Add CI pipeline for Node.js with Docker support",
-          "date": "2026-05-07T15:42:59Z",
-          "author": "Alendy-24"
-        },
-        {
-          "sha": "ae9ce9c",
-          "full_sha": "ae9ce9c8cd17af716edcaa6a53e18acc2a955b35",
-          "message": "feat: Add docker implementation. Closes (#12)",
-          "date": "2026-05-07T15:40:37Z",
-          "author": "Alendy-24"
-        },
-        {
-          "sha": "9ec5ff6",
-          "full_sha": "9ec5ff6bc035265638869683a0e7c859a1f60d1f",
-          "message": "feat: Add docker implementation. Closes (#129)",
-          "date": "2026-05-07T15:30:59Z",
-          "author": "Alendy-24"
-        },
-        {
-          "sha": "730e4fd",
-          "full_sha": "730e4fdee5454d98f1a8868ca26e77b818f2759d",
-          "message": "feat: Add unique username validation on edit profile. Closes (#203)",
-          "date": "2026-05-07T04:26:23Z",
-          "author": "Alendy-24"
-        },
-        {
-          "sha": "4c629e9",
-          "full_sha": "4c629e9934a41f5c0a7f3ead6d15cce7fb196492",
-          "message": "fix: Fixed the way the recipes are deleted on moderation. Closes/fixes (#226)",
-          "date": "2026-05-06T04:53:39Z",
-          "author": "Alendy-24"
-        },
-        {
-          "sha": "9ad3f33",
-          "full_sha": "9ad3f33ae8e56c57c2a508a5beddc498ebdffacf",
-          "message": "fix: Fixed error when logging, duplicated main page. Closes (#215)",
-          "date": "2026-05-05T05:01:59Z",
-          "author": "Alendy-24"
         }
       ],
       "prs_opened": [
@@ -1047,33 +718,12 @@
           "state": "closed",
           "merged": true,
           "url": "https://github.com/puj-course/FIS_2610_3513_G2/pull/252"
-        },
-        {
-          "number": 247,
-          "title": "Star system HU implementation ",
-          "state": "closed",
-          "merged": true,
-          "url": "https://github.com/puj-course/FIS_2610_3513_G2/pull/247"
-        },
-        {
-          "number": 248,
-          "title": "Star system HU Implementation | Forgotten file fix",
-          "state": "closed",
-          "merged": false,
-          "url": "https://github.com/puj-course/FIS_2610_3513_G2/pull/248"
-        },
-        {
-          "number": 242,
-          "title": "Add docker implementations + pipeline",
-          "state": "closed",
-          "merged": true,
-          "url": "https://github.com/puj-course/FIS_2610_3513_G2/pull/242"
         }
       ],
       "reviews_given": []
     },
     "blurryavi": {
-      "commits": 52,
+      "commits": 38,
       "commit_log": [
         {
           "sha": "94b936e",
@@ -1340,104 +990,6 @@
           "message": "Merge pull request #247 from puj-course/features-alejandro",
           "date": "2026-05-13T16:22:40Z",
           "author": "blurryavi"
-        },
-        {
-          "sha": "605df6b",
-          "full_sha": "605df6bda699f7f945cd838b03573e65b8cfe672",
-          "message": "Merge branch 'develop' into features-salome",
-          "date": "2026-05-11T03:35:41Z",
-          "author": "blurryavi"
-        },
-        {
-          "sha": "46a16df",
-          "full_sha": "46a16dfb854025aa4bdcf56011afa2e365105b2f",
-          "message": "Fixing a file that had conflicts",
-          "date": "2026-05-11T03:28:45Z",
-          "author": "blurryavi"
-        },
-        {
-          "sha": "a16c325",
-          "full_sha": "a16c3259aff746356a64defe0b3e0a993a70b643",
-          "message": "fix:just some fixes for permissions to change users role as admin. Fixes #196",
-          "date": "2026-05-09T22:09:51Z",
-          "author": "blurryavi"
-        },
-        {
-          "sha": "2f83e11",
-          "full_sha": "2f83e118c31b6f8b2b5b1fc65505928bf16f3b0e",
-          "message": "feat:Adding button to copy link in frontend. Closes (#234)",
-          "date": "2026-05-09T22:07:45Z",
-          "author": "blurryavi"
-        },
-        {
-          "sha": "98ec9f4",
-          "full_sha": "98ec9f45432df8e5db4cd211ca15efdebb0350a5",
-          "message": "fix: Fixing endpoint security to return 403 forbidden on request. Fixes (#197), ",
-          "date": "2026-05-09T19:35:05Z",
-          "author": "blurryavi"
-        },
-        {
-          "sha": "9d1ac89",
-          "full_sha": "9d1ac896428dde46f98e2fbdeea8e85675b08f89",
-          "message": "fix: protegiendo el endpoint para que solo sea accesible por administradores. Fi",
-          "date": "2026-05-09T19:28:57Z",
-          "author": "blurryavi"
-        },
-        {
-          "sha": "aac910e",
-          "full_sha": "aac910e34052a4f956196aa2649a16d979f63413",
-          "message": "fix:Just fixing somes stuff for jest bc my tests didnt work.",
-          "date": "2026-05-09T18:19:36Z",
-          "author": "blurryavi"
-        },
-        {
-          "sha": "df8a572",
-          "full_sha": "df8a5729275246525410a3489aa807726f73794e",
-          "message": "feat: Adding endpoints to get all users + change users role in bd. Closes (#197)",
-          "date": "2026-05-09T18:18:26Z",
-          "author": "blurryavi"
-        },
-        {
-          "sha": "2841465",
-          "full_sha": "2841465c2cb8dc852dc0b9481d770cef9843693f",
-          "message": "feat:Adding panel to change users role. This commit is empty please refer to the",
-          "date": "2026-05-09T18:18:26Z",
-          "author": "blurryavi"
-        },
-        {
-          "sha": "f2f95eb",
-          "full_sha": "f2f95ebaab87fb664e332d378f89aebb0cb5221c",
-          "message": "feat:Finished admin user management panel YIPEEE. Closes (#199).",
-          "date": "2026-05-09T18:18:26Z",
-          "author": "blurryavi"
-        },
-        {
-          "sha": "7f4f6e7",
-          "full_sha": "7f4f6e74a29eaa62efad2cfe673a47277502b448",
-          "message": "feat: adding user pannel. Refs #199",
-          "date": "2026-05-09T18:18:26Z",
-          "author": "blurryavi"
-        },
-        {
-          "sha": "227c1ca",
-          "full_sha": "227c1caa2aad54b82c550faac8a46765a39f537e",
-          "message": "fix: improving tags view. Closes #225",
-          "date": "2026-05-09T18:18:26Z",
-          "author": "blurryavi"
-        },
-        {
-          "sha": "ffee57b",
-          "full_sha": "ffee57b005a612d543a4a3ccf0b91fea6e0faeb5",
-          "message": "feat: adding pipeline implementation for testing reports.",
-          "date": "2026-05-09T18:18:17Z",
-          "author": "blurryavi"
-        },
-        {
-          "sha": "93aae61",
-          "full_sha": "93aae6137051c5da6b0dfe15d94e4d80af7675a1",
-          "message": "feat:adding implementation of Jest for testing features in moderacion service. C",
-          "date": "2026-05-09T18:16:04Z",
-          "author": "blurryavi"
         }
       ],
       "prs_opened": [
@@ -1489,20 +1041,6 @@
           "state": "closed",
           "merged": true,
           "url": "https://github.com/puj-course/FIS_2610_3513_G2/pull/260"
-        },
-        {
-          "number": 245,
-          "title": "feat: Adding features of HU17 adn HU15",
-          "state": "closed",
-          "merged": true,
-          "url": "https://github.com/puj-course/FIS_2610_3513_G2/pull/245"
-        },
-        {
-          "number": 243,
-          "title": "Adding HU 15 and part of HU17",
-          "state": "closed",
-          "merged": false,
-          "url": "https://github.com/puj-course/FIS_2610_3513_G2/pull/243"
         }
       ],
       "reviews_given": []

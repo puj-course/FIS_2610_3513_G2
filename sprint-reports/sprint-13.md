@@ -1,24 +1,24 @@
 # Sprint metrics report — Sprint-13
 
-> Generated: 2026-05-18 21:56:46 UTC  
-> Window: `2026-05-04` → `2026-05-18` (14 days)  
+> Generated: 2026-05-18 22:01:04 UTC  
+> Window: `2026-05-12` → `2026-05-18` (6 days)  
 > Repository: `puj-course/FIS_2610_3513_G2`
 
 ## Summary
 
 | Metric | Value |
 |--------|-------|
-| Total commits | 182 |
-| Average commits / member | 91.0 |
-| Total PRs opened | 30 |
+| Total commits | 121 |
+| Average commits / member | 60.5 |
+| Total PRs opened | 25 |
 | Members tracked | 2 |
 
 ## Commits per member
 
 | Member | Commits | PRs opened | Reviews given |
 |--------|---------|------------|---------------|
-| `Alendy-24` | 130 | 20 | 0 |
-| `blurryavi` | 52 | 9 | 0 |
+| `Alendy-24` | 83 | 17 | 0 |
+| `blurryavi` | 38 | 7 | 0 |
 
 ## Commit traceability
 
@@ -109,53 +109,6 @@
 | [`0752947`](https://github.com/puj-course/FIS_2610_3513_G2/commit/075294714066c6ba0db74f1aa2612adddbe4a46b) | 2026-05-13 | Update SonarQube.yml |
 | [`58fb52a`](https://github.com/puj-course/FIS_2610_3513_G2/commit/58fb52aa42f1fbe9bd4ab27b1caa89ec89dcf1f2) | 2026-05-13 | Enhance SonarQube workflow for test coverage |
 | [`16e8a85`](https://github.com/puj-course/FIS_2610_3513_G2/commit/16e8a853feb375caa99c200128e117e92d2b5087) | 2026-05-13 | package |
-| [`cd6dd15`](https://github.com/puj-course/FIS_2610_3513_G2/commit/cd6dd15b7e26bc39e7d58122d854dee15da1f53e) | 2026-05-12 | feat: Add identificator for logged users when trying to rate. Closes (#239) |
-| [`e400366`](https://github.com/puj-course/FIS_2610_3513_G2/commit/e400366bea62c56181413fb6f0f7f1d9d1ab2d2e) | 2026-05-12 | fix: accidentally forgot to add prisma lol |
-| [`a32b2fb`](https://github.com/puj-course/FIS_2610_3513_G2/commit/a32b2fb01470633a7abff891d06f614330e52c48) | 2026-05-12 | feat: Add total rating detail in front cards & links to backpoints. Closes (#240 |
-| [`03f6063`](https://github.com/puj-course/FIS_2610_3513_G2/commit/03f6063409ec936b7291e31b29d0b49dc52e4fc4) | 2026-05-12 | gitMerge branch 'features-alejandro' of https://github.com/puj-course/FIS_2610_3 |
-| [`fbbc9b0`](https://github.com/puj-course/FIS_2610_3513_G2/commit/fbbc9b0e1152ec80c0814c7d76445a9b649a056b) | 2026-05-12 | Packages |
-| [`ed66c67`](https://github.com/puj-course/FIS_2610_3513_G2/commit/ed66c6774b1654386a748fe77e1efa05385964f7) | 2026-05-12 | feat: Add rating front module. View n interactivity. Closes (#240 & 239) |
-| [`0227daf`](https://github.com/puj-course/FIS_2610_3513_G2/commit/0227dafd99d9c7c7a1edc2c171e75661b7fe194b) | 2026-05-12 | Merge pull request #245 from puj-course/features-salome |
-| [`35c9856`](https://github.com/puj-course/FIS_2610_3513_G2/commit/35c9856ecb1e0c1a21b726a72667939e97b722a2) | 2026-05-09 | Add CI pipeline for Node.js with Docker support |
-| [`ee13d52`](https://github.com/puj-course/FIS_2610_3513_G2/commit/ee13d522cdee72c6c24e10705e452628bc5bae36) | 2026-05-09 | Add Metrics Tests pipeline workflow |
-| [`8cd01bb`](https://github.com/puj-course/FIS_2610_3513_G2/commit/8cd01bb50100ffe5f46a084d42d7d1d1b0b9cede) | 2026-05-09 | Fix: Some fixes with the link to external pages of MainIndex |
-| [`72bc76d`](https://github.com/puj-course/FIS_2610_3513_G2/commit/72bc76d46795471aefe1c6a9135ba70029f06971) | 2026-05-09 | feat: Add frontend image + some fixes of general stuff. Closes (#241) |
-| [`90982e3`](https://github.com/puj-course/FIS_2610_3513_G2/commit/90982e3378b56d4539c13bfc537f88b8271d7dd7) | 2026-05-09 | fix: might be final fix |
-| [`08670e5`](https://github.com/puj-course/FIS_2610_3513_G2/commit/08670e53e82128d5372e33cdb4312857f6dc0d7a) | 2026-05-09 | fix: branch |
-| [`5105317`](https://github.com/puj-course/FIS_2610_3513_G2/commit/51053174b499dbb45818454ef7dff81321852cd0) | 2026-05-09 | fix: changed name |
-| [`68c2e34`](https://github.com/puj-course/FIS_2610_3513_G2/commit/68c2e342557f0853a294d45c03e4c93b48c9b79a) | 2026-05-09 | fix: add that dot that I hate (fixes the pipeline) |
-| [`9d98fa8`](https://github.com/puj-course/FIS_2610_3513_G2/commit/9d98fa82fd78f40b9bac515c2caabfca7a30ab75) | 2026-05-09 | feat: Add pipeline for docker CICD. Refss (#12) |
-| [`c5c0ddd`](https://github.com/puj-course/FIS_2610_3513_G2/commit/c5c0ddd5d714cfc3464ac41867f4045097273fd4) | 2026-05-09 | feat: Add docker implementation. Closes (#12) |
-| [`9889611`](https://github.com/puj-course/FIS_2610_3513_G2/commit/9889611e3bf19463a02fa61a0aca9bfa1c272d96) | 2026-05-09 | feat: Add docker implementation. Closes (#129) |
-| [`dcd410f`](https://github.com/puj-course/FIS_2610_3513_G2/commit/dcd410fb6383d3f915d82cdf5f0a2c4401534cb4) | 2026-05-09 | feat: Add unique username validation on edit profile. Closes (#203) |
-| [`8c0aa26`](https://github.com/puj-course/FIS_2610_3513_G2/commit/8c0aa26c650ef1ddbd2b461926cea8d1391f403a) | 2026-05-09 | fix: Fixed the way the recipes are deleted on moderation. Closes/fixes (#226) |
-| [`0e7b145`](https://github.com/puj-course/FIS_2610_3513_G2/commit/0e7b1457e8892c0c5e29c523a831f10fc71f9888) | 2026-05-09 | fix: Fixed error when logging, duplicated main page. Closes (#215) |
-| [`d5d13e3`](https://github.com/puj-course/FIS_2610_3513_G2/commit/d5d13e35bb36c4dfe68da5984a9abd09ff932be6) | 2026-05-09 | feat: add Unit Test metrics for editarPefil & setDatosBase method. Closes (#218  |
-| [`2a17033`](https://github.com/puj-course/FIS_2610_3513_G2/commit/2a170338b1f45537015451e7ed53ae0afcef5b45) | 2026-05-09 | feat: add pipeline to test metrics. |
-| [`71c2615`](https://github.com/puj-course/FIS_2610_3513_G2/commit/71c26152fdefeeb156107cd0a3b0e7585ee91ed7) | 2026-05-09 | fix: add jest.config |
-| [`13a3a4a`](https://github.com/puj-course/FIS_2610_3513_G2/commit/13a3a4a3a43f758a24471fb3057564c1f864c1b9) | 2026-05-09 | chore: sync package-lock with new test dependencies |
-| [`35047b2`](https://github.com/puj-course/FIS_2610_3513_G2/commit/35047b200ac3d0a2b97656be4fdc181342c4152c) | 2026-05-09 | feat: Add Unit Tests for crearDatosBase recetas builder. Closes (#219) |
-| [`251400f`](https://github.com/puj-course/FIS_2610_3513_G2/commit/251400fff69f8dcb2713ee0797ee72d6ea78d2fa) | 2026-05-09 | feat: Add slug function implementation for posterior url making. Closes (#233) |
-| [`ab061fc`](https://github.com/puj-course/FIS_2610_3513_G2/commit/ab061fc9cf16567c7aa354fcdfb824bc3ed14ba2) | 2026-05-09 | Merge branch 'develop' of https://github.com/puj-course/FIS_2610_3513_G2 into fe |
-| [`30fb0cc`](https://github.com/puj-course/FIS_2610_3513_G2/commit/30fb0cc546428836ad6f2f5ea3b31132bf618228) | 2026-05-09 | Add git ignore |
-| [`b7de31d`](https://github.com/puj-course/FIS_2610_3513_G2/commit/b7de31d75e4d3cbed04f59899e695cec1cd2ca9e) | 2026-05-09 | feat: Update database for urls to have custom slug. Closes (#231) |
-| [`a535552`](https://github.com/puj-course/FIS_2610_3513_G2/commit/a5355525b9a447da83819ff49118c8d006d9d00f) | 2026-05-08 | Merge pull request #242 from puj-course/docker-deploy |
-| [`1e74652`](https://github.com/puj-course/FIS_2610_3513_G2/commit/1e74652b6dcc80df69431c2ecdd52419f5952517) | 2026-05-08 | Merge branch 'develop' into docker-deploy |
-| [`9a3df2e`](https://github.com/puj-course/FIS_2610_3513_G2/commit/9a3df2eafa93e95cda613f264c1f9c580d89e44a) | 2026-05-08 | Fix: Some fixes with the link to external pages of MainIndex |
-| [`0ab5480`](https://github.com/puj-course/FIS_2610_3513_G2/commit/0ab5480e58fe4d9ffad733af2596ca018b7342c7) | 2026-05-08 | feat: Add frontend image + some fixes of general stuff. Closes (#241) |
-| [`ad0985e`](https://github.com/puj-course/FIS_2610_3513_G2/commit/ad0985e5ca4ab93a6934bffcf4dbba522736ba1d) | 2026-05-08 | changed name |
-| [`3a5413d`](https://github.com/puj-course/FIS_2610_3513_G2/commit/3a5413d16f072b13225e9cc317d476167c314cf5) | 2026-05-07 | fix: might be final fix |
-| [`b61d722`](https://github.com/puj-course/FIS_2610_3513_G2/commit/b61d7221e4f03caadd315264d5271cc37e97afa0) | 2026-05-07 | fix: branch |
-| [`e636c4a`](https://github.com/puj-course/FIS_2610_3513_G2/commit/e636c4a660656b4947a003485831498872687c32) | 2026-05-07 | fix: changed name |
-| [`7d73761`](https://github.com/puj-course/FIS_2610_3513_G2/commit/7d7376123cb2fcaa7601170383bf52c968d8b8e0) | 2026-05-07 | fix: add that dot that I hate (fixes the pipeline) |
-| [`28bf6d7`](https://github.com/puj-course/FIS_2610_3513_G2/commit/28bf6d7e186a7287290537db0d34740f8266b86f) | 2026-05-07 | Add CI pipeline for Node.js with Docker support |
-| [`4b08944`](https://github.com/puj-course/FIS_2610_3513_G2/commit/4b0894417c2586236b946e22742e4aad4d64fd61) | 2026-05-07 | feat: Add pipeline for docker CICD. Refss (#12) |
-| [`a360b37`](https://github.com/puj-course/FIS_2610_3513_G2/commit/a360b37322223e8aa3f6bd8c5e864745c69e90bc) | 2026-05-07 | Add CI pipeline for Node.js with Docker support |
-| [`ae9ce9c`](https://github.com/puj-course/FIS_2610_3513_G2/commit/ae9ce9c8cd17af716edcaa6a53e18acc2a955b35) | 2026-05-07 | feat: Add docker implementation. Closes (#12) |
-| [`9ec5ff6`](https://github.com/puj-course/FIS_2610_3513_G2/commit/9ec5ff6bc035265638869683a0e7c859a1f60d1f) | 2026-05-07 | feat: Add docker implementation. Closes (#129) |
-| [`730e4fd`](https://github.com/puj-course/FIS_2610_3513_G2/commit/730e4fdee5454d98f1a8868ca26e77b818f2759d) | 2026-05-07 | feat: Add unique username validation on edit profile. Closes (#203) |
-| [`4c629e9`](https://github.com/puj-course/FIS_2610_3513_G2/commit/4c629e9934a41f5c0a7f3ead6d15cce7fb196492) | 2026-05-06 | fix: Fixed the way the recipes are deleted on moderation. Closes/fixes (#226) |
-| [`9ad3f33`](https://github.com/puj-course/FIS_2610_3513_G2/commit/9ad3f33ae8e56c57c2a508a5beddc498ebdffacf) | 2026-05-05 | fix: Fixed error when logging, duplicated main page. Closes (#215) |
 
 **PRs opened**
 
@@ -176,9 +129,6 @@
 - [#254](https://github.com/puj-course/FIS_2610_3513_G2/pull/254) Add some testing files (Jest) to improve coverage ✅ merged
 - [#253](https://github.com/puj-course/FIS_2610_3513_G2/pull/253) Add testing file to improve coverage in src methods ✅ merged
 - [#252](https://github.com/puj-course/FIS_2610_3513_G2/pull/252) Features alejandro ✅ merged
-- [#247](https://github.com/puj-course/FIS_2610_3513_G2/pull/247) Star system HU implementation  ✅ merged
-- [#248](https://github.com/puj-course/FIS_2610_3513_G2/pull/248) Star system HU Implementation | Forgotten file fix (closed)
-- [#242](https://github.com/puj-course/FIS_2610_3513_G2/pull/242) Add docker implementations + pipeline ✅ merged
 
 ### blurryavi
 
@@ -222,20 +172,6 @@
 | [`dd70b15`](https://github.com/puj-course/FIS_2610_3513_G2/commit/dd70b15c1665e8416f461447c151a3fa4a098c55) | 2026-05-14 | feat: adding rating to the db. Closes #237. |
 | [`6bb0200`](https://github.com/puj-course/FIS_2610_3513_G2/commit/6bb0200f699de164106c98d06fac8a7be1562e5f) | 2026-05-14 | Merge pull request #252 from puj-course/features-alejandro |
 | [`f52ef81`](https://github.com/puj-course/FIS_2610_3513_G2/commit/f52ef8161db16bbdb1766f4567e131cd3cd2bb3e) | 2026-05-13 | Merge pull request #247 from puj-course/features-alejandro |
-| [`605df6b`](https://github.com/puj-course/FIS_2610_3513_G2/commit/605df6bda699f7f945cd838b03573e65b8cfe672) | 2026-05-11 | Merge branch 'develop' into features-salome |
-| [`46a16df`](https://github.com/puj-course/FIS_2610_3513_G2/commit/46a16dfb854025aa4bdcf56011afa2e365105b2f) | 2026-05-11 | Fixing a file that had conflicts |
-| [`a16c325`](https://github.com/puj-course/FIS_2610_3513_G2/commit/a16c3259aff746356a64defe0b3e0a993a70b643) | 2026-05-09 | fix:just some fixes for permissions to change users role as admin. Fixes #196 |
-| [`2f83e11`](https://github.com/puj-course/FIS_2610_3513_G2/commit/2f83e118c31b6f8b2b5b1fc65505928bf16f3b0e) | 2026-05-09 | feat:Adding button to copy link in frontend. Closes (#234) |
-| [`98ec9f4`](https://github.com/puj-course/FIS_2610_3513_G2/commit/98ec9f45432df8e5db4cd211ca15efdebb0350a5) | 2026-05-09 | fix: Fixing endpoint security to return 403 forbidden on request. Fixes (#197),  |
-| [`9d1ac89`](https://github.com/puj-course/FIS_2610_3513_G2/commit/9d1ac896428dde46f98e2fbdeea8e85675b08f89) | 2026-05-09 | fix: protegiendo el endpoint para que solo sea accesible por administradores. Fi |
-| [`aac910e`](https://github.com/puj-course/FIS_2610_3513_G2/commit/aac910e34052a4f956196aa2649a16d979f63413) | 2026-05-09 | fix:Just fixing somes stuff for jest bc my tests didnt work. |
-| [`df8a572`](https://github.com/puj-course/FIS_2610_3513_G2/commit/df8a5729275246525410a3489aa807726f73794e) | 2026-05-09 | feat: Adding endpoints to get all users + change users role in bd. Closes (#197) |
-| [`2841465`](https://github.com/puj-course/FIS_2610_3513_G2/commit/2841465c2cb8dc852dc0b9481d770cef9843693f) | 2026-05-09 | feat:Adding panel to change users role. This commit is empty please refer to the |
-| [`f2f95eb`](https://github.com/puj-course/FIS_2610_3513_G2/commit/f2f95ebaab87fb664e332d378f89aebb0cb5221c) | 2026-05-09 | feat:Finished admin user management panel YIPEEE. Closes (#199). |
-| [`7f4f6e7`](https://github.com/puj-course/FIS_2610_3513_G2/commit/7f4f6e74a29eaa62efad2cfe673a47277502b448) | 2026-05-09 | feat: adding user pannel. Refs #199 |
-| [`227c1ca`](https://github.com/puj-course/FIS_2610_3513_G2/commit/227c1caa2aad54b82c550faac8a46765a39f537e) | 2026-05-09 | fix: improving tags view. Closes #225 |
-| [`ffee57b`](https://github.com/puj-course/FIS_2610_3513_G2/commit/ffee57b005a612d543a4a3ccf0b91fea6e0faeb5) | 2026-05-09 | feat: adding pipeline implementation for testing reports. |
-| [`93aae61`](https://github.com/puj-course/FIS_2610_3513_G2/commit/93aae6137051c5da6b0dfe15d94e4d80af7675a1) | 2026-05-09 | feat:adding implementation of Jest for testing features in moderacion service. C |
 
 **PRs opened**
 
@@ -246,5 +182,3 @@
 - [#278](https://github.com/puj-course/FIS_2610_3513_G2/pull/278) Enhance quality reports and add recipe filtering and tabs ✅ merged
 - [#274](https://github.com/puj-course/FIS_2610_3513_G2/pull/274) Enhance quality reports and improve recipe filtering by popu ✅ merged
 - [#260](https://github.com/puj-course/FIS_2610_3513_G2/pull/260) Añadiendo métricas y reporte de métricas ✅ merged
-- [#245](https://github.com/puj-course/FIS_2610_3513_G2/pull/245) feat: Adding features of HU17 adn HU15 ✅ merged
-- [#243](https://github.com/puj-course/FIS_2610_3513_G2/pull/243) Adding HU 15 and part of HU17 (closed)
