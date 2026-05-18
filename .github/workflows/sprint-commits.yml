@@ -1,0 +1,59 @@
+name: Sprint Metrics Report
+ 
+on:
+  workflow_dispatch:
+    inputs:
+      sprint_name:
+        description: "Sprint name (e.g. Sprint-05)"
+        required: false
+        default: ""
+      days_back:
+        description: "How many days back to analyze"
+        required: false
+        default: "14"
+ 
+permissions:
+  contents: write
+ 
+jobs:
+  sprint-metrics:
+    runs-on: ubuntu-latest
+ 
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+ 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+ 
+      - name: Install dependencies
+        run: pip install requests python-dateutil
+ 
+      - name: Run metrics script
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          SPRINT_NAME: ${{ github.event.inputs.sprint_name }}
+          DAYS_BACK: ${{ github.event.inputs.days_back }}
+          TEAM_MEMBERS: ${{ vars.TEAM_MEMBERS }}
+          BALANCE_THRESHOLD: ${{ vars.BALANCE_THRESHOLD || '0.60' }}
+        run: python .github/scripts/sprint_metrics.py
+ 
+      - name: Upload JSON artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sprint-metrics-${{ env.SPRINT_LABEL }}
+          path: sprint-reports/*.json
+          retention-days: 90
+ 
+      - name: Commit report to repo
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add sprint-reports/
+          git diff --staged --quiet || git commit -m "docs: sprint metrics report [${{ env.SPRINT_LABEL }}]"
+          git push
