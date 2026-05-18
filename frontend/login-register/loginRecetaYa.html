@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inicio de Sesión | RecetaYa</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="loginRecetaYa.css">
+<style>
+  .tab { background: rgba(255,255,255,0.25); color: white; }
+  .tab.active { background: white; color: #b5451b; }
+</style>
+</head>
+<body>
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+<div class="blob blob-3"></div>
+
+<div class="card">
+  <h1>Inicio de Sesión</h1>
+  <div id="msg" class="msg"></div>
+
+  <div class="tabs">
+    <button id="tab-password" class="tab active" onclick="switchTab('password')">Con contraseña</button>
+    <button id="tab-otp" class="tab" onclick="switchTab('otp')">Con código SMS</button>
+  </div>
+
+  <div id="panel-password">
+    <div class="input-wrap">
+      <input type="email" id="email" placeholder="Correo" />
+    </div>
+    <div class="input-wrap">
+      <input type="password" id="password" placeholder="Contraseña" />
+      <button class="eye" id="eye" type="button">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+      </button>
+    </div>
+    <button class="btn" id="btn-password" onclick="login()">Iniciar Sesión</button>
+  </div>
+
+  <div id="panel-otp" style="display:none;">
+    <div class="input-wrap">
+      <input type="email" id="otp-email" placeholder="Correo" />
+    </div>
+    <div class="input-wrap">
+      <input type="tel" id="otp-phone" placeholder="Teléfono (+573001234567)" />
+    </div>
+    <button class="btn" id="btn-send" onclick="sendOtp()">Enviar código SMS</button>
+
+    <div id="otp-code-section" style="display:none; margin-top:12px;">
+      <div class="input-wrap">
+        <input type="text" id="otp-code" placeholder="Código de 6 dígitos" maxlength="6"/>
+      </div>
+      <button class="btn" id="btn-verify" onclick="verifyOtp()">Verificar y entrar</button>
+    </div>
+  </div>
+
+  <p class="link-row">¿No tienes cuenta? <a href="registerRecetaYa.html">Regístrate</a></p>
+</div>
+
+<script src="loginRecetaYa.js"></script>
+</body>
+</html>

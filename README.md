@@ -48,13 +48,12 @@ Check out the [Wiki](https://github.com/puj-course/FIS_2610_3513_G2/wiki#present
 
 **The team behind RecetaYa:**
 
-|---|---|---|
-|---|---|---|
-|---|---|---|
-| Salomé Ávila | Back-end Developer, DevOps Engineer, Configuration Manager |[Salome's Profile](https://github.com/blurryavi)|
-| Ale Corredor | Back-end Developer, QA Lead |[Alejandro's Profile](https://github.com/Alendy-24)|
-| Juan Sánchez | Front-end Developer, Sprint planner |[Juan´s Profile](https://github.com/jsanchez312)|
-| German Rodríguez | Graphic designer, Product Owner |[German´s Profile](https://github.com/germandrzmr)|
+
+| Name | Role | Profile |
+|------|------|---------|
+| Salomé Ávila | Back-end Developer, DevOps Engineer, Configuration Manager | [Salome's Profile](https://github.com/blurryavi) |
+| Ale Corredor | Back-end Developer, QA Lead | [Alejandro's Profile](https://github.com/Alendy-24) |
+
 ---
 
 # Technologies used
@@ -95,47 +94,75 @@ recetasYaApp/
 │   └── workflows
 │       ├── cd.yml
 │       └── ci.yml
+├── assets
+│   └── Database
+│       └── BaseDatosRecetaYa.sql
 ├── conf
-│   ├── config.yaml
-│   └── settings.json
+│   ├── config.yaml
+│   └── settings.json
 ├── docs
-│   ├── api
-│   │   └── .gitkeep
-│   ├── architecture
-│   │   └── .gitkeep
-│   └── user_guide
-│       └── .gitkeep
+│   ├── api
+│   ├── documentation
+│   │   ├── DiagramaRecetaYa.dmd
+│   │   ├── ModeloBDRecetaYa.pdf
+│   │   └── recetas_Basico_extendido.xlsx
+│   ├── user_guide
+│   └── Documentación login recetaya.pdf
+├── frontend
+│   ├── login-register
+│   │   ├── loginRecetaYa.css
+│   │   ├── loginRecetaYa.html
+│   │   ├── loginRecetaYa.js
+│   │   ├── registerRecetaYa.css
+│   │   ├── registerRecetaYa.html
+│   │   └── registerRecetaYa.js
+│   └── search
+│       ├── index.css
+│       ├── index.html
+│       └── index.js
 ├── prisma
-│   └── schema.prisma
+│   ├── migrations
+│   │   ├── 20260303041620_init
+│   │   │   └── migration.sql
+│   │   └── migration_lock.toml
+│   ├── prisma.service.ts
+│   └── schema.prisma
 ├── Scripts
-│   ├── deploy.sh
-│   ├── setup.hs
-│   └── test.sh
+│   ├── deploy.sh
+│   ├── insert-recipes.ts
+│   ├── recipes.csv
+│   ├── setup.hs
+│   └── test.sh
 ├── src
-│   ├── main
-│   │   ├── resources
-│   │   │   ├── .gitkeep
-│   │   │   └── prisma
-│   │   │       ├── prisma.module.ts
-│   │   │       └── prisma.service.ts
-│   │   └── ts
-│   │       ├── app.module.ts
-│   │       ├── common
-│   │       ├── main.ts
-│   │       └── modules
-│   └── test
-│       ├── java
-│       │   └── .gitkeep
-│       └── resources
-│           └── .gitkeep
+│   ├── ingredientes
+│   │   ├── dto
+│   │   │   └── buscar-ingrediente.dto.ts
+│   │   ├── ingredientes.controller.ts
+│   │   ├── ingredientes.module.ts
+│   │   └── ingredientes.service.ts
+│   ├── recetas
+│   │   ├── dto
+│   │   │   └── buscar-recetas.dto.ts
+│   │   ├── recetas.controller.ts
+│   │   ├── recetas.module.ts
+│   │   └── recetas.service.ts
+│   ├── test
+│   │   ├── java
+│   │   └── resources
+│   ├── usuarios
+│   │   ├── dto
+│   │   │   ├── login.dto.ts
+│   │   │   └── register.dto.ts
+│   │   ├── usuarios.controller.ts
+│   │   ├── usuarios.module.ts
+│   │   └── usuarios.service.ts
+│   ├── app.module.ts
+│   └── main.ts
 ├── temp
-│   ├── temp_data
-│   │   ├── temp1.tmp
-│   │   └── temp2.tmp
-│   └── temp_file.txt
-├── .dockerignore
-├── .gitignore
-├── .nvmrc
+│   ├── temp_data
+│   │   ├── temp1.tmp
+│   │   └── temp2.tmp
+│   └── temp_file.txt
 ├── BOILERPLATE.md
 ├── CHANGELOG.md
 ├── CONTRIBUTING.md
@@ -144,8 +171,9 @@ recetasYaApp/
 ├── LICENSE
 ├── Makefile
 ├── nest-cli.json
-├── package-lock.json
 ├── package.json
+├── package-lock.json
+├── prisma.config.ts
 ├── README.md
 └── tsconfig.json
 ```
@@ -153,18 +181,46 @@ recetasYaApp/
 # Instalation
 ## Requirements
 
-- Docker & Docker Compose
+- Node.js v18+
+- PostgreSQL
 - Git
-- ...
 
 ### Clone this repo
 
 Go into your Linux (important, jk) terminal and try this commands
-
 ```
 git clone https://github.com/puj-course/FIS_2610_3513_G2.git
 cd FIS_2610_3513_G2
 ```
+
+### Install dependencies
+```
+npm install
+```
+
+### Set up the database
+
+Make sure PostgreSQL is running, then create a `.env` file in the root with your connection string:
+```
+DATABASE_URL="postgresql://USER:PASSWORD@localhost:5432/recetaya"
+```
+
+Then run the Prisma migrations to set up the tables:
+```
+npx prisma generate
+npx prisma db push
+```
+
+### Run the backend
+```
+npm run start:dev
+```
+
+The server will be available at `http://localhost:3000`
+
+### Open the frontend
+
+Open `frontend/login-register/loginRecetaYa.html` directly in your browser, or use Live Server in VS Code.
 
 ### Docker Execution
 ### Testing
@@ -188,7 +244,8 @@ Computer science student at Pontificia Universidad Javeriana.
 Dm me anytime you need it!
 📧 daniel-corredor@javeriana.edu.co
 
-
 # License
 
 This project has been developed for academic purposes. 
+
+bwomp bwomp

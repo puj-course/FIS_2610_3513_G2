@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RecetaYa — Panel de Administración</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,900;1,900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="admin.css" />
+</head>
+<body>
+  <header>
+    <a class="logo" href="../IndexMain/index.html">
+      <img class="logo-img" src="https://res.cloudinary.com/dkvds2u3r/image/upload/v1778275838/logo_x1qa7e.png" alt="RecetaYa" onerror="this.style.display='none'" />
+      <span class="tx">Receta<span>Ya</span></span>
+    </a>
+    <span class="header-tag">— Panel de administración</span>
+    <div class="header-right">
+      <a class="btn-back" href="../IndexMain/index.html">← Volver</a>
+    </div>
+  </header>
+  <main class="admin-wrapper">
+  <aside class="sidebar">
+    <ul class="sidebar__list">
+      <li class="sidebar__element">
+        <a class="sidebar__item" data-page="perfil" onclick="showPage('perfil')">
+        <svg  xmlns="http://www.w3.org/2000/svg" width="24" height="24"  
+        fill="currentColor" viewBox="0 0 24 24" >
+        <!--Boxicons v3.0.8 https://boxicons.com | License  https://docs.boxicons.com/free-->
+        <path d="M12 6c-2.28 0-4 1.72-4 4s1.72 4 4 4 4-1.72 4-4-1.72-4-4-4m0 6c-1.18 0-2-.82-2-2s.82-2 2-2 2 .82 2 2-.82 2-2 2"></path><path d="M12 2C6.49 2 2 6.49 2 12c0 3.26 1.58 6.16 4 7.98V20h.03c1.67 1.25 3.73 2 5.97 2s4.31-.75 5.97-2H18v-.02c2.42-1.83 4-4.72 4-7.98 0-5.51-4.49-10-10-10M8.18 19.02C8.59 17.85 9.69 17 11 17h2c1.31 0 2.42.85 2.82 2.02-1.14.62-2.44.98-3.82.98s-2.69-.35-3.82-.98m9.3-1.21c-.81-1.66-2.51-2.82-4.48-2.82h-2c-1.97 0-3.66 1.16-4.48 2.82A7.96 7.96 0 0 1 4 11.99c0-4.41 3.59-8 8-8s8 3.59 8 8c0 2.29-.97 4.36-2.52 5.82"></path>
+        </svg>
+        <div class="sidebar_hide">
+          <p class="sidebar__text">Perfil</p>
+        </div>
+        </a>
+      </li>
+
+      <li class="sidebar__element">
+        <a class="sidebar__item" data-page="recetas" onclick="showPage('recetas')">
+        <svg  xmlns="http://www.w3.org/2000/svg" width="24" height="24"  
+        fill="currentColor" viewBox="0 0 24 24" >
+        <!--Boxicons v3.0.8 https://boxicons.com | License  https://docs.boxicons.com/free-->
+        <path d="M20.55 1.68 17.78 10h-1.39l2.56-7.68-1.9-.63-1.76 5.27C14.15 4.62 11.76 3 9 3c-3.86 0-7 3.14-7 7v1c0 3.61 1.9 6.87 5 8.66V21c0 .55.45 1 1 1h8c.55 0 1-.45 1-1v-1.34c3.1-1.78 5-5.05 5-8.66 0-.55-.45-1-1-1h-1.11l2.56-7.68-1.9-.63ZM9 5c2.76 0 5 2.24 5 5h-1.5c0-1.93-1.57-3.5-3.5-3.5S5.5 8.07 5.5 10H4c0-2.76 2.24-5 5-5m1.5 5h-3c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5m5.06 8.16c-.34.17-.56.52-.56.9V20H9v-.94c0-.38-.22-.73-.56-.9A7.93 7.93 0 0 1 4.06 12h15.88a7.94 7.94 0 0 1-4.38 6.16"></path>
+        </svg>
+        <div class="sidebar_hide">
+          <p class="sidebar__text">Recetas</p>
+        </div>
+       </a>
+      </li>
+      <li class="sidebar__element">
+        <a class="sidebar__item" data-page="usuarios" onclick="showPage('usuarios')">
+        <svg  xmlns="http://www.w3.org/2000/svg" width="24" height="24"  
+        fill="currentColor" viewBox="0 0 24 24" >
+        <!--Boxicons v3.0.8 https://boxicons.com | License  https://docs.boxicons.com/free-->
+        <path d="M10 13H8c-2.76 0-5 2.24-5 5v1c0 .55.45 1 1 1h10c.55 0 1-.45 1-1v-1c0-2.76-2.24-5-5-5m-5 5c0-1.65 1.35-3 3-3h2c1.65 0 3 1.35 3 3zm7.73-11.49c-.08-.22-.19-.42-.3-.62v-.01c-.69-1.14-1.93-1.89-3.42-1.89-2.28 0-4 1.72-4 4s1.72 4 4 4c1.49 0 2.73-.74 3.42-1.89v-.01c.12-.2.22-.4.3-.62.02-.06.03-.12.05-.18.06-.17.11-.34.15-.52.05-.25.07-.51.07-.78s-.03-.53-.07-.78c-.03-.18-.09-.35-.15-.52-.02-.06-.03-.12-.05-.18M9 10c-1.18 0-2-.82-2-2s.82-2 2-2 2 .82 2 2-.82 2-2 2m6 0q-.165 0-.33-.03c-.22.66-.56 1.27-.98 1.81.41.13.84.22 1.31.22 2.28 0 4-1.72 4-4s-1.72-4-4-4c-.47 0-.9.09-1.31.22.43.53.76 1.14.98 1.81.11-.01.21-.03.33-.03 1.18 0 2 .82 2 2s-.82 2-2 2m1 3h-1.11c.6.58 1.08 1.27 1.44 2.03C17.83 15.2 19 16.46 19 18h-2v1c0 .35-.07.69-.18 1H20c.55 0 1-.45 1-1v-1c0-2.76-2.24-5-5-5"></path>
+        </svg>
+        <div class="sidebar_hide">
+          <p class="sidebar__text">Usuarios</p>
+        </div>
+        </a>
+      </li>
+      <li class="sidebar__element">
+        <a class="sidebar__item" data-page="insights" onclick="showPage('insights')">
+        <svg  xmlns="http://www.w3.org/2000/svg" width="24" height="24"  
+        fill="currentColor" viewBox="0 0 24 24" >
+        <!--Boxicons v3.0.8 https://boxicons.com | License  https://docs.boxicons.com/free-->
+        <path d="M4 2H2v19c0 .55.45 1 1 1h19v-2H4z"></path><path d="M15.4 12.8c.4.3.96.26 1.31-.09l5-5L20.3 6.3l-4.39 4.39-3.31-2.48c-.4-.3-.96-.26-1.31.09l-6 6 1.41 1.41 5.39-5.39z"></path>
+        </svg>
+        <div class="sidebar_hide">
+          <p class="sidebar__text">Insights</p>
+        </div>
+        </a>
+      </li>
+      <li class="sidebar__element">
+        <a class="sidebar__item" data-page="revision" onclick="showPage('revision')">
+        <svg  xmlns="http://www.w3.org/2000/svg" width="24" height="24"  
+        fill="currentColor" viewBox="0 0 24 24" >
+        <!--Boxicons v3.0.8 https://boxicons.com | License  https://docs.boxicons.com/free-->
+        <path d="M11 8h2v4.5h-2zm0 6h2v2h-2z"></path><path d="M12 2C6.49 2 2 6.49 2 12c0 2.12.68 4.19 1.93 5.9l-1.75 2.53c-.21.31-.24.7-.06 1.03.17.33.51.54.89.54h9c5.51 0 10-4.49 10-10S17.51 2 12 2m0 18H4.91L6 18.43c.26-.37.23-.88-.06-1.22A7.98 7.98 0 0 1 4.01 12c0-4.41 3.59-8 8-8s8 3.59 8 8-3.59 8-8 8Z"></path>
+        </svg>
+        <div class="sidebar_hide">
+          <p class="sidebar__text">Revisión</p>
+        </div>
+        </a>
+      </li>
+    </ul>
+  </aside>
+  <div class="page" id="page-revision">
+    <div class="page-heading">
+      <h1>Recetas <span>pendientes</span></h1>
+      <p>Revisa cada receta antes de publicarla. Puedes aprobarla, rechazarla o eliminarla.</p>
+    </div>
+
+    <div class="loading-state" id="loadingState">
+      <div class="spinner"></div>
+      <p>Cargando recetas...</p>
+    </div>
+
+    <div id="recetasContainer"></div>
+
+    <div class="empty-state" id="emptyState" style="display:none">
+      <div class="empty-icon">✓</div>
+      <p>No hay recetas pendientes por revisar.</p>
+    </div>
+  </div>
+  <!--Page usuarios-->
+  <div class="page" id="page-usuarios"> 
+    <div class="page-heading"> 
+      <h1>Usuarios</h1> <p>Administra los usuarios de la plataforma.</p> </div> <div class="usuarios-topbar">
+      <div class="search-wrap">
+        <input type="text" id="searchInput" class="search-input"
+               placeholder="Buscar usuarios..." autocomplete="off"
+               oninput="buscarUsuario(this.value)"/>
+        <span class="search-icon">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2.5">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+        </span>
+        <div class="search-dropdown" id="searchDropdown"></div>
+      </div>
+      <select id="filter-roles" class="filter-select" onchange="aplicarFiltros()">
+        <option value="">Rol</option>
+        <option value="usuario">Usuario</option>
+        <option value="moderador">Moderador</option>
+        <option value="verificado">Verificado</option>
+        <option value="admin">Admin</option>
+      </select>
+      <select id="filter-estado" class="filter-select" onchange="aplicarFiltros()">
+        <option value="">Estado</option>
+        <option value="activo">Activo</option>
+        <option value="inactivo">Inactivo</option>
+      </select>
+    </div>
+
+    <div class="tabs-row">
+      <button class="tab-link active" id="btn-ausers" onclick="filtrarTab('todos', this)">Todos los usuarios</button>
+      <button class="tab-link" id="btn-rusers" onclick="filtrarTab('reportados', this)">Usuarios reportados</button>
+    </div>
+
+    <div class="tabla-wrap">
+      <table class="table_usuarios">
+        <colgroup>
+          <col style="width:38%"/>
+          <col style="width:16%"/>
+          <col style="width:18%"/>
+          <col style="width:18%"/>
+          <col style="width:10%"/>
+        </colgroup>
+        <thead>
+          <tr>
+            <th class="table_heading">Usuario</th>
+            <th class="table_heading">Rol</th>
+            <th class="table_heading">Registro</th>
+            <th class="table_heading">Estado</th>
+            <th class="table_heading"></th>
+          </tr>
+        </thead>
+        <tbody id="usuarios-tbody"></tbody>
+      </table>
+      <div class="tabla-footer">
+        <span class="pag-info" id="pag-info">Página 1 de 1</span>
+        <div class="pag-controls">
+          <button class="pag-btn" id="btn-prev" onclick="irPagina(paginaActual - 1)">&#8249;</button>
+          <button class="pag-btn" id="btn-next" onclick="irPagina(paginaActual + 1)">&#8250;</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  </main>
+  <div class="toast" id="toast"></div>
+  <script src="admin.js"></script>
+</body>
+</html>

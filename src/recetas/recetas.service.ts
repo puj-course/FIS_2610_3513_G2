@@ -1,0 +1,311 @@
+import { Injectable , BadRequestException} from "@nestjs/common";
+import { NotificacionesFacade } from "./../telegram/NotificacionesFacade";
+import { PrismaService } from "../../prisma/prisma.service";
+import { CrearRecetaDto } from "./dto/crear-receta.dto";
+import { CrearRecetaService } from "./crear-receta.service";
+import { GuardarBorradorService } from "./guardar-borrador.service";
+import { v2 as cloudinary } from "cloudinary";
+import { IngredienteFlyweightFactory } from '../ingredientes/flyweight/ingrediente-flyweight.factory';
+
+interface RecetaConScore {
+  id: number;
+  nombre: string;
+  score: bigint;
+  relevancia: number;
+}
+
+@Injectable()
+export class RecetasService {
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly crearRecetaService: CrearRecetaService,
+    private readonly guardarBorradorService: GuardarBorradorService,
+    private readonly notificaciones: NotificacionesFacade,
+    private readonly flyweightFactory: IngredienteFlyweightFactory,
+  ) {}
+
+  crearReceta(dto: CrearRecetaDto) {
+    return this.crearRecetaService.ejecutar(dto);
+  }
+
+  guardarBorrador(dto: CrearRecetaDto) {
+    return this.guardarBorradorService.ejecutar(dto);
+  }
+
+  async getBorradorByUsuario(userId: number) {
+  return this.prisma.receta.findFirst({
+    where: {
+      id_usuariocreador: userId,
+      estado: 'borrador',
+    },
+    orderBy: { idreceta: 'desc' },
+    include: {
+      recetaingrediente: {
+        include: { ingrediente: true },
+      },
+      paso: true,
+      recetacategoria: true,
+    },
+  });
+}
+
+  async buscarPorIngredientes(ingredientesIds: number[]) {
+    const recetas = await this.prisma.$queryRaw<RecetaConScore[]>`
+      SELECT 
+        r.*,
+        COUNT(ri.ingrediente_idingrediente) AS score,
+        COUNT(ri.ingrediente_idingrediente)::float / ${ingredientesIds.length} AS relevancia
+      FROM receta r
+      JOIN recetaingrediente ri ON ri.receta_idreceta = r.idreceta
+      WHERE ri.ingrediente_idingrediente = ANY(${ingredientesIds})
+      GROUP BY r.idreceta
+      ORDER BY score DESC
+    `;
+
+    return recetas.map((r) => ({
+      ...r,
+      score: Number(r.score),
+    }));
+  }
+
+  async actualizarEstado(idreceta: number, estado: string) {
+    if (estado === "aprobado") {
+
+
+      const receta = await this.prisma.receta.findUnique({
+        where: { idreceta },
+      });
+
+      await this.notificaciones.notificarTelegram(receta);
+
+      const imageUrl = await this.uploadImageCloudinary(idreceta);
+
+      return this.prisma.receta.update({
+        where: { idreceta },
+        data: {
+          estado: "aprobado",
+          image_url: imageUrl,
+          imagenreceta: null, 
+        },
+      });
+
+    } else {
+
+      const receta = await this.prisma.receta.findUnique({
+        where: { idreceta },
+      });
+
+      await this.notificaciones.notificarTelegram(receta);
+      return this.prisma.receta.update({
+        where: { idreceta },
+        data: { estado },
+      });
+    }
+  }
+
+  async uploadImageCloudinary(idreceta: number) {
+
+    const receta = await this.prisma.receta.findUnique({
+      where: { idreceta },
+    });
+
+    if (!receta) {
+      throw new Error("Receta no encontrada");
+    }
+
+    let imageUrl = receta.image_url;
+
+    if (receta.imagenreceta && !receta.image_url) {
+      imageUrl = await new Promise<string>((resolve, reject) => {
+        cloudinary.uploader
+          .upload_stream({ folder: "recetasya" }, (error, result) => {
+            if (error) reject(error);
+            else resolve(result!.secure_url);
+          })
+          .end(receta.imagenreceta); 
+      });
+      return imageUrl;
+    }
+  }
+
+  async getAll(ordenar?: string) {
+    const recetas = await this.prisma.receta.findMany({
+      orderBy: { nombre: 'asc' },
+      include: {
+        recetaingrediente: { include: { ingrediente: true } },
+        paso: true,
+        calificacion: true,
+      },
+    });
+
+  if (ordenar === 'popular') {
+    recetas.sort((a, b) => {
+      const promA = a.calificacion.length
+        ? a.calificacion.reduce((s, c) => s + c.puntaje, 0) / a.calificacion.length
+        : 0;
+      const promB = b.calificacion.length
+        ? b.calificacion.reduce((s, c) => s + c.puntaje, 0) / b.calificacion.length
+        : 0;
+      return promB - promA;
+    });
+  }
+
+  return {
+    ingredientes: this.flyweightFactory.getPool(),
+    recetas: recetas.map(r => this.mapearReceta(r)),
+  };
+}
+
+  private mapearReceta(r: any) {
+    return {
+      idreceta:          r.idreceta,
+      nombre:            r.nombre,
+      descripcion:       r.descripcion,
+      estado:            r.estado,
+      image_url:         this.resolverImagen(r),
+      id_usuariocreador: r.id_usuariocreador,
+      ingredienteIds:    this.resolverIngredientes(r),
+      pasos:             (r.paso || []).map((p: any) => p.descripcion),
+    };
+  }
+
+  private resolverImagen(r: any): string | null {
+    return r.image_url ?? (r.imagenreceta
+      ? `data:image/jpeg;base64,${Buffer.from(r.imagenreceta).toString('base64')}`
+      : null);
+  }
+
+  private resolverIngredientes(r: any): number[] {
+    return r.recetaingrediente.map(ri => {
+      this.flyweightFactory.getFlyweight(
+        ri.ingrediente.idingrediente,
+        ri.ingrediente.nombre,
+      );
+
+      return {
+        idingrediente: ri.ingrediente.idingrediente,
+        cantidad: ri.cantidadingrediente ?? null,
+      };
+    });
+  }
+
+    async eliminarReceta(idreceta: number) {
+      await this.prisma.paso.deleteMany({ where: { receta_idreceta: idreceta } });
+      await this.prisma.recetaingrediente.deleteMany({ where: { receta_idreceta: idreceta } });
+      await this.prisma.recetacategoria.deleteMany({ where: { receta_idreceta: idreceta } });
+    
+      return this.prisma.receta.delete({
+        where: { idreceta },
+    });
+    }
+
+    async subirVideoCloudinary(buffer: Buffer): Promise<string> {
+      return new Promise((resolve, reject) => {
+        cloudinary.uploader.upload_stream(
+          { folder: 'recetasya/pendientes', resource_type: 'video' },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result!.secure_url);
+          }
+        ).end(buffer);
+      });
+    }
+
+
+  //para recetas guardadas 
+  //
+  
+  async guardarReceta(usuarioId: number, recetaId: number) {
+    return this.prisma.recetaguardada.create({
+      data: {
+        usuario_idusuario: usuarioId,
+        receta_idreceta:   recetaId,
+        fecha_guardado:    new Date(),
+      },
+    });
+  }
+
+  async quitarRecetaGuardada(usuarioId: number, recetaId: number) {
+    return this.prisma.recetaguardada.delete({
+      where: {
+        usuario_idusuario_receta_idreceta: {
+          usuario_idusuario: usuarioId,
+          receta_idreceta:   recetaId,
+        },
+      },
+    });
+  }
+
+  async getRecetasGuardadas(usuarioId: number) {
+    return this.prisma.recetaguardada.findMany({
+      where: { usuario_idusuario: usuarioId },
+      select: { receta_idreceta: true },
+    });
+  }
+
+  async getCalificacionPromedio(recetaId: number){
+    const result = await this.prisma.calificacion.aggregate({
+      where: {receta_idreceta: recetaId},
+      _avg: { puntaje: true },
+      _count: {puntaje: true},
+    });
+
+    return {
+      promedio: result._avg.puntaje ? Math.round(result._avg.puntaje * 10) / 10 : null,
+      total: result._count.puntaje,
+    };
+  }
+
+  async calificar(recetaId:number, usuarioId: number, puntaje: number){
+    if (puntaje < 1 || puntaje > 5) {
+      throw new BadRequestException('El puntaje debe estar entre 1 y 5');
+    }
+    return this.prisma.calificacion.upsert({
+      where: {
+        usuario_idusuario_receta_idreceta : {
+          usuario_idusuario: usuarioId,
+          receta_idreceta: recetaId,
+        },
+      },
+      update: {puntaje},
+      create: {
+        usuario_idusuario: usuarioId,
+        receta_idreceta: recetaId,
+        puntaje,
+      },
+    });
+  }
+
+  async getRecetaPorSlug(slug: string) {
+  return this.prisma.receta.findFirst({
+    where: {
+      slugUrl: slug,
+      estado: 'publicado',
+    },
+    select: {
+      idreceta:          true,
+      nombre:            true,
+      descripcion:       true,
+      tiempopreparacion: true,
+      calorias:          true,
+      image_url:         true,
+      slugUrl:           true,
+      fechacreacion:     true,
+      recetaingrediente: {
+        select: {
+          cantidadingrediente: true,
+          ingrediente: { select: { nombre: true } },
+        },
+      },
+      paso: {
+        orderBy: { numeropaso: 'asc' },
+        select: { numeropaso: true, descripcion: true },
+      },
+      recetacategoria: {
+        select: { categoria: { select: { nombre: true } } },
+      },
+    },
+    });
+  }
+}
+

@@ -12,6 +12,8 @@ services:
       - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - backend
     restart: unless-stopped
 
   backend:
@@ -19,11 +21,32 @@ services:
     container_name: backend
     ports:
       - "8080:8080"
+      - "5555:5555" # Para ejecutar npx prisma studio
     env_file:
-      - .env
+      - .env.docker
     depends_on:
       - database
+    networks:
+        - frontend
+        - backend
     restart: unless-stopped
-
+  
+  frontend:
+    build: ./frontend
+    container_name: frontend
+    ports:
+      - "3000:80"
+    networks:
+        - frontend
+    restart: unless-stopped
+    
 volumes:
   postgres_data:
+
+networks:
+  frontend:
+    driver: bridge
+    name: frontend_network
+  backend: 
+    driver: bridge 
+    name: backend_network
