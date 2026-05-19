@@ -47,6 +47,21 @@ networks:
   frontend:
     driver: bridge
     name: frontend_network
-  backend: 
-    driver: bridge 
+    driver_opts:
+      com.docker.network.bridge.host_binding_ipv4: "127.0.0.1"  # Restringe la red backend a localhost
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.20.0.0/24 # Subred para la red frontend
+          gateway: 172.20.0.1
+
+  backend:
+    driver: bridge
     name: backend_network
+    driver_opts:
+      com.docker.network.bridge.host_binding_ipv4: "127.0.0.1" # Restringe la red backend a localhost
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.21.0.0/24 # Subred para la red backend
+          gateway: 172.21.0.1
