@@ -72,4 +72,57 @@ describe('TelegramService', () => {
       await expect(service.enviarMensajeA(123, 'test')).resolves.not.toThrow();
     });
   });
+
+  // enviarFoto ------------------------------------------------
+  // Envía una foto al chatId configurado en variables de entorno.
+
+  describe('enviarFoto', () => {
+    it('CP05 - llama a la API de Telegram con sendPhoto y los datos de la imagen', async () => {
+      // Act
+      await service.enviarFoto(Buffer.from('imagen'), 'Arepa con hogao');
+
+      // Assert
+      expect(fetchMock).toHaveBeenCalledWith(
+        expect.stringContaining('sendPhoto'),
+        expect.objectContaining({ method: 'POST' }),
+      );
+    });
+
+    it('CP06 - no lanza error si fetch falla (manejo silencioso)', async () => {
+      // Arrange
+      fetchMock.mockRejectedValue(new Error('Network error'));
+
+      // Act & Assert
+      await expect(
+        service.enviarFoto(Buffer.from('imagen'), 'caption')
+      ).resolves.not.toThrow();
+    });
+  });
+
+  // enviarFotoA ------------------------------------------------
+  // Envía una foto a un chatId específico (usado por el bot de Telegram).
+
+  describe('enviarFotoA', () => {
+    it('CP07 - llama a sendPhoto con el chatId y la imagen correctos', async () => {
+      // Act
+      await service.enviarFotoA(987654, Buffer.from('imagen'), 'Tamales de Sañuera');
+
+      // Assert
+      expect(fetchMock).toHaveBeenCalledWith(
+        expect.stringContaining('sendPhoto'),
+        expect.objectContaining({ method: 'POST' }),
+      );
+    });
+
+    it('CP08 - no lanza error si fetch falla (manejo silencioso)', async () => {
+      // Arrange
+      fetchMock.mockRejectedValue(new Error('Network error'));
+
+      // Act & Assert
+      await expect(
+        service.enviarFotoA(123, Buffer.from('imagen'), 'caption')
+      ).resolves.not.toThrow();
+    });
+  });
 });
+
