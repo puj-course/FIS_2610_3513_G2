@@ -165,6 +165,8 @@ export class RecetasService {
       image_url:         this.resolverImagen(r),
       id_usuariocreador: r.id_usuariocreador,
       ingredienteIds:    this.resolverIngredientes(r),
+      tiempopreparacion: r.tiempopreparacion,
+      calorias:          r.calorias,
       pasos:             (r.paso || []).map((p: any) => p.descripcion),
     };
   }

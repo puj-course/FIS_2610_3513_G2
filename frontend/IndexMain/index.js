@@ -78,7 +78,7 @@ async function buildAllRecetas() {
     imagen:      r.image_url || null,
     descripcion: r.descripcion || null,
     pasos:       (r.pasos || []),
-    tiempo:      r.tiempo_preparacion || null,
+    tiempo:      r.tiempopreparacion || null,
     calorias:    r.calorias || null,
     estado:      r.estado || "publicado",
     tipo:        "bd",
@@ -500,8 +500,8 @@ if (starRating) starRating.reset(receta.id);
   }).join("");
 
   // Meta
-  rmdTiempo.textContent   = receta.tiempo    || "—";
-  rmdCalorias.textContent = receta.calorias  || "—";
+  rmdTiempo.textContent   = receta.tiempo    ? receta.tiempo    + " min"  : "—";
+  rmdCalorias.textContent = receta.calorias  ? receta.calorias  + " kcal" : "—";
 
   // Descripción
   rmdDesc.textContent  = receta.descripcion || "";
