@@ -1,41 +1,29 @@
 #!/usr/bin/env python3
 """
-sprint_metrics.py
------------------
-Queries the GitHub API to produce per-sprint traceability data that
-GitHub Insights does not expose natively:
-  - Commits per member per sprint
-  - Sprint commit average
-  - Balance warning when any member is below threshold
-  - PR authorship and review participation
-  - Links every commit SHA to its author (full traceability)
+sprint_report.py
+----------------
+No inputs needed. Reads the full commit history of the repo,
+splits it into 1-week sprints automatically (from the first commit),
+and produces:
 
-Outputs
-  sprint-reports/SPRINT_LABEL.md   — human-readable Markdown report
-  sprint-reports/SPRINT_LABEL.json — machine-readable data for later analysis
+  sprint-reports/SPRINTS.md  — full report:
+                               • commits per user per sprint
+                               • average commits per sprint (per user + team)
+                               • traceability: every commit linked to its author
 """
 
-import json
-import os
-import sys
+import json, os
 from datetime import datetime, timezone, timedelta
 from collections import defaultdict
 import requests
 from dateutil import parser as dateparser
 
-TOKEN      = os.environ["GITHUB_TOKEN"]
-REPO       = os.environ["REPO"]                   # owner/repo
-DAYS_BACK  = int(os.environ.get("DAYS_BACK", 14))
-SPRINT_NAME = os.environ.get("SPRINT_NAME", "")  # e.g. "Sprint-05"
+# ── Config ────────────────────────────────────────────────────────────────────
 
-TEAM_MEMBERS_RAW = os.environ.get("TEAM_MEMBERS", "")
-TEAM_MEMBERS = [m.strip() for m in TEAM_MEMBERS_RAW.split(",") if m.strip()]
-
-BALANCE_THRESHOLD = float(os.environ.get("BALANCE_THRESHOLD", 0.60))
-
-# ---------------------------------------------------------------------------
-# Helpers
-# ---------------------------------------------------------------------------
+TOKEN   = os.environ["GITHUB_TOKEN"]
+REPO    = os.environ["REPO"]
+MEMBERS_RAW = os.environ.get("TEAM_MEMBERS", "")
+MEMBERS = [m.strip() for m in MEMBERS_RAW.split(",") if m.strip()]
 
 HEADERS = {
     "Authorization": f"Bearer {TOKEN}",
@@ -43,12 +31,13 @@ HEADERS = {
     "X-GitHub-Api-Version": "2022-11-28",
 }
 
+# ── GitHub API helper ─────────────────────────────────────────────────────────
+
 def gh_get(url, params=None):
-    """GET a GitHub API URL, handling pagination automatically."""
     results = []
     while url:
         r = requests.get(url, headers=HEADERS, params=params)
-        if r.status_code == 422:
+        if r.status_code in (422, 409):
             return []
         r.raise_for_status()
         data = r.json()
@@ -56,287 +45,224 @@ def gh_get(url, params=None):
             results.extend(data)
         else:
             return data
-        # Follow Link: <url>; rel="next" pagination
         link = r.headers.get("Link", "")
-        url = None
-        params = None
+        url, params = None, None
         for part in link.split(","):
             if 'rel="next"' in part:
                 url = part.split(";")[0].strip().strip("<>")
     return results
 
-
 def api(path, params=None):
     return gh_get(f"https://api.github.com/{path}", params)
 
+# ── 1. Fetch all commits ──────────────────────────────────────────────────────
 
-# ---------------------------------------------------------------------------
-# Date window
-# ---------------------------------------------------------------------------
+print(f"Fetching all commits for {REPO}...")
+raw_commits = api(f"repos/{REPO}/commits", params={"per_page": 100})
 
-now = datetime.now(timezone.utc)
-since = now - timedelta(days=DAYS_BACK)
-since_iso = since.strftime("%Y-%m-%dT%H:%M:%SZ")
-until_iso = now.strftime("%Y-%m-%dT%H:%M:%SZ")
+if not raw_commits:
+    print("No commits found.")
+    exit(0)
 
-if not SPRINT_NAME:
-    SPRINT_NAME = f"sprint-{since.strftime('%Y%m%d')}-{now.strftime('%Y%m%d')}"
-
-SPRINT_LABEL = SPRINT_NAME.lower().replace(" ", "-")
-
-print(f"Sprint: {SPRINT_NAME}")
-print(f"Window: {since_iso} → {until_iso}")
-print(f"Repo:   {REPO}")
-
-# ---------------------------------------------------------------------------
-# 1. Commits
-# ---------------------------------------------------------------------------
-
-print("\nFetching commits...")
-owner, repo_name = REPO.split("/", 1)
-
-raw_commits = api(
-    f"repos/{REPO}/commits",
-    params={"since": since_iso, "until": until_iso, "per_page": 100},
-)
-
-commits_by_member = defaultdict(list)   # username -> [commit_dict]
-unmatched_commits = []
-
+# Parse into clean list sorted oldest → newest
+commits = []
 for c in raw_commits:
-    sha     = c["sha"]
-    message = c["commit"]["message"].split("\n")[0][:80]
-    date    = c["commit"]["committer"]["date"]
-    author  = (c.get("author") or {}).get("login", "")
-    if not author:
-        author = c["commit"]["author"].get("email", "unknown")
-
-    entry = {"sha": sha[:7], "full_sha": sha, "message": message, "date": date, "author": author}
-
-    if TEAM_MEMBERS and author in TEAM_MEMBERS:
-        commits_by_member[author].append(entry)
-    elif not TEAM_MEMBERS:
-        # No filter — group by whoever committed
-        commits_by_member[author].append(entry)
-    else:
-        unmatched_commits.append(entry)
-
-# Ensure every team member appears even with 0 commits
-for m in TEAM_MEMBERS:
-    if m not in commits_by_member:
-        commits_by_member[m] = []
-
-# ---------------------------------------------------------------------------
-# 2. Pull requests (opened + merged in window)
-# ---------------------------------------------------------------------------
-
-print("Fetching pull requests...")
-prs_raw = api(f"repos/{REPO}/pulls", params={"state": "all", "per_page": 100, "sort": "updated", "direction": "desc"})
-
-prs_in_window = []
-for pr in prs_raw:
-    created = dateparser.parse(pr["created_at"])
-    if created >= since:
-        prs_in_window.append(pr)
-
-prs_by_author = defaultdict(list)
-for pr in prs_in_window:
-    login = (pr.get("user") or {}).get("login", "unknown")
-    prs_by_author[login].append({
-        "number": pr["number"],
-        "title": pr["title"][:60],
-        "state": pr["state"],
-        "merged": pr.get("merged_at") is not None,
-        "url": pr["html_url"],
+    author = (c.get("author") or {}).get("login", "") or c["commit"]["author"].get("email", "unknown")
+    date   = dateparser.parse(c["commit"]["committer"]["date"])
+    commits.append({
+        "sha":      c["sha"][:7],
+        "full_sha": c["sha"],
+        "message":  c["commit"]["message"].split("\n")[0][:80],
+        "date":     date,
+        "author":   author,
     })
 
-# ---------------------------------------------------------------------------
-# 3. PR Reviews
-# ---------------------------------------------------------------------------
+commits.sort(key=lambda c: c["date"])
 
-print("Fetching PR reviews...")
-reviews_by_reviewer = defaultdict(list)
+# ── 2. Auto-detect sprint windows (1 week each from first commit) ─────────────
 
-for pr in prs_in_window:
-    pr_num = pr["number"]
-    reviews = api(f"repos/{REPO}/pulls/{pr_num}/reviews")
-    for rv in reviews:
+first_commit_date = commits[0]["date"].replace(hour=0, minute=0, second=0, microsecond=0)
+now = datetime.now(timezone.utc)
+
+sprints = []
+sprint_start = first_commit_date
+sprint_num   = 1
+
+while sprint_start < now:
+    sprint_end = sprint_start + timedelta(weeks=1)
+    sprints.append({
+        "number": sprint_num,
+        "since":  sprint_start,
+        "until":  min(sprint_end, now),
+    })
+    sprint_start = sprint_end
+    sprint_num  += 1
+
+print(f"Detected {len(sprints)} sprint(s) from {commits[0]['date'].date()} to {now.date()}")
+
+# ── 3. Bucket commits into sprints ───────────────────────────────────────────
+
+def commits_for_sprint(sprint):
+    result = defaultdict(list)
+    for c in commits:
+        if sprint["since"] <= c["date"] < sprint["until"]:
+            author = c["author"]
+            if not MEMBERS or author in MEMBERS:
+                result[author].append(c)
+    # Ensure all tracked members appear
+    for m in MEMBERS:
+        if m not in result:
+            result[m] = []
+    return result
+
+sprint_results = []
+for s in sprints:
+    by_member = commits_for_sprint(s)
+    members   = sorted(by_member.keys())
+    counts    = {m: len(by_member[m]) for m in members}
+    total     = sum(counts.values())
+    average   = round(total / len(members), 2) if members else 0
+    sprint_results.append({
+        "number":    s["number"],
+        "since":     s["since"].strftime("%Y-%m-%d"),
+        "until":     s["until"].strftime("%Y-%m-%d"),
+        "members":   members,
+        "counts":    counts,
+        "log":       {m: by_member[m] for m in members},
+        "total":     total,
+        "average":   average,
+    })
+
+# ── 4. All-sprint averages per member ────────────────────────────────────────
+
+all_members = sorted({m for s in sprint_results for m in s["members"]})
+
+avg_per_member = {}
+for m in all_members:
+    sprints_with = [s for s in sprint_results if m in s["counts"]]
+    total_commits = sum(s["counts"][m] for s in sprints_with)
+    avg_per_member[m] = round(total_commits / len(sprints_with), 2) if sprints_with else 0
+
+overall_avg = round(
+    sum(s["average"] for s in sprint_results) / len(sprint_results), 2
+) if sprint_results else 0
+
+# ── 5. Fetch PRs and reviews (once, for traceability) ────────────────────────
+
+print("Fetching pull requests and reviews...")
+all_prs = api(f"repos/{REPO}/pulls", params={"state": "all", "per_page": 100, "sort": "updated", "direction": "desc"})
+
+prs_by_author    = defaultdict(list)
+reviews_by_login = defaultdict(list)
+
+for pr in all_prs:
+    login = (pr.get("user") or {}).get("login", "unknown")
+    created = dateparser.parse(pr["created_at"])
+    prs_by_author[login].append({
+        "number":  pr["number"],
+        "title":   pr["title"][:60],
+        "merged":  pr.get("merged_at") is not None,
+        "url":     pr["html_url"],
+        "created": created,
+    })
+    for rv in api(f"repos/{REPO}/pulls/{pr['number']}/reviews"):
         reviewer = (rv.get("user") or {}).get("login", "unknown")
-        state = rv.get("state", "COMMENTED")
-        if state in ("APPROVED", "CHANGES_REQUESTED", "COMMENTED"):
-            reviews_by_reviewer[reviewer].append({
-                "pr": pr_num,
-                "pr_title": pr["title"][:50],
-                "state": state,
-                "submitted_at": rv.get("submitted_at", ""),
+        if rv.get("state") in ("APPROVED", "CHANGES_REQUESTED", "COMMENTED"):
+            reviews_by_login[reviewer].append({
+                "pr":    pr["number"],
+                "title": pr["title"][:50],
+                "state": rv["state"],
+                "date":  dateparser.parse(rv["submitted_at"]) if rv.get("submitted_at") else None,
             })
 
-# ---------------------------------------------------------------------------
-# 4. Compute stats
-# ---------------------------------------------------------------------------
+# ── 6. Render SPRINTS.md ─────────────────────────────────────────────────────
 
-members = sorted(commits_by_member.keys())
-commit_counts = {m: len(commits_by_member[m]) for m in members}
-total_commits = sum(commit_counts.values())
-avg_commits   = total_commits / len(members) if members else 0
-
-balance_warnings = []
-for m in members:
-    count = commit_counts[m]
-    if avg_commits > 0 and count < avg_commits * BALANCE_THRESHOLD:
-        balance_warnings.append({
-            "member": m,
-            "commits": count,
-            "average": round(avg_commits, 1),
-            "ratio": round(count / avg_commits, 2) if avg_commits else 0,
-        })
-
-# ---------------------------------------------------------------------------
-# 5. Build output structures
-# ---------------------------------------------------------------------------
-
-report_data = {
-    "sprint": SPRINT_NAME,
-    "generated_at": now.isoformat(),
-    "window": {"since": since_iso, "until": until_iso, "days": DAYS_BACK},
-    "repo": REPO,
-    "summary": {
-        "total_commits": total_commits,
-        "average_commits_per_member": round(avg_commits, 2),
-        "total_prs": len(prs_in_window),
-        "members_tracked": len(members),
-    },
-    "members": {},
-    "balance_warnings": balance_warnings,
-}
-
-for m in members:
-    report_data["members"][m] = {
-        "commits": commit_counts[m],
-        "commit_log": commits_by_member[m],
-        "prs_opened": prs_by_author.get(m, []),
-        "reviews_given": reviews_by_reviewer.get(m, []),
-    }
-
-# ---------------------------------------------------------------------------
-# 6. Render Markdown
-# ---------------------------------------------------------------------------
-
-def render_markdown(data):
-    d = data
+def render(sprint_results, all_members, avg_per_member, overall_avg):
     lines = []
     a = lines.append
 
-    a(f"# Sprint metrics report — {d['sprint']}")
+    a(f"# Sprint participation report")
     a(f"")
-    a(f"> Generated: {d['generated_at'][:19].replace('T',' ')} UTC  ")
-    a(f"> Window: `{d['window']['since'][:10]}` → `{d['window']['until'][:10]}` ({d['window']['days']} days)  ")
-    a(f"> Repository: `{d['repo']}`")
+    a(f"_Generated: {now.strftime('%Y-%m-%d %H:%M')} UTC · Repo: `{REPO}`_")
     a(f"")
 
-    # Summary table
-    s = d["summary"]
-    a(f"## Summary")
+    # ── Overall averages ──────────────────────────────────────────────────────
+    a(f"## Overall averages — all sprints")
     a(f"")
-    a(f"| Metric | Value |")
-    a(f"|--------|-------|")
-    a(f"| Total commits | {s['total_commits']} |")
-    a(f"| Average commits / member | {s['average_commits_per_member']} |")
-    a(f"| Total PRs opened | {s['total_prs']} |")
-    a(f"| Members tracked | {s['members_tracked']} |")
-    a(f"")
-
-    # Per-member commit table
-    a(f"## Commits per member")
-    a(f"")
-    a(f"| Member | Commits | PRs opened | Reviews given |")
-    a(f"|--------|---------|------------|---------------|")
-    for m, info in d["members"].items():
-        flag = " ⚠️" if any(w["member"] == m for w in d["balance_warnings"]) else ""
-        a(f"| `{m}`{flag} | {info['commits']} | {len(info['prs_opened'])} | {len(info['reviews_given'])} |")
+    a(f"| Member | Total commits | Avg commits / sprint |")
+    a(f"|--------|-------------:|---------------------:|")
+    for m in all_members:
+        total = sum(s["counts"].get(m, 0) for s in sprint_results)
+        a(f"| `{m}` | {total} | {avg_per_member[m]} |")
+    a(f"| **Team** | **{sum(s['total'] for s in sprint_results)}** | **{overall_avg}** |")
     a(f"")
 
-    # Balance warnings
-    if d["balance_warnings"]:
-        a(f"## Balance warnings")
-        a(f"")
-        a(f"> Members below {int(BALANCE_THRESHOLD*100)}% of sprint average")
-        a(f"")
-        for w in d["balance_warnings"]:
-            a(f"- **`{w['member']}`** — {w['commits']} commits (average: {w['average']}, ratio: {w['ratio']})")
-        a(f"")
-
-    # Commit traceability per member
-    a(f"## Commit traceability")
+    # ── Sprint summary table ──────────────────────────────────────────────────
+    a(f"## Commits per sprint — summary")
     a(f"")
-    for m, info in d["members"].items():
-        a(f"### {m}")
-        a(f"")
-        if not info["commit_log"]:
-            a(f"_No commits in this sprint window._")
-        else:
-            a(f"| SHA | Date | Message |")
-            a(f"|-----|------|---------|")
-            for c in info["commit_log"]:
-                date_short = c["date"][:10]
-                sha_link = f"[`{c['sha']}`](https://github.com/{REPO}/commit/{c['full_sha']})"
-                a(f"| {sha_link} | {date_short} | {c['message']} |")
-        a(f"")
+    header  = "| Sprint | Period |" + "".join(f" `{m}` |" for m in all_members) + " Total | Team avg |"
+    divider = "|--------|--------|" + "".join("------:|" for _ in all_members) + "------:|---------:|"
+    a(header)
+    a(divider)
+    for s in sprint_results:
+        period = f"{s['since']} → {s['until']}"
+        cols   = "".join(f" {s['counts'].get(m, 0)} |" for m in all_members)
+        a(f"| Sprint {s['number']} | {period} |{cols} {s['total']} | {s['average']} |")
+    a(f"")
 
-        if info["prs_opened"]:
-            a(f"**PRs opened**")
+    # ── Per-sprint traceability ───────────────────────────────────────────────
+    a(f"## Traceability — commits per sprint per member")
+    a(f"")
+    for s in sprint_results:
+        a(f"### Sprint {s['number']} — {s['since']} → {s['until']}")
+        a(f"")
+        for m in s["members"]:
+            log = s["log"].get(m, [])
+            # PRs and reviews in this sprint window
+            since_dt = dateparser.parse(s["since"] + "T00:00:00+00:00")
+            until_dt = dateparser.parse(s["until"] + "T23:59:59+00:00")
+            prs      = [p for p in prs_by_author.get(m, []) if since_dt <= p["created"] <= until_dt]
+            reviews  = [r for r in reviews_by_login.get(m, []) if r["date"] and since_dt <= r["date"] <= until_dt]
+
+            a(f"#### `{m}` — {len(log)} commit(s) · {len(prs)} PR(s) · {len(reviews)} review(s)")
             a(f"")
-            for pr in info["prs_opened"]:
-                merged_tag = " ✅ merged" if pr["merged"] else f" ({pr['state']})"
-                a(f"- [#{pr['number']}]({pr['url']}) {pr['title']}{merged_tag}")
-            a(f"")
-
-        if info["reviews_given"]:
-            a(f"**Reviews given**")
-            a(f"")
-            for rv in info["reviews_given"]:
-                a(f"- PR #{rv['pr']} — {rv['pr_title']} — `{rv['state']}`")
-            a(f"")
+            if log:
+                a(f"| SHA | Date | Message |")
+                a(f"|-----|------|---------|")
+                for c in log:
+                    link = f"[`{c['sha']}`](https://github.com/{REPO}/commit/{c['full_sha']})"
+                    a(f"| {link} | {c['date'].strftime('%Y-%m-%d')} | {c['message']} |")
+                a(f"")
+            else:
+                a(f"_No commits._")
+                a(f"")
+            if prs:
+                for pr in prs:
+                    tag = "✅ merged" if pr["merged"] else "open"
+                    a(f"- PR [#{pr['number']}]({pr['url']}) {pr['title']} — {tag}")
+                a(f"")
+            if reviews:
+                for rv in reviews:
+                    a(f"- Reviewed PR #{rv['pr']} · {rv['title']} · `{rv['state']}`")
+                a(f"")
 
     return "\n".join(lines)
 
-
-# ---------------------------------------------------------------------------
-# 7. Write files
-# ---------------------------------------------------------------------------
+# ── 7. Write file ─────────────────────────────────────────────────────────────
 
 os.makedirs("sprint-reports", exist_ok=True)
+out_path = "sprint-reports/SPRINTS.md"
 
-md_path   = f"sprint-reports/{SPRINT_LABEL}.md"
-json_path = f"sprint-reports/{SPRINT_LABEL}.json"
+with open(out_path, "w", encoding="utf-8") as f:
+    f.write(render(sprint_results, all_members, avg_per_member, overall_avg))
 
-with open(md_path, "w", encoding="utf-8") as f:
-    f.write(render_markdown(report_data))
+# ── 8. Console summary ───────────────────────────────────────────────────────
 
-with open(json_path, "w", encoding="utf-8") as f:
-    json.dump(report_data, f, indent=2, ensure_ascii=False)
-
-# Write SPRINT_LABEL to env file so the workflow can use it in artifact name
-with open(os.environ.get("GITHUB_ENV", "/dev/null"), "a") as env_file:
-    env_file.write(f"SPRINT_LABEL={SPRINT_LABEL}\n")
-
-# ---------------------------------------------------------------------------
-# 8. Print summary to Actions log
-# ---------------------------------------------------------------------------
-
-print(f"\n{'='*60}")
-print(f"  {SPRINT_NAME} — {since_iso[:10]} to {until_iso[:10]}")
-print(f"{'='*60}")
-print(f"  Total commits : {total_commits}")
-print(f"  Average       : {avg_commits:.1f}")
-print(f"")
-for m in members:
-    flag = "  ⚠ BELOW THRESHOLD" if any(w["member"] == m for w in balance_warnings) else ""
-    print(f"  {m:<20} {commit_counts[m]:>4} commits{flag}")
-
-if balance_warnings:
-    print(f"\n  Balance warnings: {len(balance_warnings)} member(s) below {int(BALANCE_THRESHOLD*100)}% of average")
-    sys.exit(1)  # Fail the workflow step so it's visible in GitHub UI
-
-print(f"\nReport written to {md_path}")
-print(f"JSON written to   {json_path}")
+print(f"\n{'─'*55}")
+print(f"  {'Sprint':<10} {'Period':<24} {'Total':>6} {'Avg':>6}")
+print(f"{'─'*55}")
+for s in sprint_results:
+    print(f"  {s['number']:<10} {s['since']} → {s['until']}  {s['total']:>6}  {s['average']:>6}")
+print(f"{'─'*55}")
+print(f"  Overall avg commits/sprint: {overall_avg}")
+print(f"\n  Report → {out_path}")
