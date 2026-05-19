@@ -79,26 +79,45 @@ for c in raw_commits:
 
 commits.sort(key=lambda c: c["date"])
 
-# ── 2. Auto-detect sprint windows (1 week each from first commit) ─────────────
+# ── 2. Real sprint windows ────────────────────────────────────────────────────
 
-first_commit_date = commits[0]["date"].replace(hour=0, minute=0, second=0, microsecond=0)
 now = datetime.now(timezone.utc)
 
+SPRINT_DATES = [
+    (1,  "2025-02-12", "2025-02-18"),
+    (2,  "2025-02-19", "2025-02-25"),
+    (3,  "2025-02-26", "2025-03-04"),
+    (4,  "2025-03-05", "2025-03-10"),
+    (5,  "2025-03-11", "2025-03-18"),
+    (6,  "2025-03-23", "2025-03-29"),
+    (7,  "2025-03-30", "2025-04-05"),
+    (8,  "2025-04-06", "2025-04-12"),
+    (9,  "2025-04-13", "2025-04-19"),
+    (10, "2025-04-20", "2025-04-26"),
+    (11, "2025-04-27", "2025-05-03"),
+    (12, "2025-05-04", "2025-05-10"),
+    (13, "2025-05-11", "2025-05-17"),
+]
+
 sprints = []
-sprint_start = first_commit_date
-sprint_num   = 1
 
-while sprint_start < now:
-    sprint_end = sprint_start + timedelta(weeks=1)
+for number, since_str, until_str in SPRINT_DATES:
+    since = datetime.fromisoformat(since_str).replace(tzinfo=timezone.utc)
+
+    # +1 día para incluir el último día completo
+    until = (
+        datetime.fromisoformat(until_str)
+        .replace(tzinfo=timezone.utc)
+        + timedelta(days=1)
+    )
+
     sprints.append({
-        "number": sprint_num,
-        "since":  sprint_start,
-        "until":  min(sprint_end, now),
+        "number": number,
+        "since": since,
+        "until": until,
     })
-    sprint_start = sprint_end
-    sprint_num  += 1
 
-print(f"Detected {len(sprints)} sprint(s) from {commits[0]['date'].date()} to {now.date()}")
+print(f"Loaded {len(sprints)} configured sprint(s)")
 
 # ── 3. Bucket commits into sprints ───────────────────────────────────────────
 
@@ -125,7 +144,7 @@ for s in sprints:
     sprint_results.append({
         "number":    s["number"],
         "since":     s["since"].strftime("%Y-%m-%d"),
-        "until":     s["until"].strftime("%Y-%m-%d"),
+       "until":     (s["until"] - timedelta(days=1)).strftime("%Y-%m-%d"),
         "members":   members,
         "counts":    counts,
         "log":       {m: by_member[m] for m in members},
